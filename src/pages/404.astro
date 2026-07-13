@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="页面未找到">
+  <section class="not-found shell">
+    <span>404 / LOST VECTOR</span>
+    <h1>这个方向没有<br />收敛到页面。</h1>
+    <a href="/">返回首页 →</a>
+  </section>
+</BaseLayout>
+<style>
+  .not-found { min-height: 70vh; display: flex; flex-direction: column; justify-content: center; }
+  .not-found span { color: var(--signal); font-family: var(--mono); font-size: .72rem; }
+  .not-found h1 { margin: 1rem 0 2rem; font-family: var(--serif); font-size: clamp(3rem, 8vw, 7rem); font-weight: 600; letter-spacing: -.06em; line-height: 1.08; }
+  .not-found a { color: var(--signal); font-weight: 700; }
+</style>

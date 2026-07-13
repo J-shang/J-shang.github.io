@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f5f3ed"/>
+  <g stroke="#d7d5cd" stroke-width="1">
+    <path d="M0 90h1200M0 180h1200M0 270h1200M0 360h1200M0 450h1200M0 540h1200"/>
+    <path d="M100 0v630M200 0v630M300 0v630M400 0v630M500 0v630M600 0v630M700 0v630M800 0v630M900 0v630M1000 0v630M1100 0v630"/>
+  </g>
+  <circle cx="930" cy="315" r="180" fill="none" stroke="#1258ff" stroke-width="3"/>
+  <ellipse cx="930" cy="315" rx="180" ry="72" fill="none" stroke="#171816" stroke-width="2" transform="rotate(-24 930 315)"/>
+  <circle cx="1070" cy="200" r="14" fill="#ef6c36"/>
+  <text x="80" y="150" fill="#1258ff" font-family="monospace" font-size="24" letter-spacing="5">J.SHANG / TECHNICAL NOTES</text>
+  <text x="80" y="285" fill="#171816" font-family="serif" font-size="68" font-weight="600">把复杂系统拆到</text>
+  <text x="80" y="375" fill="#171816" font-family="serif" font-size="68" font-weight="600">可以验证</text>
+  <text x="84" y="480" fill="#565a55" font-family="sans-serif" font-size="25">AI SYSTEMS · OPTIMIZATION · LARGE-SCALE TRAINING</text>
+</svg>

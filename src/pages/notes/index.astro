@@ -1,0 +1,80 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+const notes = (await getCollection('notes')).sort((a, b) => a.data.order - b.data.order);
+const categories = [...new Set(notes.map((note) => note.data.category))];
+---
+
+<BaseLayout title="全部文章" description="J. Shang 的 AI 系统、优化器与规模化训练文章。">
+  <section class="page-hero shell">
+    <p class="eyebrow">Archive / Knowledge map</p>
+    <h1>文章与知识地图</h1>
+    <p>这里不是按热度排列的知识碎片。选择一条主线，从基础公式一路读到工程实现和实验判断。</p>
+  </section>
+  <section class="archive shell">
+    <div class="filters">
+      <div class="filter-row" role="group" aria-label="按分类筛选">
+        <button class="filter is-active" data-category="all">全部 <span>{notes.length}</span></button>
+        {categories.map((category) => <button class="filter" data-category={category}>{category}</button>)}
+      </div>
+      <label class="search">
+        <span>⌕</span>
+        <input type="search" placeholder="搜索标题、摘要或分类…" aria-label="搜索文章" />
+      </label>
+    </div>
+    <p class="result-count"><span id="visible-count">{notes.length}</span> ARTICLES / FIELD NOTES</p>
+    <div class="card-grid" id="archive-grid">
+      {notes.map((note, index) => (
+        <div class="archive-item" data-category={note.data.category} data-search={`${note.data.title} ${note.data.description} ${note.data.category}`.toLowerCase()}>
+          <PostCard id={note.id} {...note.data} index={index + 1} />
+        </div>
+      ))}
+    </div>
+    <p class="empty" hidden>没有找到匹配文章。换一个关键词试试。</p>
+  </section>
+  <script>
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>('.filter')];
+    const items = [...document.querySelectorAll<HTMLDivElement>('.archive-item')];
+    const input = document.querySelector<HTMLInputElement>('.search input');
+    const count = document.querySelector<HTMLElement>('#visible-count');
+    const empty = document.querySelector<HTMLParagraphElement>('.empty');
+    let category = new URLSearchParams(location.search).get('category') || 'all';
+    let query = '';
+    const render = () => {
+      let visible = 0;
+      items.forEach((element) => {
+        const item = element;
+        const categoryMatch = category === 'all' || item.dataset.category === category;
+        const searchMatch = !query || item.dataset.search?.includes(query);
+        const show = Boolean(categoryMatch && searchMatch);
+        item.hidden = !show;
+        if (show) visible += 1;
+      });
+      buttons.forEach((button) => button.classList.toggle('is-active', button.dataset.category === category));
+      if (count) count.textContent = String(visible);
+      if (empty) empty.hidden = visible !== 0;
+    };
+    buttons.forEach((button) => button.addEventListener('click', () => { category = button.dataset.category || 'all'; render(); }));
+    input?.addEventListener('input', () => { query = input.value.trim().toLowerCase(); render(); });
+    render();
+  </script>
+</BaseLayout>
+
+<style>
+  .archive { padding-bottom: 2rem; }
+  .filters { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; margin-bottom: 2rem; padding-block: 1.2rem; border-block: 1px solid var(--line); }
+  .filter-row { display: flex; flex-wrap: wrap; gap: .45rem; }
+  .filter { padding: .4rem .7rem; border: 1px solid transparent; background: transparent; color: var(--ink-soft); font-size: .76rem; cursor: pointer; }
+  .filter span { font-family: var(--mono); font-size: .62rem; }
+  .filter:hover, .filter.is-active { border-color: var(--ink); color: var(--ink); }
+  .filter.is-active { background: var(--ink); color: var(--paper); }
+  .search { display: flex; min-width: min(280px, 100%); align-items: center; gap: .5rem; padding: .4rem .65rem; border-bottom: 1px solid var(--line-strong); }
+  .search input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: .78rem; }
+  .result-count { margin: 0 0 1.2rem; color: var(--ink-soft); font-family: var(--mono); font-size: .65rem; letter-spacing: .08em; }
+  .archive-item[hidden] { display: none; }
+  .archive-item :global(.post-card) { height: 100%; }
+  .empty { padding: 5rem 0; color: var(--ink-soft); text-align: center; }
+  @media (max-width: 760px) { .filters { align-items: stretch; flex-direction: column; } .search { min-width: 0; } }
+</style>

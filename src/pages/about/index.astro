@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="关于本站" description="J. Shang Technical Notes 的写作原则与内容边界。">
+  <section class="page-hero shell">
+    <p class="eyebrow">About / Working principles</p>
+    <h1>长期学习，公开推理。</h1>
+    <p>这个站点用来沉淀 AI 系统、优化器与规模化训练中的可复用理解，而不是追逐每天的新名词。</p>
+  </section>
+  <section class="about shell">
+    <div class="about__lead">写下来的标准，是下一次仍然能够验证。</div>
+    <div class="principles">
+      <article><span>01</span><h2>证据有层级</h2><p>优先使用原始论文、官方仓库与框架文档。技术报告、预印本和个人推断不会混写成同一种确定性。</p></article>
+      <article><span>02</span><h2>公式要落到代码</h2><p>不仅解释方法“是什么”，也记录张量形状、状态更新、分布式边界和可以实际运行的检查项。</p></article>
+      <article><span>03</span><h2>效率要统一口径</h2><p>Token、FLOP、显存与 wall-clock 分开报告，避免用一个维度的改善替另一个维度下结论。</p></article>
+      <article><span>04</span><h2>结论有时间截点</h2><p>快速演进的主题明确记录核对日期。旧文章不会被悄悄改成永远正确，而会保留更新轨迹。</p></article>
+    </div>
+    <div class="contact"><p>源码、勘误与讨论</p><a href="https://github.com/J-shang" target="_blank" rel="noreferrer">github.com/J-shang ↗</a></div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about { display: grid; grid-template-columns: .7fr 1.3fr; gap: clamp(3rem, 8vw, 8rem); }
+  .about__lead { position: sticky; top: 7rem; align-self: start; font-family: var(--serif); font-size: clamp(1.6rem, 3.5vw, 2.7rem); line-height: 1.45; }
+  .principles { border-top: 1px solid var(--line-strong); }
+  .principles article { display: grid; grid-template-columns: 48px 180px 1fr; gap: 1rem; padding: 1.5rem 0; border-bottom: 1px solid var(--line); }
+  .principles span { color: var(--signal); font-family: var(--mono); font-size: .7rem; }
+  .principles h2 { margin: 0; font-family: var(--serif); font-size: 1.25rem; font-weight: 600; }
+  .principles p { margin: 0; color: var(--ink-soft); font-size: .86rem; }
+  .contact { grid-column: 2; display: flex; justify-content: space-between; gap: 1rem; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line-strong); font-size: .84rem; }
+  .contact p { margin: 0; color: var(--ink-soft); }
+  .contact a { color: var(--signal); font-weight: 700; }
+  @media (max-width: 800px) { .about { grid-template-columns: 1fr; } .about__lead { position: static; } .principles article { grid-template-columns: 40px 1fr; } .principles p { grid-column: 2; } .contact { grid-column: auto; } }
+</style>
