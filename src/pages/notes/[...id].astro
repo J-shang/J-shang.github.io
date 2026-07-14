@@ -1,16 +1,28 @@
 ---
-import { getCollection, render } from 'astro:content';
-import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { loadSiteContent, noteHref } from '../../lib/content';
 
 export async function getStaticPaths() {
-  const notes = await getCollection('notes');
-  return notes.map((post) => ({ params: { id: post.id }, props: { post } }));
+  const { notes } = await loadSiteContent();
+  return notes.flatMap((post) => post.data.legacyPaths.map((legacyPath) => ({
+      params: { id: legacyPath.slice('/notes/'.length, -1) },
+      props: { destination: noteHref(post) },
+    })));
 }
 
-const { post } = Astro.props;
-const { Content, headings } = await render(post);
+const { destination } = Astro.props;
 ---
 
-<ArticleLayout {...post.data} headings={headings}>
-  <Content />
-</ArticleLayout>
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content={`0;url=${destination}`} />
+    <link rel="canonical" href={new URL(destination, Astro.site)} />
+    <title>文章地址已更新 · J. Shang</title>
+  </head>
+  <body>
+    <p>文章地址已更新，正在前往 <a href={destination}>{destination}</a>。</p>
+  </body>
+</html>

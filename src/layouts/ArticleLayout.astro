@@ -5,16 +5,36 @@ interface Heading { depth: number; slug: string; text: string; }
 interface Props {
   title: string;
   description: string;
-  category: string;
+  topicTitle: string;
+  topicHref: string;
+  sectionTitle: string;
   date: Date;
   updated?: Date;
   cutoff?: Date;
   readtime?: number;
   headings?: Heading[];
-  source?: string;
+  source?: {
+    repository: string;
+    path: string;
+    url: string;
+    revision?: string;
+    syncedAt?: Date;
+  };
 }
 
-const { title, description, category, date, updated, cutoff, readtime, headings = [], source } = Astro.props;
+const {
+  title,
+  description,
+  topicTitle,
+  topicHref,
+  sectionTitle,
+  date,
+  updated,
+  cutoff,
+  readtime,
+  headings = [],
+  source,
+} = Astro.props;
 const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
 const fmt = (value: Date) => new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }).format(value);
 ---
@@ -23,7 +43,7 @@ const fmt = (value: Date) => new Intl.DateTimeFormat('zh-CN', { year: 'numeric',
   <div class="reading-progress" aria-hidden="true"></div>
   <article class="article-shell">
     <header class="article-header">
-      <p class="eyebrow">{category} / Field Note</p>
+      <p class="eyebrow"><a href={topicHref}>{topicTitle}</a> / {sectionTitle}</p>
       <h1>{title}</h1>
       <p class="article-header__dek">{description}</p>
       <div class="article-meta">
@@ -39,8 +59,9 @@ const fmt = (value: Date) => new Intl.DateTimeFormat('zh-CN', { year: 'numeric',
         {source && (
           <aside class="source-note">
             本文由公开学习材料整理而成。为保留可追溯性，可在
-            <a href={source} target="_blank" rel="noreferrer">原始仓库</a>
+            <a href={source.url} target="_blank" rel="noreferrer">原始仓库</a>
             查看 Markdown 源文档与版本历史。
+            {source.revision && <> 同步版本：<code>{source.revision.slice(0, 12)}</code>。</>}
           </aside>
         )}
       </div>

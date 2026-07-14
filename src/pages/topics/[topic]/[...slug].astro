@@ -1,0 +1,30 @@
+---
+import { render } from 'astro:content';
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import { loadSiteContent, noteSlug, sectionTitle, topicHref } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const { notes, topicById } = await loadSiteContent();
+  return notes.map((post) => {
+    const topic = topicById.get(post.data.topic);
+    if (!topic) throw new Error(`Missing topic for note "${post.id}".`);
+    return {
+      params: { topic: topic.id, slug: noteSlug(post) },
+      props: { post, topic },
+    };
+  });
+}
+
+const { post, topic } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<ArticleLayout
+  {...post.data}
+  topicTitle={topic.data.title}
+  topicHref={topicHref(topic.id)}
+  sectionTitle={sectionTitle(topic, post.data.section)}
+  headings={headings}
+>
+  <Content />
+</ArticleLayout>

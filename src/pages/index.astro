@@ -1,17 +1,20 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
+import { loadSiteContent, noteHref, noteSlug, sectionTitle, topicHref } from '../lib/content';
 
-const notes = (await getCollection('notes')).sort((a, b) => a.data.order - b.data.order);
-const guide = notes.find((note) => note.id === 'muon-system-guide');
-const picks = ['megatron-muon-implementation', 'newton-schulz', 'token-flop-wall-clock']
-  .map((id) => notes.find((note) => note.id === id))
-  .filter(Boolean);
-const categoryCounts = new Map();
-for (const note of notes.filter((note) => note.data.category !== 'Muon 专题')) {
-  categoryCounts.set(note.data.category, (categoryCounts.get(note.data.category) ?? 0) + 1);
-}
+const { topics, notes, topicById } = await loadSiteContent();
+const featuredTopic = topics.find((topic) => topic.data.featured) ?? topics[0];
+const featuredTopicNotes = featuredTopic
+  ? notes.filter((note) => note.data.topic === featuredTopic.id)
+  : [];
+const guide = featuredTopic?.data.guide
+  ? featuredTopicNotes.find((note) => noteSlug(note) === featuredTopic.data.guide)
+  : undefined;
+const picks = topics.flatMap((topic) => topic.data.featuredNotes.map((slug) => (
+  notes.find((note) => note.data.topic === topic.id && noteSlug(note) === slug)
+))).filter((note) => note !== undefined);
+const fmt = (value: Date) => new Intl.DateTimeFormat('zh-CN').format(value);
 ---
 
 <BaseLayout>
@@ -19,9 +22,9 @@ for (const note of notes.filter((note) => note.data.category !== 'Muon 专题'))
     <div class="hero__copy">
       <p class="eyebrow">Independent technical writing / 2026</p>
       <h1 class="display">把复杂系统拆到<br /><span class="accent">可以验证。</span></h1>
-      <p class="hero__dek">关于 AI 系统、优化器与规模化训练的长期技术笔记。追踪公式，也追踪公式进入代码之后发生了什么。</p>
+      <p class="hero__dek">关于 AI 系统、优化器、数据处理与规模化训练的长期技术笔记。追踪公式，也追踪公式进入代码之后发生了什么。</p>
       <div class="hero__actions">
-        <a class="primary-action" href="/topics/muon/">开始阅读 Muon 专题 <span>→</span></a>
+        <a class="primary-action" href="/topics/">浏览全部专题 <span>→</span></a>
         <a class="secondary-action" href="https://github.com/J-shang" target="_blank" rel="noreferrer">GitHub ↗</a>
       </div>
     </div>
@@ -48,16 +51,20 @@ for (const note of notes.filter((note) => note.data.category !== 'Muon 专题'))
     </div>
   </section>
 
-  {guide && (
+  {guide && featuredTopic && (
     <section class="featured shell">
       <div class="section-heading"><h2>当前专题</h2><span>FEATURED / 01</span></div>
-      <a class="feature" href={`/notes/${guide.id}/`}>
-        <div class="feature__number">μ</div>
+      <a class="feature" href={noteHref(guide)}>
+        <div class="feature__number">{featuredTopic.data.symbol}</div>
         <div class="feature__content">
-          <p class="eyebrow">Muon optimizer / System guide</p>
+          <p class="eyebrow">{featuredTopic.data.kicker} / System guide</p>
           <h2>{guide.data.title}</h2>
           <p>{guide.data.description}</p>
-          <div class="feature__meta"><span>24 篇内容</span><span>5 条知识主线</span><span>信息截点 2026-07-01</span></div>
+          <div class="feature__meta">
+            <span>{featuredTopicNotes.length} 篇内容</span>
+            <span>{featuredTopic.data.sections.filter((section) => section.id !== guide.data.section).length} 条知识主线</span>
+            {featuredTopic.data.cutoff && <span>信息截点 {fmt(featuredTopic.data.cutoff)}</span>}
+          </div>
         </div>
         <span class="feature__arrow">↗</span>
       </a>
@@ -67,21 +74,25 @@ for (const note of notes.filter((note) => note.data.category !== 'Muon 专题'))
   <section class="latest shell">
     <div class="section-heading"><h2>编辑精选</h2><a class="text-link" href="/notes/">浏览全部文章</a></div>
     <div class="card-grid">
-      {picks.map((note, index) => note && <PostCard id={note.id} {...note.data} index={index + 1} />)}
+      {picks.map((note, index) => {
+        const topic = topicById.get(note.data.topic);
+        return topic && <PostCard href={noteHref(note)} title={note.data.title} description={note.data.description} label={`${topic.data.shortTitle} · ${sectionTitle(topic, note.data.section)}`} date={note.data.date} index={index + 1} />;
+      })}
     </div>
   </section>
 
   <section class="map shell">
     <div class="section-heading"><h2>知识地图</h2><span>FROM THEORY TO SYSTEMS</span></div>
     <div class="map__grid">
-      {[...categoryCounts.entries()].map(([category, count], index) => (
-        <a href={`/notes/?category=${encodeURIComponent(category)}`} class="map__item">
+      {topics.map((topic, index) => {
+        const count = notes.filter((note) => note.data.topic === topic.id).length;
+        return <a href={topicHref(topic.id)} class="map__item">
           <span class="map__index">0{index + 1}</span>
-          <span class="map__name">{category}</span>
-          <span class="map__count">{count} NOTES</span>
+          <span class="map__name">{topic.data.title}</span>
+          <span class="map__count">{count > 0 ? `${count} NOTES` : 'COMING SOON'}</span>
           <span class="map__line"></span>
-        </a>
-      ))}
+        </a>;
+      })}
     </div>
   </section>
 </BaseLayout>

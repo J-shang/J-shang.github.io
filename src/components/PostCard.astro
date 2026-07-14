@@ -1,20 +1,20 @@
 ---
 interface Props {
-  id: string;
+  href: string;
   title: string;
   description: string;
-  category: string;
+  label: string;
   date: Date;
   index?: number;
 }
 
-const { id, title, description, category, date, index = 1 } = Astro.props;
+const { href, title, description, label, date, index = 1 } = Astro.props;
 const formatted = new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
 ---
 
-<a class="post-card" href={`/notes/${id}/`}>
+<a class="post-card" href={href}>
   <div class="post-card__meta">
-    <span>{category}</span>
+    <span>{label}</span>
     <span class="post-card__index">{String(index).padStart(2, '0')} / {formatted}</span>
   </div>
   <h3>{title}</h3>

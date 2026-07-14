@@ -1,0 +1,72 @@
+name: Sync Muon content
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: Muon branch, tag, or commit to synchronize
+        required: true
+        default: main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout blog
+        uses: actions/checkout@v6
+      - name: Checkout Muon source
+        uses: actions/checkout@v6
+        with:
+          repository: J-shang/Muon
+          ref: ${{ inputs.source_ref || 'main' }}
+          path: .sync-sources/muon
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Synchronize managed content
+        run: npm run sync:content -- --topic muon --source .sync-sources/muon --prune --strict-discovery
+      - name: Validate synchronized site
+        run: |
+          npm run check
+          npm run build
+          npm run check:links
+        env:
+          ASTRO_TELEMETRY_DISABLED: "1"
+      - name: Open or update review pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$(git status --porcelain -- src/data/notes/muon)" ]; then
+            echo "Muon content is already current."
+            exit 0
+          fi
+
+          branch="content-sync/muon"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git add src/data/notes/muon
+          git commit -m "content: sync Muon notes"
+          git push --force origin "HEAD:$branch"
+
+          existing="$(gh pr list --head "$branch" --state open --json url --jq '.[0].url')"
+          if [ -z "$existing" ]; then
+            gh pr create \
+              --base main \
+              --head "$branch" \
+              --title "content: sync Muon notes" \
+              --body "Automated one-way synchronization from J-shang/Muon. Review source revisions, rendered content, and checks before merging."
+          else
+            echo "Updated existing pull request: $existing"
+          fi

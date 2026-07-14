@@ -1,21 +1,14 @@
-name: Deploy to GitHub Pages
+name: Quality checks
 
 on:
-  push:
-    branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
-  build:
+  quality:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -31,18 +24,9 @@ jobs:
         run: npm run check
         env:
           ASTRO_TELEMETRY_DISABLED: "1"
-      - name: Install, build, and upload site
-        uses: withastro/action@v6
+      - name: Build static site
+        run: npm run build
+        env:
+          ASTRO_TELEMETRY_DISABLED: "1"
       - name: Check generated local links
         run: npm run check:links
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4

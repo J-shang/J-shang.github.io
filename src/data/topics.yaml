@@ -1,0 +1,82 @@
+- id: muon
+  title: Muon 优化器
+  shortTitle: Muon
+  heroTitle: Muon
+  heroAccent: 优化器
+  symbol: μ
+  description: 从更新几何、矩阵数值方法到分布式实现与 LLM 实验判断，建立一套可以验证的 Muon 心智模型。
+  kicker: Optimizer systems
+  scope:
+    - 算法
+    - 数值
+    - 系统
+    - 实验
+  order: 1
+  featured: true
+  status: published
+  cutoff: 2026-07-01
+  guide: muon-system-guide
+  featuredNotes:
+    - megatron-muon-implementation
+    - newton-schulz
+    - token-flop-wall-clock
+  repository: https://github.com/J-shang/Muon
+  sections:
+    - id: guide
+      title: Muon 专题
+      description: 专题总览、结论边界与推荐阅读顺序。
+      order: 0
+    - id: optimization
+      title: 优化基础
+      description: 从 SGD、Momentum、Nesterov 与 AdamW 建立优化器基础。
+      order: 1
+    - id: linear-algebra
+      title: 线性代数
+      description: 理解奇异值、矩阵范数、极分解与半正交几何。
+      order: 2
+    - id: numerical-computing
+      title: 数值计算
+      description: 追踪 Newton–Schulz、条件数与低精度计算的误差边界。
+      order: 3
+    - id: engineering
+      title: 深度学习工程
+      description: 把优化器放进混合精度、分片、张量并行和 Megatron-LM。
+      order: 4
+    - id: experiments
+      title: LLM 实验方法
+      description: 用统一口径比较 token、FLOP、wall-clock 与规模迁移。
+      order: 5
+
+- id: data-processing
+  title: 数据处理
+  shortTitle: 数据处理
+  heroTitle: 数据
+  heroAccent: 处理
+  symbol: ∑
+  description: 围绕数据采集、清洗、存储、分布式处理与质量验证建立可复用的数据系统知识路径。
+  kicker: Data systems
+  scope:
+    - 采集
+    - 清洗
+    - 存储
+    - 质量
+  order: 2
+  featured: false
+  status: planned
+  featuredNotes: []
+  sections:
+    - id: ingestion
+      title: 数据采集
+      order: 1
+    - id: cleaning
+      title: 数据清洗
+      order: 2
+    - id: storage
+      title: 存储格式
+      order: 3
+    - id: distributed-processing
+      title: 分布式处理
+      order: 4
+    - id: quality
+      title: 数据质量
+      order: 5

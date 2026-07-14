@@ -1,21 +1,60 @@
 import { defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
+import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+
+const topics = defineCollection({
+  loader: file('./src/data/topics.yaml'),
+  schema: z.object({
+    title: z.string(),
+    shortTitle: z.string(),
+    heroTitle: z.string(),
+    heroAccent: z.string(),
+    symbol: z.string(),
+    description: z.string(),
+    kicker: z.string(),
+    scope: z.array(z.string()).default([]),
+    order: z.number().default(99),
+    featured: z.boolean().default(false),
+    status: z.enum(['published', 'planned']).default('published'),
+    cutoff: z.coerce.date().optional(),
+    guide: z.string().optional(),
+    featuredNotes: z.array(z.string()).default([]),
+    repository: z.url().optional(),
+    sections: z.array(z.object({
+      id: z.string(),
+      title: z.string(),
+      description: z.string().optional(),
+      order: z.number().default(99),
+    })),
+  }),
+});
 
 const notes = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/data/notes' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    category: z.enum(['优化基础', '线性代数', '数值计算', '深度学习工程', 'LLM 实验方法', 'Muon 专题']),
+    topic: z.string(),
+    section: z.string(),
+    slug: z.string().optional(),
+    legacyPaths: z.array(z.string()).default([]),
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
     cutoff: z.coerce.date().optional(),
     order: z.number().default(99),
     featured: z.boolean().default(false),
     readtime: z.number().optional(),
-    source: z.url().optional(),
+    source: z.object({
+      repository: z.string(),
+      path: z.string(),
+      url: z.url(),
+      revision: z.string().optional(),
+      syncedAt: z.coerce.date().optional(),
+      contentHash: z.string().optional(),
+      manifest: z.string().optional(),
+      managed: z.boolean().default(false),
+    }).optional(),
   }),
 });
 
-export const collections = { notes };
+export const collections = { topics, notes };

@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { loadSiteContent, noteHref, noteSlug } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const { topics, notes } = await loadSiteContent();
+  return topics.map((topic) => ({
+    params: { topic: topic.id },
+    props: { topic, topicNotes: notes.filter((note) => note.data.topic === topic.id) },
+  }));
+}
+
+const { topic, topicNotes } = Astro.props;
+const sections = [...topic.data.sections].sort((a, b) => a.order - b.order);
+const guide = topic.data.guide
+  ? topicNotes.find((note) => noteSlug(note) === topic.data.guide)
+  : undefined;
+const groups = sections
+  .filter((section) => section.id !== guide?.data.section)
+  .map((section) => ({
+    section,
+    notes: topicNotes.filter((note) => note.data.section === section.id),
+  }));
+const fmt = (value: Date) => new Intl.DateTimeFormat('zh-CN').format(value);
+---
+
+<BaseLayout title={`${topic.data.title}专题`} description={topic.data.description}>
+  <section class="topic-hero shell">
+    <div>
+      <p class="eyebrow">Topic {String(topic.data.order).padStart(3, '0')} / {topic.data.kicker}</p>
+      <h1>{topic.data.heroTitle}<br /><span>{topic.data.heroAccent}</span></h1>
+    </div>
+    <div class="topic-hero__intro">
+      <p>{topic.data.description}</p>
+      <dl>
+        <div><dt>范围</dt><dd>{topic.data.scope.join(' · ')}</dd></div>
+        <div><dt>内容</dt><dd>{topicNotes.length} 篇</dd></div>
+        {topic.data.cutoff && <div><dt>信息截点</dt><dd>{fmt(topic.data.cutoff)}</dd></div>}
+        {topic.data.status === 'planned' && <div><dt>状态</dt><dd>内容准备中</dd></div>}
+      </dl>
+    </div>
+  </section>
+
+  {guide && (
+    <section class="topic-start shell">
+      <span class="topic-start__index">START HERE</span>
+      <div><p class="eyebrow">System guide</p><h2>{guide.data.title}</h2><p>{guide.data.description}</p></div>
+      <a href={noteHref(guide)} aria-label="阅读系统指南">→</a>
+    </section>
+  )}
+
+  <section class="reading-path shell">
+    <div class="section-heading"><h2>推荐阅读路径</h2><span>{groups.length} LAYERS / {topicNotes.length - (guide ? 1 : 0)} NOTES</span></div>
+    <div class="path-list">
+      {groups.map((group, groupIndex) => (
+        <section class="path-group">
+          <header><span>{String(groupIndex + 1).padStart(2, '0')}</span><h3>{group.section.title}</h3><b>{group.notes.length}</b></header>
+          <div class="path-notes">
+            {group.notes.map((note) => (
+              <a href={noteHref(note)}><span>{note.data.title}</span><small>{note.data.readtime ? `${note.data.readtime} MIN` : 'NOTE'}</small><i>↗</i></a>
+            ))}
+            {group.notes.length === 0 && <p class="path-empty">内容准备中</p>}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .topic-hero { display: grid; min-height: 70vh; grid-template-columns: 1.1fr .9fr; gap: 4rem; align-items: end; padding-block: 6rem 4rem; }
+  .topic-hero h1 { margin: 0; font-family: var(--serif); font-size: clamp(5rem, 15vw, 11rem); font-weight: 600; letter-spacing: -.09em; line-height: .74; }
+  .topic-hero h1 span { color: var(--signal); font-size: .55em; }
+  .topic-hero__intro { padding-bottom: .5rem; }
+  .topic-hero__intro > p { max-width: 500px; margin: 0 0 3rem; font-family: var(--serif); font-size: clamp(1.25rem, 2.6vw, 2rem); line-height: 1.55; }
+  .topic-hero dl { margin: 0; border-top: 1px solid var(--line-strong); }
+  .topic-hero dl div { display: grid; grid-template-columns: 100px 1fr; padding: .65rem 0; border-bottom: 1px solid var(--line); }
+  .topic-hero dt { color: var(--ink-soft); font-size: .75rem; }
+  .topic-hero dd { margin: 0; font-family: var(--mono); font-size: .72rem; }
+  .topic-start { display: grid; grid-template-columns: 130px 1fr auto; gap: 2rem; align-items: center; padding: 2.4rem; border: 1px solid var(--line-strong); background: var(--paper-raised); }
+  .topic-start__index { color: var(--signal); font-family: var(--mono); font-size: .7rem; letter-spacing: .1em; }
+  .topic-start h2 { margin: 0 0 .5rem; font-family: var(--serif); font-size: clamp(1.7rem, 4vw, 3.2rem); font-weight: 600; letter-spacing: -.04em; }
+  .topic-start div > p:last-child { margin: 0; color: var(--ink-soft); }
+  .topic-start > a { color: var(--signal); font-size: 2.5rem; }
+  .reading-path { padding-top: 7rem; }
+  .path-group { display: grid; grid-template-columns: minmax(220px, .7fr) 1.3fr; border-top: 1px solid var(--line-strong); }
+  .path-group header { display: grid; grid-template-columns: 42px 1fr auto; gap: 1rem; align-content: start; padding: 1.4rem 2rem 2rem 0; }
+  .path-group header span, .path-group header b { color: var(--ink-soft); font-family: var(--mono); font-size: .68rem; font-weight: 400; }
+  .path-group h3 { margin: -.25rem 0 0; font-family: var(--serif); font-size: 1.5rem; font-weight: 600; }
+  .path-notes { border-left: 1px solid var(--line); }
+  .path-notes a { display: grid; grid-template-columns: 1fr 65px 20px; gap: 1rem; align-items: center; min-height: 58px; padding: .7rem 0 .7rem 1.4rem; border-bottom: 1px solid var(--line); }
+  .path-notes a:hover { background: var(--signal-soft); color: var(--signal); }
+  .path-notes small { color: var(--ink-soft); font-family: var(--mono); font-size: .62rem; }
+  .path-notes i { color: var(--signal); font-style: normal; }
+  .path-empty { margin: 0; padding: 1.1rem 1.4rem; border-bottom: 1px solid var(--line); color: var(--ink-soft); font-size: .78rem; }
+  @media (max-width: 760px) { .topic-hero { min-height: auto; grid-template-columns: 1fr; gap: 3rem; } .topic-start { grid-template-columns: 1fr auto; } .topic-start__index { grid-column: 1 / -1; } .path-group { grid-template-columns: 1fr; } .path-notes { border-left: 0; } }
+</style>

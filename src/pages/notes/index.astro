@@ -1,13 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
+import { loadSiteContent, noteHref, sectionTitle } from '../../lib/content';
 
-const notes = (await getCollection('notes')).sort((a, b) => a.data.order - b.data.order);
-const categories = [...new Set(notes.map((note) => note.data.category))];
+const { topics, notes, topicById } = await loadSiteContent();
 ---
 
-<BaseLayout title="全部文章" description="J. Shang 的 AI 系统、优化器与规模化训练文章。">
+<BaseLayout title="全部文章" description="J. Shang 的 AI 系统、优化器、数据处理与规模化训练文章。">
   <section class="page-hero shell">
     <p class="eyebrow">Archive / Knowledge map</p>
     <h1>文章与知识地图</h1>
@@ -15,22 +14,27 @@ const categories = [...new Set(notes.map((note) => note.data.category))];
   </section>
   <section class="archive shell">
     <div class="filters">
-      <div class="filter-row" role="group" aria-label="按分类筛选">
-        <button class="filter is-active" data-category="all">全部 <span>{notes.length}</span></button>
-        {categories.map((category) => <button class="filter" data-category={category}>{category}</button>)}
+      <div class="filter-row" role="group" aria-label="按专题筛选">
+        <button class="filter is-active" data-topic="all">全部 <span>{notes.length}</span></button>
+        {topics.map((topic) => <button class="filter" data-topic={topic.id}>{topic.data.shortTitle}</button>)}
       </div>
       <label class="search">
         <span>⌕</span>
-        <input type="search" placeholder="搜索标题、摘要或分类…" aria-label="搜索文章" />
+        <input type="search" placeholder="搜索标题、摘要、专题或章节…" aria-label="搜索文章" />
       </label>
     </div>
     <p class="result-count"><span id="visible-count">{notes.length}</span> ARTICLES / FIELD NOTES</p>
     <div class="card-grid" id="archive-grid">
-      {notes.map((note, index) => (
-        <div class="archive-item" data-category={note.data.category} data-search={`${note.data.title} ${note.data.description} ${note.data.category}`.toLowerCase()}>
-          <PostCard id={note.id} {...note.data} index={index + 1} />
-        </div>
-      ))}
+      {notes.map((note, index) => {
+        const topic = topicById.get(note.data.topic);
+        if (!topic) return null;
+        const section = sectionTitle(topic, note.data.section);
+        return (
+          <div class="archive-item" data-topic={topic.id} data-search={`${note.data.title} ${note.data.description} ${topic.data.title} ${section}`.toLowerCase()}>
+            <PostCard href={noteHref(note)} title={note.data.title} description={note.data.description} label={`${topic.data.shortTitle} · ${section}`} date={note.data.date} index={index + 1} />
+          </div>
+        );
+      })}
     </div>
     <p class="empty" hidden>没有找到匹配文章。换一个关键词试试。</p>
   </section>
@@ -40,23 +44,23 @@ const categories = [...new Set(notes.map((note) => note.data.category))];
     const input = document.querySelector<HTMLInputElement>('.search input');
     const count = document.querySelector<HTMLElement>('#visible-count');
     const empty = document.querySelector<HTMLParagraphElement>('.empty');
-    let category = new URLSearchParams(location.search).get('category') || 'all';
+    let topic = new URLSearchParams(location.search).get('topic') || 'all';
     let query = '';
     const render = () => {
       let visible = 0;
       items.forEach((element) => {
         const item = element;
-        const categoryMatch = category === 'all' || item.dataset.category === category;
+        const topicMatch = topic === 'all' || item.dataset.topic === topic;
         const searchMatch = !query || item.dataset.search?.includes(query);
-        const show = Boolean(categoryMatch && searchMatch);
+        const show = Boolean(topicMatch && searchMatch);
         item.hidden = !show;
         if (show) visible += 1;
       });
-      buttons.forEach((button) => button.classList.toggle('is-active', button.dataset.category === category));
+      buttons.forEach((button) => button.classList.toggle('is-active', button.dataset.topic === topic));
       if (count) count.textContent = String(visible);
       if (empty) empty.hidden = visible !== 0;
     };
-    buttons.forEach((button) => button.addEventListener('click', () => { category = button.dataset.category || 'all'; render(); }));
+    buttons.forEach((button) => button.addEventListener('click', () => { topic = button.dataset.topic || 'all'; render(); }));
     input?.addEventListener('input', () => { query = input.value.trim().toLowerCase(); render(); });
     render();
   </script>
