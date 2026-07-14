@@ -16,7 +16,7 @@ topic → section → note
 - `/topics/<topic>/<slug>/` is the canonical note URL.
 - `/notes/` aggregates notes from every topic.
 
-Muon is the first published topic. A data-processing topic skeleton is already present and can receive local or externally synchronized notes without adding another page template.
+The site currently publishes two source-backed topics: Muon optimization and Pretraining Data. Both are synchronized from their learning repositories through reviewed manifests while the blog owns presentation metadata and reading order.
 
 ## Local development
 
@@ -78,6 +78,16 @@ npm run sync:content -- \
   --discover
 ```
 
+Pretraining Data synchronization:
+
+```bash
+npm run sync:content -- \
+  --topic pretraining-data \
+  --source ../pt-data-learning \
+  --prune \
+  --strict-discovery
+```
+
 The sync tool records the source path, file-level Git revision, sync date, and transformed-body hash. It refuses to overwrite local edits to a managed body. `--adopt` is only for the reviewed first import of existing unmanaged files; `--prune` is required before managed files removed from the manifest are deleted.
 
 See `content-sources/README.md` for adding another external repository.
@@ -85,5 +95,5 @@ See `content-sources/README.md` for adding another external repository.
 ## Automation and deployment
 
 - `.github/workflows/quality.yml` checks types, the production build, and local links on pull requests or manual dispatch.
-- `.github/workflows/sync-muon.yml` checks the Muon repository weekly and on manual dispatch. Mapped changes are pushed to a dedicated branch and opened as a pull request for review; an unmapped new Markdown file fails discovery so it cannot be silently skipped.
+- `.github/workflows/sync-muon.yml` and `.github/workflows/sync-pretraining-data.yml` check both source repositories weekly and on manual dispatch. Mapped changes are pushed to dedicated branches and opened as pull requests for review; an unmapped new Markdown file fails discovery so it cannot be silently skipped.
 - `.github/workflows/deploy.yml` repeats the type and local-link gates before deploying `main` to GitHub Pages.

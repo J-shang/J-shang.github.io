@@ -13,9 +13,9 @@ Each JSON manifest maps one external Git repository into one blog topic. The sou
 
 ```bash
 npm run sync:content -- \
-  --topic data-processing \
-  --source ../DataProcessing \
-  --manifest content-sources/data-processing.json \
+  --topic pretraining-data \
+  --source ../pt-data-learning \
+  --manifest content-sources/pretraining-data.json \
   --dry-run \
   --discover
 ```

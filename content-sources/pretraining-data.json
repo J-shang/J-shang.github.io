@@ -1,0 +1,427 @@
+{
+  "topic": "pretraining-data",
+  "repository": "J-shang/pt-data-learning",
+  "repositoryUrl": "https://github.com/J-shang/pt-data-learning",
+  "output": "src/data/notes/pretraining-data",
+  "linkRoutes": {
+    "knowledge-map/README.md": "/topics/pretraining-data/",
+    "industry-data-practices/README.md": "/topics/pretraining-data/",
+    "industry-data-practices/TASKS.md": "https://github.com/J-shang/pt-data-learning/blob/main/industry-data-practices/TASKS.md",
+    "experiments/README.md": "https://github.com/J-shang/pt-data-learning/blob/main/experiments/README.md",
+    "sources/README.md": "https://github.com/J-shang/pt-data-learning/blob/main/sources/README.md"
+  },
+  "discoveryRoots": [
+    "README.md",
+    "knowledge-map",
+    "industry-data-practices"
+  ],
+  "discoveryIgnore": [
+    "knowledge-map/README.md",
+    "industry-data-practices/README.md",
+    "industry-data-practices/TASKS.md"
+  ],
+  "documents": [
+    {
+      "source": "README.md",
+      "slug": "pretraining-data-system-guide",
+      "title": "Pretraining Data 系统学习指南",
+      "description": "从数据单位、处理管线和采样配方，到训练期诊断、validation 与证据边界的完整学习路线。",
+      "section": "guide",
+      "order": 0,
+      "readtime": 24,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14",
+      "featured": true
+    },
+    {
+      "source": "knowledge-map/00-foundations/token-accounting.md",
+      "slug": "token-accounting",
+      "title": "Token 核算与数据单位",
+      "description": "统一 raw、unique、sampled、non-padding 与 loss token，建立可从配置推导和从运行计数器复核的分母。",
+      "section": "foundations",
+      "order": 10,
+      "readtime": 16,
+      "date": "2026-07-14"
+    },
+    {
+      "source": "knowledge-map/01-pipeline/data-lifecycle.md",
+      "slug": "data-lifecycle",
+      "title": "预训练数据生命周期",
+      "description": "把 source、解析、过滤、tokenization、sharding、采样和训练反馈连接成有版本、可追溯的数据流。",
+      "section": "pipeline",
+      "order": 20,
+      "readtime": 16,
+      "date": "2026-07-14"
+    },
+    {
+      "source": "knowledge-map/02-curation/filtering-dedup-decontamination.md",
+      "slug": "filtering-dedup-decontamination",
+      "title": "质量过滤、去重与去污染",
+      "description": "用共同框架区分质量代理、训练集内部冗余和训练—评测泄漏，并检查各自的误删与验证边界。",
+      "section": "curation",
+      "order": 30,
+      "readtime": 19,
+      "date": "2026-07-14"
+    },
+    {
+      "source": "knowledge-map/03-mixtures/data-mixtures-and-sampling.md",
+      "slug": "data-mixtures-and-sampling",
+      "title": "数据配比与采样",
+      "description": "用目标 exposure 分布统一自然采样、温度采样、手工配比、proxy-learned 与 online selection。",
+      "section": "mixtures",
+      "order": 40,
+      "readtime": 17,
+      "date": "2026-07-14"
+    },
+    {
+      "source": "knowledge-map/04-measurement/data-metrics.md",
+      "slug": "data-metrics",
+      "title": "训练数据指标体系",
+      "description": "把 corpus、pipeline、sampler 和模型行为连接成可下钻的指标系统，不把数据质量压成一个总分。",
+      "section": "measurement",
+      "order": 50,
+      "readtime": 17,
+      "date": "2026-07-14"
+    },
+    {
+      "source": "knowledge-map/05-validation/validation-design.md",
+      "slug": "validation-design",
+      "title": "Validation 设计与诊断",
+      "description": "从独立性、可比性与决策目标推导 split、指标、checkpoint 选择和 contamination 合同。",
+      "section": "validation",
+      "order": 60,
+      "readtime": 18,
+      "date": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/methodology.md",
+      "slug": "industry-data-methodology",
+      "title": "大厂数据实践统一调研方法",
+      "description": "固定 organization、model family、generation、training stage 与 artifact version，再逐字段记录可审计证据。",
+      "section": "methodology",
+      "order": 70,
+      "readtime": 18,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/disclosure-scorecard.md",
+      "slug": "data-disclosure-scorecard",
+      "title": "数据披露证据卡：逐字段等级，而非透明度总分",
+      "description": "按模型代际、训练阶段和字段记录 D0–D4 证据形状，避免用组织级单一分数掩盖未知项。",
+      "section": "methodology",
+      "order": 71,
+      "readtime": 22,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/comparison-matrix.md",
+      "slug": "industry-data-comparison-matrix",
+      "title": "厂商与模型数据实践比较矩阵",
+      "description": "以模型代际 × 训练阶段为单位，对齐 source、token accounting、处理管线、validation 与可复现资产。",
+      "section": "methodology",
+      "order": 72,
+      "readtime": 55,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/synthetic-and-distillation.md",
+      "slug": "synthetic-data-and-distillation",
+      "title": "合成数据与蒸馏：从来源衍生到学生暴露",
+      "description": "恢复 source、teacher、transform、verifier、accepted derivatives、采样与 student loss 的完整审计链。",
+      "section": "cross-cutting",
+      "order": 80,
+      "readtime": 16,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/long-context-data.md",
+      "slug": "long-context-data",
+      "title": "长上下文数据：能力窗口之外的暴露账本",
+      "description": "分离 context window、长度 curriculum、自然长文、拼接方式、attention mask 与 loss exposure。",
+      "section": "cross-cutting",
+      "order": 81,
+      "readtime": 15,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/reasoning-code-math-data.md",
+      "slug": "reasoning-code-math-data",
+      "title": "Reasoning、Code 与 Math 数据",
+      "description": "区分预训练文档、SFT traces、RL rollouts、verifier 与 benchmark seeds，避免跨阶段重复核算。",
+      "section": "cross-cutting",
+      "order": 82,
+      "readtime": 17,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/multilingual-and-multimodal-data.md",
+      "slug": "multilingual-and-multimodal-data",
+      "title": "多语言与多模态数据",
+      "description": "用 tokenizer fertility、模态统计单位、采样分母与来源权利约束解释 multilingual/multimodal mixture。",
+      "section": "cross-cutting",
+      "order": 83,
+      "readtime": 16,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/validation-and-contamination.md",
+      "slug": "validation-and-contamination",
+      "title": "Validation 与污染：从 held-out 到决策层过拟合",
+      "description": "同时审计内容重叠、祖先或衍生重叠，以及反复用 benchmark 做数据决策带来的 decision exposure。",
+      "section": "cross-cutting",
+      "order": 84,
+      "readtime": 15,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/open-controls/ai2-olmo-dolma.md",
+      "slug": "ai2-olmo-dolma-data-practices",
+      "title": "AI2 OLMo / Dolma 数据实践",
+      "description": "用开放数据、处理工具、配置、顺序、checkpoint、日志和评测资产建立可复查的数据系统控制组。",
+      "section": "open-controls",
+      "order": 90,
+      "readtime": 23,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/china/deepseek.md",
+      "slug": "deepseek-data-practices",
+      "title": "DeepSeek 家族的数据实践",
+      "description": "追踪 DeepSeek LLM、V2/V3、R1 与后续代际中的去重、remix、continued training 和 reasoning data 边界。",
+      "section": "china-cases",
+      "order": 100,
+      "readtime": 34,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/china/qwen.md",
+      "slug": "qwen-data-practices",
+      "title": "Alibaba Qwen 家族的数据实践",
+      "description": "沿 Qwen 代际审计多语言、code/math、continued pretraining、质量代理和 distillation 的证据链。",
+      "section": "china-cases",
+      "order": 101,
+      "readtime": 33,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/china/mimo.md",
+      "slug": "mimo-data-practices",
+      "title": "Xiaomi MiMo 家族的数据实践",
+      "description": "分层表示 reasoning-aware extraction、多阶段 mixture、多模态核算、verifier 与 agent 数据 provenance。",
+      "section": "china-cases",
+      "order": 102,
+      "readtime": 34,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/china/minimax.md",
+      "slug": "minimax-data-practices",
+      "title": "MiniMax 模型家族的数据实践",
+      "description": "审计数据实验功效、重复曝光、长上下文、多模态阶段与 agent-data factory 的不同统计单位。",
+      "section": "china-cases",
+      "order": 103,
+      "readtime": 37,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/china/moonshot-kimi.md",
+      "slug": "moonshot-kimi-data-practices",
+      "title": "Moonshot Kimi 与 Moonlight 的数据实践",
+      "description": "正交核算长上下文处理、rephrasing、optimizer/data 协同、agent provenance 与多模态训练时序。",
+      "section": "china-cases",
+      "order": 104,
+      "readtime": 38,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/china/glm.md",
+      "slug": "glm-data-practices",
+      "title": "Zhipu / Z.ai GLM 家族的数据实践",
+      "description": "沿模型代际拆分 ARC、semantic dedup、thinking mode、长上下文与 async agent RL 的训练阶段。",
+      "section": "china-cases",
+      "order": 105,
+      "readtime": 31,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/china/stepfun.md",
+      "slug": "stepfun-data-practices",
+      "title": "StepFun Step 家族的数据实践",
+      "description": "区分 annealing corpus、多模态 task/token、replay 和 scaling-law proxy 到目标模型的迁移边界。",
+      "section": "china-cases",
+      "order": 106,
+      "readtime": 31,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/china/bytedance-seed-doubao.md",
+      "slug": "bytedance-seed-doubao-data-practices",
+      "title": "ByteDance Seed / 豆包的数据实践",
+      "description": "分层审计 multimodal、code 与 agent 配方，以及消费产品数据的训练适格性和 checkpoint inclusion。",
+      "section": "china-cases",
+      "order": 107,
+      "readtime": 27,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/china/tencent-hunyuan-hy.md",
+      "slug": "tencent-hunyuan-hy-data-practices",
+      "title": "Tencent Hunyuan / Hy 的数据实践",
+      "description": "核算 synthetic pretraining、阶段 token、长上下文、多模态 pairs 与开放权重资产的证据边界。",
+      "section": "china-cases",
+      "order": 108,
+      "readtime": 26,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/china/baidu-ernie.md",
+      "slug": "baidu-ernie-data-practices",
+      "title": "Baidu ERNIE / 文心的数据实践",
+      "description": "按阶段拆分知识图谱任务、确定性数据流、masked multimodal loss 与 unified codec 的公开证据。",
+      "section": "china-cases",
+      "order": 109,
+      "readtime": 27,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/china/huawei-pangu-openpangu.md",
+      "slug": "huawei-pangu-openpangu-data-practices",
+      "title": "Huawei PanGu / openPangu 的数据实践",
+      "description": "沿 raw-to-retained 漏斗、domain routing、vertical replay 与阶段 mixture 审计开放资产边界。",
+      "section": "china-cases",
+      "order": 110,
+      "readtime": 32,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/international/openai.md",
+      "slug": "openai-data-practices",
+      "title": "OpenAI GPT 与 Reasoning 模型的数据实践",
+      "description": "比较 GPT-3 到 reasoning 模型的 mixture、来源类别、训练阶段和披露边界如何变化。",
+      "section": "international-cases",
+      "order": 120,
+      "readtime": 25,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/international/meta-llama.md",
+      "slug": "meta-llama-data-practices",
+      "title": "Meta Llama 家族的数据实践",
+      "description": "沿 Llama 代际追踪 mixture、global dedup、长上下文、multimodal token 与 data ablation。",
+      "section": "international-cases",
+      "order": 121,
+      "readtime": 26,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/international/anthropic-claude.md",
+      "slug": "anthropic-claude-data-practices",
+      "title": "Anthropic Claude 家族的数据实践",
+      "description": "分离 source taxonomy、consent 边界、transcript incident、canary 与 evaluation decision exposure。",
+      "section": "international-cases",
+      "order": 122,
+      "readtime": 27,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/international/google-gemini-gemma.md",
+      "slug": "google-gemini-gemma-data-practices",
+      "title": "Google Gemini / Gemma 的数据实践",
+      "description": "区分闭源 source taxonomy、开放权重 token ladder 与 WebLI、JEST 等数据方法证据。",
+      "section": "international-cases",
+      "order": 123,
+      "readtime": 31,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/international/microsoft-mai-phi.md",
+      "slug": "microsoft-mai-phi-data-practices",
+      "title": "Microsoft MAI 与 Phi 家族的数据实践",
+      "description": "审计 model ladder、unique/sample/epoch、synthetic textbook、蒸馏与阶段边界。",
+      "section": "international-cases",
+      "order": 124,
+      "readtime": 34,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/international/xai-grok.md",
+      "slug": "xai-grok-data-practices",
+      "title": "xAI Grok 的数据实践",
+      "description": "分层处理训练快照、X 数据通道、实时检索、future-training controls 与 targeted mid-training。",
+      "section": "international-cases",
+      "order": 125,
+      "readtime": 29,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/international/amazon-nova-forge.md",
+      "slug": "amazon-nova-forge-data-practices",
+      "title": "Amazon Nova / Nova Forge 的数据实践",
+      "description": "按 catalog、stage checkpoint、两层 mixture、RAI 与 managed artifact 边界审计可编排训练控制面。",
+      "section": "international-cases",
+      "order": 126,
+      "readtime": 28,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/international/nvidia-nemotron.md",
+      "slug": "nvidia-nemotron-data-practices",
+      "title": "NVIDIA Nemotron / Nemotron-CC 的数据实践",
+      "description": "连接 crawl 漏斗、quality buckets、synthetic rewrite lineage、采样暴露与开放训练资产。",
+      "section": "international-cases",
+      "order": 127,
+      "readtime": 29,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/international/mistral-ai.md",
+      "slug": "mistral-ai-data-practices",
+      "title": "Mistral AI 的数据实践",
+      "description": "区分开放权重与数据可审计性，并约束 tokenizer、语言、context 线索对 corpus 账本的外推。",
+      "section": "international-cases",
+      "order": 128,
+      "readtime": 25,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    },
+    {
+      "source": "industry-data-practices/international/apple-foundation-models.md",
+      "slug": "apple-foundation-models-data-practices",
+      "title": "Apple Foundation Models 的数据实践",
+      "description": "按 core、continued、context 与 multimodal 阶段核算 target/teacher exposure、端云蒸馏和披露变化。",
+      "section": "international-cases",
+      "order": 129,
+      "readtime": 27,
+      "date": "2026-07-14",
+      "cutoff": "2026-07-14"
+    }
+  ]
+}
