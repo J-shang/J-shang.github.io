@@ -6,16 +6,16 @@ section: "numerical-computing"
 slug: "condition-number"
 legacyPaths: ["/notes/condition-number/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 21
 readtime: 6
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/数值计算/条件数.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/%E6%9D%A1%E4%BB%B6%E6%95%B0.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/%E6%9D%A1%E4%BB%B6%E6%95%B0.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:d5f2b27f84530b4ccdb3811b036f4d0dac0ce0d90489063ee3c25d03507baf5e"
+  contentHash: "sha256:d096c1827f8936a1dec37d02a03f2e242fc6a7b75820a9b3326b0fc4f1995a71"
   manifest: "muon"
   managed: true
 ---
@@ -112,6 +112,6 @@ Muon 对 momentum 矩阵做 polar 近似，本质上要把奇异值压向统一�
 
 ## 参考入口
 
-- Trefethen & Bau, *Numerical Linear Algebra*。
-- Higham, *Accuracy and Stability of Numerical Algorithms*。
-- Muon² / Muon-NSR 等 polar 前预条件方向的论文。
+- Trefethen & Bau, *Numerical Linear Algebra* —— 从 SVD 与扰动角度建立条件数的几何含义。
+- Higham, *Accuracy and Stability of Numerical Algorithms* —— 区分 problem conditioning 与 algorithm stability，并学习浮点误差界。
+- Muon² / Muon-NSR 等 polar 前预条件预印本 —— 查看作者怎样试图改善进入 NS 的谱；把训练收益保留为待复现结论。

@@ -7,11 +7,21 @@
   "linkRoutes": {
     "必备知识地图/README.md": "/topics/muon/"
   },
-  "discoveryRoots": ["MUON_LEARNING_GUIDE.md", "必备知识地图"],
+  "discoveryRoots": ["MUON_LEARNING_GUIDE.md", "必备知识地图", "论文精读", "notes", "experiments/README.md"],
   "discoveryIgnore": ["必备知识地图/README.md"],
   "externalLinks": [
     {
       "sourceIncludes": "Megatron-LM Muon 实现解析.md",
+      "prefix": "../../Megatron-LM/",
+      "baseUrl": "https://github.com/NVIDIA/Megatron-LM/blob/0823c731ed7d793aef047b6a64f2dbbf32bf6e2c/"
+    },
+    {
+      "sourceIncludes": "notes/实现与代码走读.md",
+      "prefix": "../Megatron-LM/",
+      "baseUrl": "https://github.com/NVIDIA/Megatron-LM/blob/0823c731ed7d793aef047b6a64f2dbbf32bf6e2c/"
+    },
+    {
+      "sourceIncludes": "muP.md",
       "prefix": "../../Megatron-LM/",
       "baseUrl": "https://github.com/NVIDIA/Megatron-LM/blob/0823c731ed7d793aef047b6a64f2dbbf32bf6e2c/"
     }
@@ -40,6 +50,27 @@
     { "source": "必备知识地图/LLM 实验方法/scaling law.md", "slug": "scaling-law", "title": "Scaling Law", "description": "读懂 compute-optimal 比较，不把特定拟合区间的优势误写成普遍规律。", "section": "experiments", "order": 40, "readtime": 7, "date": "2026-07-01" },
     { "source": "必备知识地图/LLM 实验方法/critical batch size.md", "slug": "critical-batch-size", "title": "Critical Batch Size", "description": "理解 batch 增大何时不再带来等比例优化收益，以及它对 Muon 实验的影响。", "section": "experiments", "order": 41, "readtime": 7, "date": "2026-07-01" },
     { "source": "必备知识地图/LLM 实验方法/muP.md", "slug": "mup", "title": "μP", "description": "把超参数从小模型迁移到大模型时，哪些尺度规则不能靠直觉复制。", "section": "experiments", "order": 42, "readtime": 6, "date": "2026-07-01" },
-    { "source": "必备知识地图/LLM 实验方法/token-FLOP-wall-clock 公平比较.md", "slug": "token-flop-wall-clock", "title": "Token、FLOP 与 Wall-clock", "description": "建立公平比较框架：更少 token、更少 FLOP 和更短墙钟时间不是同一件事。", "section": "experiments", "order": 43, "readtime": 7, "date": "2026-07-01" }
+    { "source": "必备知识地图/LLM 实验方法/token-FLOP-wall-clock 公平比较.md", "slug": "token-flop-wall-clock", "title": "Token、FLOP 与 Wall-clock", "description": "建立公平比较框架：更少 token、更少 FLOP 和更短墙钟时间不是同一件事。", "section": "experiments", "order": 43, "readtime": 7, "date": "2026-07-01" },
+    { "source": "论文精读/README.md", "slug": "muon-paper-reading-guide", "title": "Muon 论文精读路线", "description": "沿前史、规模化证据、理论与数值边界、分布式系统四条线索精读 Muon 核心来源。", "section": "papers", "order": 60, "date": "2026-07-14", "cutoff": "2026-07-14", "featured": true },
+    { "source": "论文精读/00-Muon原始设计说明.md", "slug": "muon-original-design", "title": "Muon 原始设计说明", "description": "从作者设计说明和参考实现提取 Muon 的最小算法合同，并划清其证据边界。", "section": "papers", "order": 61, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/01-Shampoo.md", "slug": "shampoo", "title": "Shampoo", "description": "理解矩阵结构预条件的经典前史，并推导 instantaneous Shampoo 与 polar 的条件关系。", "section": "papers", "order": 62, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/02-Scalable-Optimization-in-the-Modular-Norm.md", "slug": "scalable-optimization-modular-norm", "title": "Scalable Optimization in the Modular Norm", "description": "把层角色、operator norm 与可迁移 update scale 放进统一的架构语言。", "section": "papers", "order": 63, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/03-SOAP.md", "slug": "soap", "title": "SOAP", "description": "理解在结构化特征基底中运行 Adam 的设计，并辨清 SOAP、Shampoo 与 Muon 的差异。", "section": "papers", "order": 64, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/04-Old-Optimizer-New-Norm.md", "slug": "old-optimizer-new-norm", "title": "Old Optimizer, New Norm", "description": "从范数约束重建 Adam、Shampoo 与 Muon 的最陡下降解释。", "section": "papers", "order": 65, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/05-Modular-Duality.md", "slug": "modular-duality", "title": "Modular Duality in Deep Learning", "description": "理解梯度为何是 dual object，以及矩阵更新方向如何由 dualization 得到。", "section": "papers", "order": 66, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/06-Norm-Constrained-LMOs-Scion.md", "slug": "norm-constrained-lmos-scion", "title": "Norm-Constrained LMOs 与 Scion", "description": "把 polar update 放进线性最小化 oracle，并区分优化器更新与参数约束。", "section": "papers", "order": 67, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/07-Muon-is-Scalable.md", "slug": "muon-is-scalable", "title": "Muon is Scalable for LLM Training", "description": "核查 weight decay、shape scale、distributed Muon 与 scaling law 的规模化证据。", "section": "papers", "order": 68, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/08-Practical-Efficiency-of-Muon.md", "slug": "practical-efficiency-of-muon", "title": "Practical Efficiency of Muon", "description": "从多尺度、large batch、μP 与 compute-time Pareto 评估 Muon 的实践效率。", "section": "papers", "order": 69, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/09-Spectral-Norm-Constraints.md", "slug": "muon-spectral-norm-constraints", "title": "Muon 的谱范数约束", "description": "连接 matrix sign、核范数、解耦衰减与 Muon 的隐式谱约束。", "section": "papers", "order": 70, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/10-Critical-Batch-Size.md", "slug": "muon-critical-batch-size", "title": "Muon 的收敛界与 Critical Batch Size", "description": "对齐 momentum、weight decay、rank、noise 与 critical batch 的理论定义和实验口径。", "section": "papers", "order": 71, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/11-Kimi-K2-and-MuonClip.md", "slug": "kimi-k2-muonclip", "title": "Kimi K2 与 MuonClip", "description": "把 MuonClip 作为超大规模训练系统案例阅读，并避免把整套系统收益归因于优化器。", "section": "papers", "order": 72, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/12-Inexact-Muon-Update.md", "slug": "inexact-muon-update", "title": "非精确 Muon Update", "description": "研究有限步 Newton–Schulz 误差与学习率、动量及训练目标之间的耦合。", "section": "papers", "order": 73, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/13-Convergence-with-Newton-Schulz.md", "slug": "muon-convergence-newton-schulz", "title": "Muon 与 Newton–Schulz 的收敛", "description": "直接分析实际有限步 Newton–Schulz Muon，而不是用精确 SVD 替代实现。", "section": "papers", "order": 74, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/14-Muon2.md", "slug": "muon2", "title": "Muon²", "description": "研究 polar 之前的二阶统计如何改善有限步 Newton–Schulz 的输入谱。", "section": "papers", "order": 75, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "论文精读/15-DMuon.md", "slug": "dmuon", "title": "DMuon", "description": "理解保持完整矩阵语义时，分布式 Muon 如何把额外开销压到接近 AdamW。", "section": "papers", "order": 76, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "notes/论文与证据索引.md", "slug": "muon-evidence-index", "title": "Muon 论文与证据索引", "description": "用来源类别、结论置信度和 claim ledger 管理 Muon 主线结论与证据缺口。", "section": "research-practice", "order": 80, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "notes/实现与代码走读.md", "slug": "muon-code-reading", "title": "Muon 实现与代码走读", "description": "沿输入、shape、state、branch、output 与 test 把论文公式落到真实训练代码。", "section": "research-practice", "order": 81, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "notes/前沿变体与开放问题.md", "slug": "muon-frontiers", "title": "Muon 前沿变体与开放问题", "description": "按训练统计与 polar 实现两个主轴比较前沿变体，并给出可证伪的研究问题。", "section": "research-practice", "order": 82, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "experiments/README.md", "slug": "muon-experiment-roadmap", "title": "Muon 实验路线与记录规范", "description": "把数学、数值、训练与分布式理解转化为可复现、可证伪的实验产物。", "section": "research-practice", "order": 83, "date": "2026-07-14", "cutoff": "2026-07-14" }
   ]
 }

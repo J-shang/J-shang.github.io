@@ -6,16 +6,16 @@ section: "optimization"
 slug: "nesterov"
 legacyPaths: ["/notes/nesterov/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 3
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/优化基础/Nesterov.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/Nesterov.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/Nesterov.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:abf404fb028213436372ecfb32b7fe597e9001101e9c91a7493dda9d47808314"
+  contentHash: "sha256:b88f8ce31c12039883a470b621ebdd5d814714ba412d6da8a179e4ad16366fc4"
   manifest: "muon"
   managed: true
 ---
@@ -119,6 +119,6 @@ Muon 的主线实现可以选择是否启用 Nesterov 风格的 momentum。理�
 
 ## 参考入口
 
-- Nesterov, *A method for solving the convex programming problem with convergence rate $O(1/k^2)$*。
-- Sutskever et al., *On the importance of initialization and momentum in deep learning*。
-- PyTorch `torch.optim.SGD` 中 Nesterov momentum 的实现说明。
+- Nesterov, *A method for solving the convex programming problem with convergence rate $O(1/k^2)$* —— 理论起点；只把结论用于其凸优化假设，不直接外推 LLM。
+- Sutskever et al., *On the importance of initialization and momentum in deep learning* —— 连接加速方法与深度网络训练中的 momentum 经验。
+- PyTorch `torch.optim.SGD` 中 Nesterov momentum 的实现说明 —— 用来核对 buffer 更新和 look-ahead 记号，不用抽象名称猜公式。

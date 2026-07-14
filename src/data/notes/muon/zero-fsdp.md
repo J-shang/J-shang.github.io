@@ -6,16 +6,16 @@ section: "engineering"
 slug: "zero-fsdp"
 legacyPaths: ["/notes/zero-fsdp/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 32
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/深度学习工程/ZeRO-FSDP.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/ZeRO-FSDP.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/ZeRO-FSDP.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:f8ce7e9cf0ee88a7373164ff16c7b5784176640c4f8f2dbc08a6bff8ce43e75c"
+  contentHash: "sha256:0fcd4ed12fc79c26e4e4c3cad29b20356ab2be3648344032b5e0c7bc45fcb03b"
   manifest: "muon"
   managed: true
 ---
@@ -113,6 +113,6 @@ Muon 对“完整二维矩阵”的语义很敏感。如果一个线性层权重
 
 ## 参考入口
 
-- Rajbhandari et al., *ZeRO: Memory Optimizations Toward Training Trillion Parameter Models*。
-- PyTorch Fully Sharded Data Parallel 文档。
-- Megatron-Core emerging optimizers 文档中的 TensorParallelMuon/AdaptiveMuon。
+- Rajbhandari et al., *ZeRO: Memory Optimizations Toward Training Trillion Parameter Models* —— ZeRO-1/2/3 的原始状态、梯度和参数分片模型。
+- PyTorch Fully Sharded Data Parallel 文档 —— 核对当前 all-gather/reduce-scatter、state dict 与包裹策略的实际 API。
+- Megatron-Core emerging optimizers 文档中的 TensorParallelMuon/AdaptiveMuon —— 查看矩阵语义如何进入 TP mode 和 adaptive state；具体行为仍以固定源码版本为准。

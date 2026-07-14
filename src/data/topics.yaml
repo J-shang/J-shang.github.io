@@ -14,12 +14,12 @@
   order: 1
   featured: true
   status: published
-  cutoff: 2026-07-01
+  cutoff: 2026-07-14
   guide: muon-system-guide
   featuredNotes:
+    - muon-paper-reading-guide
     - megatron-muon-implementation
     - newton-schulz
-    - token-flop-wall-clock
   repository: https://github.com/J-shang/Muon
   sections:
     - id: guide
@@ -46,6 +46,14 @@
       title: LLM 实验方法
       description: 用统一口径比较 token、FLOP、wall-clock 与规模迁移。
       order: 5
+    - id: papers
+      title: 论文精读
+      description: 沿历史谱系、规模化证据、理论边界与系统实现精读 Muon 核心来源。
+      order: 6
+    - id: research-practice
+      title: 研究实践
+      description: 用证据账本、代码走读、开放问题和可复现实验把理解变成可验证产出。
+      order: 7
 
 - id: data-processing
   title: 数据处理

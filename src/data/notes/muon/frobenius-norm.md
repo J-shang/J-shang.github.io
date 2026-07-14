@@ -6,16 +6,16 @@ section: "linear-algebra"
 slug: "frobenius-norm"
 legacyPaths: ["/notes/frobenius-norm/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 12
 readtime: 8
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/线性代数/Frobenius 范数.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/Frobenius%20%E8%8C%83%E6%95%B0.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/Frobenius%20%E8%8C%83%E6%95%B0.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:3506f8991d5e17cd07fd1b2de3b7fe602a8605968e2f397f0de0c94945eb1f04"
+  contentHash: "sha256:5adc154603a7afa206bd4cdaaa163f8b37f74ef433036edb146539570a9ed06b"
   manifest: "muon"
   managed: true
 ---
@@ -135,6 +135,6 @@ Muon 的更新方向 $UV^\top$ 在 Frobenius 范数下的大小与矩阵秩和�
 
 ## 参考入口
 
-- Golub & Van Loan, *Matrix Computations*。
-- Liu et al., *Muon is Scalable for LLM Training*。
-- KellerJordan/Muon 中关于 update scaling 的实现。
+- Golub & Van Loan, *Matrix Computations* —— Frobenius/SVD 恒等式和矩阵计算规范入口。
+- Liu et al., *Muon is Scalable for LLM Training* —— 查看 consistent update RMS 的规模化动机与经验消融。
+- KellerJordan/Muon 中关于 update scaling 的实现 —— 用实际 shape 方向核对理论 RMS 与代码 scale factor。

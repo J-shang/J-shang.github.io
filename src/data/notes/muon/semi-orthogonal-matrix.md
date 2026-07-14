@@ -6,16 +6,16 @@ section: "linear-algebra"
 slug: "semi-orthogonal-matrix"
 legacyPaths: ["/notes/semi-orthogonal-matrix/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 15
 readtime: 8
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/线性代数/半正交矩阵.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/%E5%8D%8A%E6%AD%A3%E4%BA%A4%E7%9F%A9%E9%98%B5.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/%E5%8D%8A%E6%AD%A3%E4%BA%A4%E7%9F%A9%E9%98%B5.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:93c52d5c5b91c54b464ebfa811c60be87fbc3876905e3b97f9bddcdd4e08ea98"
+  contentHash: "sha256:05e92a1f31f8d69a0ebde3c78d9055212c5902cbce0570a78dfdfb633b026784"
   manifest: "muon"
   managed: true
 ---
@@ -141,6 +141,6 @@ $W_{t+1}$ 一般不会满足半正交关系。Muon 是改变走路方式，不�
 
 ## 参考入口
 
-- Golub & Van Loan, *Matrix Computations*。
-- Liu et al., *Muon is Scalable for LLM Training*。
-- KellerJordan/Muon 参考实现和缩放约定。
+- Golub & Van Loan, *Matrix Computations* —— 非方阵 polar factor、薄 SVD 和正交性条件的数学入口。
+- Liu et al., *Muon is Scalable for LLM Training* —— 查看 shape-dependent update scale 为什么影响大模型 recipe。
+- KellerJordan/Muon 参考实现和缩放约定 —— 对照高矩阵/宽矩阵的 transpose 分支与 scale，防止检查错 $Q^\top Q$ 或 $QQ^\top$。

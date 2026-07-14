@@ -6,16 +6,16 @@ section: "optimization"
 slug: "decoupled-weight-decay"
 legacyPaths: ["/notes/decoupled-weight-decay/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 5
 readtime: 8
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/优化基础/解耦 weight decay.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/%E8%A7%A3%E8%80%A6%20weight%20decay.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/%E8%A7%A3%E8%80%A6%20weight%20decay.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:e60f6bd70312d535f3648dbc256962e69307d8248697b56836ab110b20e0f816"
+  contentHash: "sha256:31f68a6232bdf01f530426b34d74676c3c01aac088862f8e5d3d1cec76170a01"
   manifest: "muon"
   managed: true
 ---
@@ -140,6 +140,6 @@ weight decay 能抑制权重范数增长，但不能替代学习率、梯度裁�
 
 ## 参考入口
 
-- Loshchilov & Hutter, *Decoupled Weight Decay Regularization*。
-- Liu et al., *Muon is Scalable for LLM Training*。
-- PyTorch `AdamW` 与 `SGD` 文档中关于 weight decay 的参数说明。
+- Loshchilov & Hutter, *Decoupled Weight Decay Regularization* —— 推导 adaptive optimizer 中 L2 penalty 与 decay 为什么不等价。
+- Liu et al., *Muon is Scalable for LLM Training* —— 查看 weight decay 如何成为规模化 Muon 的关键消融，而非一般性稳定口号。
+- PyTorch `AdamW` 与 `SGD` 文档中的 weight decay 说明 —— 核对当前 API 的更新顺序和命名，避免跨库迁移时混用语义。

@@ -6,16 +6,16 @@ section: "experiments"
 slug: "scaling-law"
 legacyPaths: ["/notes/scaling-law/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 40
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/LLM 实验方法/scaling law.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/scaling%20law.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/scaling%20law.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:545559192298aca69a418c1bcaad69c0143f6b339fe86c75ce1a550aef8de43a"
+  contentHash: "sha256:ab222c3f203ba21e9fefca8d17479346363d9fae1d639aa6e2d51724ea35cc02"
   manifest: "muon"
   managed: true
 ---
@@ -105,6 +105,6 @@ Muon 论文中“达到 AdamW 同等表现需要更少 FLOPs”这类说法，�
 
 ## 参考入口
 
-- Kaplan et al., *Scaling Laws for Neural Language Models*。
-- Hoffmann et al., *Training Compute-Optimal Large Language Models*。
-- Liu et al., *Muon is Scalable for LLM Training*。
+- Kaplan et al., *Scaling Laws for Neural Language Models* —— 读取参数量、数据量与 loss 的早期幂律拟合；重点看拟合区间和外推假设。
+- Hoffmann et al., *Training Compute-Optimal Large Language Models* —— 理解固定 compute 下模型/数据配比怎样改变，避免沿用单一 scaling law。
+- Liu et al., *Muon is Scalable for LLM Training* —— 查看 Muon/AdamW 的 compute-optimal 对照；只在其模型族、数据和拟合设置内解释“约 2×”。

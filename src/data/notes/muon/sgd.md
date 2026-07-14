@@ -6,16 +6,16 @@ section: "optimization"
 slug: "sgd"
 legacyPaths: ["/notes/sgd/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 1
 readtime: 8
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/优化基础/SGD.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/SGD.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/SGD.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:435707eda1dd42a93fd440ab99f2ceed15fe3d65f1c9d41a1cc5df11dc280998"
+  contentHash: "sha256:8530ecf5377c3f9ae017e8f6244f24391ac621d4da6eb8d1ac8f06d739a307ad"
   manifest: "muon"
   managed: true
 ---
@@ -141,6 +141,6 @@ Muon 可以从“SGD + momentum + 矩阵正交化”这条线理解。SGD 直接
 
 ## 参考入口
 
-- Bottou, Curtis & Nocedal, *Optimization Methods for Large-Scale Machine Learning*。
-- Goodfellow, Bengio & Courville, *Deep Learning* 第 8 章。
-- Keller Jordan, *Muon: An optimizer for hidden layers in neural networks*。
+- Bottou, Curtis & Nocedal, *Optimization Methods for Large-Scale Machine Learning* —— SGD 的统计/优化假设、步长和收敛分析入口。
+- Goodfellow, Bengio & Courville, *Deep Learning* 第 8 章 —— 用统一深度学习记号复习 minibatch、noise 和 optimization practice。
+- Keller Jordan, *Muon: An optimizer for hidden layers in neural networks* —— 对照“SGD momentum 后增加矩阵谱变换”的最小差异。

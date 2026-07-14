@@ -6,16 +6,16 @@ section: "engineering"
 slug: "tensor-parallelism"
 legacyPaths: ["/notes/tensor-parallelism/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 33
 readtime: 8
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/深度学习工程/张量并行.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/%E5%BC%A0%E9%87%8F%E5%B9%B6%E8%A1%8C.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/%E5%BC%A0%E9%87%8F%E5%B9%B6%E8%A1%8C.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:4cb689f60feece9de9feaa76143dd1b3de31ba8369e70481aa0f27c461374ddc"
+  contentHash: "sha256:a508a47e722fcae688a1211304f63c91ea9788c5179afdfbd2522c97bec4a5e7"
   manifest: "muon"
   managed: true
 ---
@@ -117,6 +117,6 @@ Muon 要对二维线性权重的更新矩阵做正交化，而张量并行改变
 
 ## 参考入口
 
-- Megatron-LM / Megatron-Core 张量并行文档。
-- Megatron-Core emerging optimizers 中的 TensorParallelMuon。
-- Liu et al., *Muon is Scalable for LLM Training* 的 distributed Muon 设计。
+- Megatron-LM / Megatron-Core 张量并行文档 —— 建立 column/row parallel 的 global/local shape 与 collective 时序。
+- Megatron-Core emerging optimizers 中的 TensorParallelMuon —— 逐分支核对 `duplicated`、`distributed`、`blockwise` 和 QKV split。
+- Liu et al., *Muon is Scalable for LLM Training* 的 distributed Muon 设计 —— 对照论文中的通信/状态目标与实际框架实现，不默认二者版本等价。

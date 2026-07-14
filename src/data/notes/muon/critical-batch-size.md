@@ -6,28 +6,47 @@ section: "experiments"
 slug: "critical-batch-size"
 legacyPaths: ["/notes/critical-batch-size/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 41
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/LLM 实验方法/critical batch size.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/critical%20batch%20size.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/critical%20batch%20size.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:2bf3a590ede68425d068e8a554cf3253de55dd1ca60dc9a12f0221ff1091689a"
+  contentHash: "sha256:3c289453bbf022ef72920aa44b4d5a2136bb4d098368a3fc32b62e168e15df31"
   manifest: "muon"
   managed: true
 ---
 > 层次：LLM 实验方法
+> 信息截点：2026-07-14
+> 主推理路径：现象到机制——先把“大 batch 收益递减”写成可测曲线，再比较梯度噪声、调参和系统吞吐解释。
 
 ## 一句话定位
 
 critical batch size 描述 batch 增大到某个范围后，继续加 batch 的效率收益开始明显递减。
 
+## 动机问题与最小例子
+
+假设 batch 由 1M tokens/update 增到 4M，tokens/s 提高 1.8 倍，但达到同一验证 loss 所需 token 从 100B 增到 150B。墙钟比为
+
+$$
+\frac{150/1.8}{100}\approx0.83.
+$$
+
+因此大 batch 在这个点仍约快 17%，但 token efficiency 已下降 50%。继续增大 batch 是否值得，取决于目标指标和硬件曲线；“临界”不是只看梯度或只看吞吐得到的单一常数。
+
 ## 核心定义
 
 小 batch 区间里，增大 batch 往往能近似线性提高硬件吞吐，并允许相应调大学习率或减少更新噪声。但超过某个临界范围后，每个 token 提供的边际优化信息下降，训练可能需要更多 token 或更复杂调参才能达到同样 loss。这个临界点与模型规模、数据、训练阶段、优化器和学习率 schedule 都相关。
+
+## 假设与适用范围
+
+- critical batch 必须绑定目标（固定 loss、固定 token、固定 FLOP 或固定 time）、模型、数据、训练阶段、optimizer 和调参预算；它不是数据集的固有常数。
+- gradient noise scale 是一种局部/统计解释，依赖梯度采样和近似；不能单独证明端到端最优 batch。
+- gradient accumulation 与同大小物理 batch 在理想算术下可形成同一平均梯度，但 BatchNorm、随机性、通信、舍入、schedule 和实现时序可破坏工程等价。
+- Muon 使 critical batch 右移是 **empirical association/hypothesis**；谱压平本身不构成因果证明。
 
 ## 相关知识展开
 
@@ -57,6 +76,14 @@ $$
 
 这时继续加 batch 可能仍提高吞吐，但达到同样 loss 所需 token 也会增加。临界 batch size 就是这种收益开始明显递减的区域。
 
+若单样本梯度为 $g_i$，均值为 $\mu$、协方差为 $\Sigma$，在独立同分布的教学近似下，batch 平均梯度满足
+
+$$
+\operatorname{Cov}(\bar g_B)=\frac{\Sigma}{B}.
+$$
+
+这个 exact-looking $1/B$ 只在上述抽样假设下描述估计方差；它没有告诉你该减少多少 optimizer steps，也没有计入数据相关性、非平稳训练和硬件吞吐。critical batch 的经验模型正是尝试把局部噪声收益与优化进展联系起来，但最终仍要用目标 loss 曲线验证。
+
 ### 4. linear scaling rule 不是万能规则
 
 经典经验是 batch 放大 $k$ 倍，学习率也放大 $k$ 倍，至少在某些范围内有效。但 LLM 预训练里，还要考虑 warmup、AdamW/Muon 动力学、梯度裁剪、序列长度和数据顺序。超过临界 batch 后，简单线性放大学习率往往不再可靠。
@@ -73,6 +100,14 @@ Muon 改变了矩阵更新方向，把 momentum 的奇异值谱压平。若这�
 
 如果只把 AdamW 的最佳 batch 直接套给 Muon，或只把 Muon 的最佳 batch 直接套给 AdamW，都不公平。
 
+对每个 optimizer/batch 点至少计算：
+
+$$
+T(L^*)=\frac{D(L^*)}{\text{tokens/s}},
+$$
+
+其中 $D(L^*)$ 是插值到目标 loss $L^*$ 所需 token。若某个 run 没达到 $L^*$，它是右删失/失败点，不能偷偷从表中删掉。还应报告 optimizer-specific LR/warmup 搜索预算，否则“最佳 batch”可能只是“调得最多的 batch”。
+
 ## 和 Muon 的关系
 
 Muon 的一个重要实验方向是大 batch 训练。若 Muon 在更大 batch 下仍能保持 token efficiency 或更好利用更新方向，它就可能提高硬件并行效率。但这不等于“batch 越大越好”：Muon 的 NS/通信成本、更新缩放、weight decay 和稳定性机制都会影响最终 wall-clock。
@@ -83,6 +118,8 @@ Muon 的一个重要实验方向是大 batch 训练。若 Muon 在更大 batch �
 - 能区分 global batch size、micro batch size、gradient accumulation steps。
 - 能读懂 loss-vs-token 与 loss-vs-step 曲线在 batch 扫描中的差别。
 - 能把 critical batch size 当作实验对象，而不是固定常数。
+- 能从 loss-vs-token 与 tokens/s 合成目标 loss 的 wall-clock，并保留未达目标的失败点。
+- 能解释 $\operatorname{Cov}(\bar g_B)=\Sigma/B$ 的抽样假设和它不能推出的结论。
 
 ## 常见误区
 
@@ -92,12 +129,12 @@ Muon 的一个重要实验方向是大 batch 训练。若 Muon 在更大 batch �
 
 ## 自测问题
 
-1. global batch size、micro batch size 和 accumulation step 的关系是什么？
-2. 为什么大 batch 可能提高吞吐，却降低 token efficiency？
-3. 评估 Muon 的大 batch 优势时，至少应画哪些曲线？
+1. batch 放大 4 倍、tokens/s 放大 1.6 倍、达到目标 loss 的 token 放大 1.3 倍。wall-clock 改善多少？这能否说明 gradient noise 更小是原因？
+2. 两个 optimizer 在相同 batch 上使用同一个 LR 搜索区间，但一个的最优点落在边界。为什么这还不算同等调参？下一轮怎样改？
+3. 观测到 Muon 的 critical batch 右移。请给出一个“谱方向利用更充分”之外的竞争解释，并设计能区分两者的日志或消融。
 
 ## 参考入口
 
-- McCandlish et al., *An Empirical Model of Large-Batch Training*。
-- Shallue et al., *Measuring the Effects of Data Parallelism on Neural Network Training*。
-- *Practical Efficiency of Muon for Pretraining*。
+- [McCandlish et al., *An Empirical Model of Large-Batch Training*](https://arxiv.org/abs/1812.06162) —— gradient noise scale 与 critical batch 经验模型；重点读假设和预测量。
+- [Shallue et al., *Measuring the Effects of Data Parallelism on Neural Network Training*](https://jmlr.org/papers/v20/18-789.html) —— 大规模受控 batch 研究和统计报告方法。
+- [*Practical Efficiency of Muon for Pretraining*](https://arxiv.org/abs/2505.02222) —— Muon 在 large-batch regime 的主要多尺度证据；结论限定在其模型、数据与 recipe。

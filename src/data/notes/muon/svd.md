@@ -6,16 +6,16 @@ section: "linear-algebra"
 slug: "svd"
 legacyPaths: ["/notes/svd/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 10
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/线性代数/SVD.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/SVD.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/SVD.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:905486ad47cd4c72ce9c920aef27d2d31df20b5f39276f0ba50bac833beeeb8d"
+  contentHash: "sha256:5949faf4286ec1f1737f75a566898901c17293aff6208e1575883055d4a9a660"
   manifest: "muon"
   managed: true
 ---
@@ -128,6 +128,6 @@ $$
 
 ## 参考入口
 
-- Golub & Van Loan, *Matrix Computations*。
-- Trefethen & Bau, *Numerical Linear Algebra*。
-- Keller Jordan, *Muon: An optimizer for hidden layers in neural networks*。
+- Golub & Van Loan, *Matrix Computations* —— SVD、polar 和稳定矩阵算法的规范参考。
+- Trefethen & Bau, *Numerical Linear Algebra* —— 用几何图像、低秩近似和条件数理解奇异值。
+- Keller Jordan, *Muon: An optimizer for hidden layers in neural networks* —— 直接观察 Muon 如何从 $M=U\Sigma V^\top$ 保留 $UV^\top$。

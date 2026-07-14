@@ -6,16 +6,16 @@ section: "experiments"
 slug: "token-flop-wall-clock"
 legacyPaths: ["/notes/token-flop-wall-clock/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 43
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/LLM 实验方法/token-FLOP-wall-clock 公平比较.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/token-FLOP-wall-clock%20%E5%85%AC%E5%B9%B3%E6%AF%94%E8%BE%83.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/token-FLOP-wall-clock%20%E5%85%AC%E5%B9%B3%E6%AF%94%E8%BE%83.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:63e822886f2deb56d612d5ce402205d1d83add9b386169a0cbd502156a06cbba"
+  contentHash: "sha256:ef28f33100c7f803cfae6baaaf73f5406f2801a2e5d941569107d6d2a8629a53"
   manifest: "muon"
   managed: true
 ---
@@ -104,6 +104,6 @@ Muon 可能让 loss 按 token 或 FLOP 更快下降，但每步 optimizer 需要
 
 ## 参考入口
 
-- Hoffmann et al., *Training Compute-Optimal Large Language Models*。
-- Liu et al., *Muon is Scalable for LLM Training*。
-- Essential AI, *Practical Efficiency of Muon for Pretraining*。
+- Hoffmann et al., *Training Compute-Optimal Large Language Models* —— 学习如何在共同 compute budget 下比较模型与数据配置。
+- Liu et al., *Muon is Scalable for LLM Training* —— 检查论文如何从 scaling-law 曲线得到 FLOP efficiency，而不是把该数字当 wall-clock。
+- Essential AI, *Practical Efficiency of Muon for Pretraining* —— 重点读 compute-time Pareto frontier、batch sweep 和 profiling 口径。

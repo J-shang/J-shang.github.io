@@ -6,16 +6,16 @@ section: "optimization"
 slug: "adamw"
 legacyPaths: ["/notes/adamw/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 4
 readtime: 8
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/优化基础/AdamW.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/AdamW.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/AdamW.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:be29d8f9bd3290576673a496d41286ef8cc14635c3bb679b4b2e5c61fdc8b01c"
+  contentHash: "sha256:58573182caf40872f7497d01f9288b886e59f648f0cfa3fba552e0ce152d5864"
   manifest: "muon"
   managed: true
 ---
@@ -141,6 +141,6 @@ Muon 和 AdamW 的差别不是小修小补。AdamW 通过逐坐标二阶矩做�
 
 ## 参考入口
 
-- Kingma & Ba, *Adam: A Method for Stochastic Optimization*。
-- Loshchilov & Hutter, *Decoupled Weight Decay Regularization*。
-- Liu et al., *Muon is Scalable for LLM Training*。
+- Kingma & Ba, *Adam: A Method for Stochastic Optimization* —— 从原始算法核对一阶/二阶矩、bias correction 和逐元素分母。
+- Loshchilov & Hutter, *Decoupled Weight Decay Regularization* —— 核对 AdamW 与 L2 penalty 分叉的更新顺序和实验动机。
+- Liu et al., *Muon is Scalable for LLM Training* —— 查看现代 Muon 训练中 AdamW scalar group 的基线与配方边界。

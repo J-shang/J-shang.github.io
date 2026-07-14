@@ -6,16 +6,16 @@ section: "numerical-computing"
 slug: "newton-schulz"
 legacyPaths: ["/notes/newton-schulz/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 20
 readtime: 13
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/数值计算/Newton–Schulz 迭代.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/Newton%E2%80%93Schulz%20%E8%BF%AD%E4%BB%A3.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/Newton%E2%80%93Schulz%20%E8%BF%AD%E4%BB%A3.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:356748101fdf119bf937dfbca6fa304ab78ea99bae65fa078c08f2948efec6c5"
+  contentHash: "sha256:cdb41275bbc19603cd84bec3ee7a393f3f2d46e9915ae30dc2b4b1dc1024c94b"
   manifest: "muon"
   managed: true
 ---
@@ -220,6 +220,6 @@ NS 在深度学习里好用，是因为它主要由矩阵乘组成，GPU 友好�
 
 ## 参考入口
 
-- KellerJordan/Muon 中的 Newton–Schulz 函数。
-- Higham, *Functions of Matrices*。
-- Shulgin et al., *Beyond the Ideal: Analyzing the Inexact Muon Update*。
+- KellerJordan/Muon 中的 Newton–Schulz 函数 —— 最小实现入口；逐行核对 transpose、归一化、系数、steps 和 dtype。
+- Higham, *Functions of Matrices* —— 矩阵函数、polar decomposition 与迭代收敛的规范数学背景。
+- Shulgin et al., *Beyond the Ideal: Analyzing the Inexact Muon Update* —— 研究有限步近似如何与学习率/momentum 耦合；属于前沿理论预印本。

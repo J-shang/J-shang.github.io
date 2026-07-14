@@ -6,16 +6,16 @@ section: "optimization"
 slug: "momentum"
 legacyPaths: ["/notes/momentum/"]
 date: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-14
 order: 2
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/优化基础/momentum.md"
-  url: "https://github.com/J-shang/Muon/blob/7458bf6dbff95ca416a8ca9069308d5cc6907f96/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/momentum.md"
-  revision: "7458bf6dbff95ca416a8ca9069308d5cc6907f96"
+  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/momentum.md"
+  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
   syncedAt: "2026-07-14"
-  contentHash: "sha256:ecb377067140e8377d83722628471513b3194ce49800b4b6c046e2f3a566dfd8"
+  contentHash: "sha256:ef8b0fc2c27c9c64f7f11227abd0dcf01253e81841e1dbf78de1906d41f6aa53"
   manifest: "muon"
   managed: true
 ---
@@ -128,6 +128,6 @@ Muon 的输入通常不是裸梯度，而是 momentum 矩阵。对二维权重�
 
 ## 参考入口
 
-- Polyak, *Some methods of speeding up the convergence of iteration methods*。
-- Sutskever et al., *On the importance of initialization and momentum in deep learning*。
-- KellerJordan/Muon 参考实现中的 momentum buffer。
+- Polyak, *Some methods of speeding up the convergence of iteration methods* —— heavy-ball 方法的原始理论入口；核对二次问题中的动力学。
+- Sutskever et al., *On the importance of initialization and momentum in deep learning* —— 查看 momentum、初始化和深度网络训练的经验连接。
+- KellerJordan/Muon 参考实现中的 momentum buffer —— 直接确认进入 NS 的是 buffer 还是 Nesterov 组合，以及是否有尺度归一化。
