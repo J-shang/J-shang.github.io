@@ -5,26 +5,26 @@ topic: "pretraining-data"
 section: "china-cases"
 slug: "mimo-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 102
 readtime: 34
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/china/mimo.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/china/mimo.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:8ee891feeeefc56fea2fb13bdb2e2b7bb7a2c8448b88ef5b6ba90d98deeefc2b"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/china/mimo.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:d273c8a057e05fdf20d75ccdfd0670e168ff7fc54c6345b035f53f99aa7b4182"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 研究锚点：MiMo-7B、MiMo-VL-7B、MiMo-V2-Flash、MiMo-V2.5、MiMo-V2.5-Pro。
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+> 主要模型/资料：MiMo-7B、MiMo-VL-7B、MiMo-V2-Flash、MiMo-V2.5、MiMo-V2.5-Pro。
 
-## 定位与 motivating problem
+## 这篇案例要回答什么
 
 MiMo 的公开材料把“提高 reasoning-pattern density”从口号展开成了可检查的数据操作：保留网页中的公式与代码、全局去重后再按质量重配、用小模型做多维标签、生成 synthetic reasoning responses，并在训练末段同时改变 mixture 与 context length。V2-Flash 又公开了 22T→26T→27T 的调度、长依赖代码源和大规模可验证 agent environments，因此适合研究三个问题：
 
@@ -34,13 +34,13 @@ MiMo 的公开材料把“提高 reasoning-pattern density”从口号展开成�
 
 本笔记不把 25T、2.4T、27T、48T 和 27T 排成一个单调 scaling curve。MiMo-VL 是从 MiMo-7B 语言骨干出发的多模态训练；MiMo-V2.5（310B/15B active）与 MiMo-V2.5-Pro（1.02T/42B active）是两个并列规模，不是同一模型的 48T/27T 冲突记录。
 
-## 代际与阶段表
+## 各代模型和 training stage
 
 | 模型 | 阶段 | 已披露数据与规模 | mixture / context | 披露 |
 |---|---|---|---|---|
-| MiMo-7B-Base | `P0` Stage 1 | 约 18T：由学习率日程可还原为 84B warmup + 10.2T constant + 7.5T decay；不是独立 unique corpus 计数 | 排除 reasoning-query synthetic responses；压低 ads/news/jobs/低知识密度，提升专业高质量域；8K | `D2/D3` |
+| MiMo-7B-Base | `P0` Stage 1 | 约 17.784T（可近似写成约 18T）：论文 §2.3 的 learning rate schedule 明确给出 84B warmup + 10.2T constant + 7.5T cosine decay；三段相加得到的是 nominal training exposure，不能解读为论文独立披露的 unique corpus size | 排除 reasoning-query synthetic responses；压低 ads/news/jobs/低知识密度，提升专业高质量域；8K | `D2/D3` |
 | MiMo-7B-Base | `P1` Stage 2 | 4T sampled exposure | math + code 提升到约 70%；8K | `D2/D3` |
-| MiMo-7B-Base | `P1/P3` Stage 3 | 2T，其中末 500B 再降学习率；总计约 25T | 约 10% math/code/creative-writing synthetic responses；8K→32K | `D2/D3` |
+| MiMo-7B-Base | `P1/P3` Stage 3 | 2T，其中末 500B 再降 learning rate；总计约 25T | 约 10% math/code/creative-writing synthetic responses；8K→32K | `D2/D3` |
 | MiMo-7B-SFT / RL | `A1/A2` | 初版 SFT 约 500K、后续 checkpoint 扩至 6M；RL 为 100K math + 30K code problems | 规则 verifier；code test difficulty reward；10% easy-pool resampling；RL context 后续 32K→48K | `D2/D3` |
 | MiMo-VL-7B-SFT | multimodal `P0/P1/A1` | 四阶段合计 2.4T tokens；各阶段 tokens `unknown` | projector warmup → vision-language alignment → general multimodal pretraining → long-context SFT | `D2/D3` |
 | MiMo-VL-7B-RL | `A2` | prompt/rollout/loss tokens `unknown` | Mixed On-policy RL：perception、grounding、reasoning、human/AI preference；text/image/video | `D2/D3` |
@@ -54,9 +54,19 @@ MiMo 的公开材料把“提高 reasoning-pattern density”从口号展开成�
 | MiMo-V2.5-Pro-Base | `P0/P3` | 27T；native 32K，base context 256K | source/mix、阶段边界与 long-context token 数 `unknown` | `D1/D3` |
 | MiMo-V2.5-Pro | `A1/A2/A3` | 数量 `unknown` | SFT → domain-specialized RL teachers → MOPD；推理 context 1M | `D1/D3` |
 
-MiMo-7B Stage 1 的约 18T 来自官方优化器日程中的 exposure 边界；这是 `implementation relation`，不是论文直接给出的 corpus-size row。优化器段落可直接读出的三个阶段约为 17.784T + 4T + 2T = 23.784T，而摘要把总量写成 approximately 25T。两者相差约 1.216T，可能来自阶段边界简写或总量四舍五入；没有 step-level log 时保留为 `ambiguous`，不把差额擅自分配给 Stage 3。
+`[来源事实 | verified]` 论文 §2.3 直接给出 Stage 1 开始后的 84B warmup、10.2T constant phase 和 7.5T cosine decay；随后又直接给出 Stage 2 的 4T，以及 Stage 3 的 1.5T fixed-rate + 500B decay。论文在摘要、引言和 §2.1 将总训练量写成 approximately 25T。
 
-## Assumption ledger
+`[推导结论 | supported]` 若按 §2.3 的自然读法，把前三个连续且不重叠的区段都归入 Stage 1，则其 nominal training exposure 为：
+
+$$
+84\text{B}+10.2\text{T}+7.5\text{T}=17.784\text{T}\approx18\text{T}
+$$
+
+这个加法本身是 exact arithmetic；把三个区段完整归入 Stage 1 是基于论文行文的 `implementation relation`，没有 step-level log 或独立阶段表，因此整体标为 `supported`，不标为论文直接给出的 18T source fact。它也不能证明 17.784T 都是 unique tokens。
+
+`[推导结论 | open]` 按同样读法，三阶段合计为 17.784T + 4T + 2T = 23.784T，与 approximately 25T 相差约 1.216T。差异可能来自总量舍入、阶段描述省略或边界简写；论文没有提供足以区分这些解释的 step-level log，因此不把差额擅自分配给任何阶段。
+
+## 阅读这些结论前先确认的前提
 
 | 项 | 本笔记的处理 |
 |---|---|
@@ -69,7 +79,7 @@ MiMo-7B Stage 1 的约 18T 来自官方优化器日程中的 exposure 边界；�
 | cutoff | 全家族训练数据时间边界均 `unknown`；GitHub issue/task 的 snapshot 日期也未完整披露 |
 | 省略效应 | 代际同时改变参数规模、dense/MoE、attention、MTP、precision、数据、context、optimizer 与 post-training |
 
-## 统一数据字段表
+## 厂商公开了哪些 data fields
 
 | 字段 | MiMo-7B | MiMo-VL | V2-Flash / V2.5 | 置信 |
 |---|---|---|---|---|
@@ -124,11 +134,11 @@ S1: natural/general sources; no reasoning-query synthetic responses; domain remi
  -> S3: synthetic reasoning/creative ~10%; context 32K
 ```
 
-S3 同时改变 synthetic ratio、context length、batch size、RoPE 与学习率。它支持“联合配方有效”的经验关联，不能识别 synthetic 或 long context 的独立贡献。
+S3 同时改变 synthetic ratio、context length、batch size、RoPE 与 learning rate。它支持“联合配方有效”的经验关联，不能识别 synthetic 或 long context 的独立贡献。
 
 ## 25T 的 operational accounting
 
-MiMo-7B 的训练日程给出一组可检查的 exposure 边界：
+MiMo-7B 的 training schedule 给出一组可检查的 exposure 边界：
 
 $$
 T_{S1}=84\text{B}+10.2\text{T}+7.5\text{T}\approx17.784\text{T}
@@ -139,7 +149,7 @@ T_{S2}=4\text{T},\qquad
 T_{S3}=1.5\text{T}+0.5\text{T}=2\text{T}
 $$
 
-报告把 Stage 3 描述为 1.5T fixed-LR 后 0.5T decay，所以阶段表使用约 18T/4T/2T。由这些段落相加得到约 23.784T，与 approximately 25T 的总数不完全闭合；实现审计应从 step × global batch × sequence length 重建：
+报告把 Stage 3 描述为 1.5T fixed-LR 后 0.5T decay，所以阶段表显示推导得到的 17.784T、直接披露的 4T 和推导得到的 2T。三阶段相加为约 23.784T，与 approximately 25T 的总数不完全闭合；若要得到比论文行文更精确的边界，需要从 step × global batch × seqlen 重建：
 
 $$
 T_{sampled}=\sum_s N_{steps,s}\,B_{seq,s}\,L_s
@@ -194,7 +204,7 @@ V2-Flash 的 source 类别包括 web、books、academic papers、code、math 和
  -> 26–27T same family mix + upsample long dependencies, 256K
 ```
 
-Stage 3 同时改变数据、sequence length、RoPE、batch size、learning rate 和 expert-bias update。因此 NIAH/GSM-Infinite 的长上下文提升属于联合干预。
+Stage 3 同时改变数据、seqlen、RoPE、batch size、learning rate 和 expert-bias update。因此 NIAH/GSM-Infinite 的长上下文提升属于联合干预。
 
 ### SFT 与 MoE-specific monitor
 
@@ -242,7 +252,7 @@ MOPD 不是离线 teacher-response dataset。student 自己生成轨迹，teache
 
 只有固定模型 card revision 和训练报告后，才可以继续问它们是否共享 V2-Flash 27T corpus、48T 是否包含 visual/audio tokenization、以及 Pro 是否从独立初始化训练。
 
-## Validation、ablation 与区分性检查
+## 如何验证这些结论，并检查 contamination
 
 ### 已公开的锚点
 
@@ -267,11 +277,11 @@ MOPD 不是离线 teacher-response dataset。student 自己生成轨迹，teache
 
 仍缺少 pretraining held-out corpus 的 source、时间边界、dedup unit、freeze date、tokenizer revision、每域 token 数、micro/macro loss、decision threshold 和 checkpoint-selection rule。benchmark suite 不能替代这一 contract；LiveCodeBench 的 contamination-aware 设计也不能证明其他 benchmark 或训练阶段已去污染。
 
-## 表面冲突与边界
+## 看似矛盾的说法怎样区分
 
 ### 25T 与 Stage 1/2/3 数字
 
-约 25T 是总 sampled exposure；约 17.784T/4T/2T 是由学习率段落直接读出的阶段 exposure，不是 unique source pool。两组数字不能精确闭合，差额约 1.216T；在缺少 step log 时保留为 `ambiguous`，不能反推额外训练阶段。
+论文直接给出 approximately 25T 总训练量，以及 84B、10.2T、7.5T、4T、1.5T、500B 这些 schedule 区段。17.784T 和 2T 是对相应区段做加法得到的推导值，不是论文单列的 unique source pool。三阶段推导和约 25T 不能精确闭合，差额约 1.216T；在缺少 step log 时保留为 `open`，不能反推额外训练阶段。
 
 ### 2.4T multimodal 与 25T text
 
@@ -285,7 +295,7 @@ MOPD 不是离线 teacher-response dataset。student 自己生成轨迹，teache
 
 它们是不同参数规模/模态 checkpoint。应做 model-specific accounting，不能用“大模型通常看更多/更少数据”的先验改写官方字段。
 
-## 可迁移与不可外推
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -302,7 +312,7 @@ MOPD 不是离线 teacher-response dataset。student 自己生成轨迹，teache
 - `[未知 | open]` 不能由 70% environment-build success 推断 30% 失败任务的分布无偏；失败很可能与语言、依赖复杂度和年代相关。
 - `[未知 | open]` 不能将 V2.5 的 48T、多模态 encoder 与 1M context 的收益分解为 data-only effect。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - 完整 source manifest、language/domain/modality token ratio、source rights/consent 与全局 cutoff；
 - tokenizer revision、visual/audio token accounting、unique/sample/loss token 对照；
@@ -313,11 +323,11 @@ MOPD 不是离线 teacher-response dataset。student 自己生成轨迹，teache
 - SFT/RL/MOPD 的 prompt、trajectory、tool-call、accepted-token 与 loss-token 数；
 - V2.5 与 Pro 对 V2-Flash corpus/checkpoint 的精确继承关系。
 
-## 掌握标准与推理型自测
+## 读完后应该能回答的问题
 
 完成本案例后应能：
 
-1. 解释为什么 reasoning-aware parser 是数据配方的一部分，而不是无影响的工程细节；
+1. 解释为什么 reasoning-aware parser 是 data recipe 的一部分，而不是无影响的工程细节；
 2. 从 25T/27T schedule 区分总 exposure、stage exposure、unique corpus 与 loss tokens；
 3. 说明 MiMo-VL 2.4T 为什么不能直接与 text-only 25T 比质量或算力；
 4. 把 130K RL problems、120K environments、10K pods 与 trajectories 正确放入不同统计层；
@@ -331,9 +341,9 @@ MOPD 不是离线 teacher-response dataset。student 自己生成轨迹，teache
 - environment build 失败率从 30% 降到 10%，应检查 RL capability 变化还是 sampling-population 变化？
 - V2.5 与 Pro 都支持 1M，怎样区分 native training、post-training curriculum 与 inference extrapolation？
 
-## 来源与阅读顺序
+## 来源与建议阅读位置
 
-1. [MiMo: Unlocking the Reasoning Potential of Language Model — From Pretraining to Posttraining](https://arxiv.org/abs/2505.07608)：先读 §2.1 的 extraction/dedup/filter/synthetic/mixture，再读 §2.3 的 token/LR/context 边界，最后读 §3.2–3.3 的 130K 构造与 easy resampling。
+1. [MiMo: Unlocking the Reasoning Potential of Language Model — From Pretraining to Posttraining](https://arxiv.org/abs/2505.07608)：先读 §2.1 的 extraction/dedup/filter/synthetic/mixture；再用 §2.3 核对 84B/10.2T/7.5T/4T/1.5T/500B 这些直接披露的 schedule 区段，并把它们与本文推导的 17.784T/2T 分开；最后读 §3.2–3.3 的 130K 构造与 easy resampling。
 2. [MiMo 官方仓库](https://github.com/XiaomiMiMo/MiMo)：用于固定发布 checkpoint、初版/0530 SFT 规模与 RL context 更新；不要把 README 更新反写成初版报告配方。
 3. [MiMo-VL Technical Report](https://arxiv.org/abs/2506.03569)：读四阶段 2.4T、synthetic long-CoT/rejection sampling 与 MORL；特别区分 multimodal pretraining 和 long-context SFT。
 4. [MiMo-VL 官方仓库与 evaluation framework](https://github.com/XiaomiMiMo/MiMo-VL)：用于固定 checkpoints、2508 diff 与公开 eval prompts；它不是训练数据发布。

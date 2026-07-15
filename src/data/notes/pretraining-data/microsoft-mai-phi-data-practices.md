@@ -5,26 +5,26 @@ topic: "pretraining-data"
 section: "international-cases"
 slug: "microsoft-mai-phi-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 124
 readtime: 34
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/international/microsoft-mai-phi.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/international/microsoft-mai-phi.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:4931564b3c2d64c05ad76eca63666e6005179a13ca83cee7de1388e33b2aa341"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/international/microsoft-mai-phi.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:e264a4a25140839e0580587fd59ed73ae0e7fd64b5b3cf7a045957ecb394586d"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 研究锚点：MAI-Thinking-1 / MAI-Base-1 与 Phi-1→Phi-4；MAI-1-preview 作为闭源历史边界。
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+> 主要模型/资料：MAI-Thinking-1 / MAI-Base-1 与 Phi-1→Phi-4；MAI-1-preview 作为闭源历史边界。
 
-## 定位与 motivating problem
+## 这篇案例要回答什么
 
 Microsoft 内部存在两条不能互相代填的研究线：
 
@@ -33,7 +33,7 @@ Microsoft 内部存在两条不能互相代填的研究线：
 
 两条线恰好构成受控对照：MAI-Base-1 的 pretraining 明确不使用 LM-generated synthetic data，Phi-4 则让 synthetic 成为最大单一 source。这个差异不是“谁更好”的实验，因为模型规模、目标、数据、token budget 与训练年代都不同；它用于检验本仓库的 synthetic provenance、unique/sample token、model ladder 与 validation 定义能否容纳相反策略。
 
-## 代际与阶段表
+## 各代模型和 training stage
 
 | 模型 | 阶段 | 已披露数据规模 | mixture / context | 披露 |
 |---|---|---:|---|---|
@@ -61,7 +61,7 @@ $$
 
 mid-training 没有引入新 source 或 synthetic，只从 pretraining corpus 过滤、重权重、重打包；因此 3.55T 是追加 sampled exposure，不是新增 3.55T unique corpus。
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 项 | 本笔记的处理 |
 |---|---|
@@ -74,7 +74,7 @@ mid-training 没有引入新 source 或 synthetic，只从 pretraining corpus �
 | multimodal token | Phi-3.5-Vision 的 500B 含 visual/text elements，image token 不计 LM loss；不能当 500B text loss tokens |
 | knowledge cutoff vs collection date | MAI 表是 source knowledge cutoff；不自动等于所有文件抓取/授权/处理完成日 |
 
-## 统一数据字段表
+## 厂商公开了哪些 data fields
 
 | 字段 | MAI-Base-1 / Thinking-1 | Phi | 置信 |
 |---|---|---|---|
@@ -243,7 +243,7 @@ $$
 
 SFT 约33B，并联合 text/multimodal tasks 以降低 language regression。没有 visual tokenizer equivalence、padding/mask ledger 时，500B 不能与 phi-4 10T直接做 data-efficiency ratio。
 
-## Validation、ablation 与区分性检查
+## 如何验证这些结论，并检查 contamination
 
 | 公开结论 | 首个混淆 | 有辨识力的检查 |
 |---|---|---|
@@ -255,7 +255,7 @@ SFT 约33B，并联合 text/multimodal tasks 以降低 language regression。没
 | natural long优于padded long | document quality/length/task不同 | length/quality matched natural vs concat vs synthetic dependency |
 | Phi vision 500B高效 | visual/text/loss token口径不明 | 按modality报告sample、tokens、loss mask与compute；matched-text replay |
 
-## 表面冲突与处理
+## 看似矛盾的说法怎样区分
 
 1. **MAI no synthetic vs Phi synthetic-heavy**：不同家族/目标；MAI 限定 pretraining，post-training明确含 synthetic。
 2. **MAI 29.2T unique vs 30T training**：source-level oversample/downsample抵消后总 epochs 1.03×，不表示每个 token约一次。
@@ -264,7 +264,7 @@ SFT 约33B，并联合 text/multimodal tasks 以降低 language regression。没
 5. **Phi rank correlation vs MAI rank reversal**：Phi 是给定 7B/14B、1T/mixture-gap 的局部观察；MAI 提供 23B/20T crossing 反例。
 6. **15K H100 vs 8,192 GB200**：一个是 MAI-1-preview 的高层 compute claim，一个是 MAI-Base-1 phase table；均不是 token count。
 
-## 可迁移与不可外推
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -283,7 +283,7 @@ SFT 约33B，并联合 text/multimodal tasks 以降低 language regression。没
 - 不把 teacher-generated synthetic 的 benchmark gain自动解释为超越 teacher 的通用知识；需 teacher-independent domains。
 - 不用 MAI/Phi benchmark差异比较两种数据哲学，除非固定模型、compute、tokenizer与post-training。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - MAI 公开 corpus/manifest、provider list、per-document rights、order、seed、packing/loss tokens与训练日志；
 - MAI mixture ladder 的所有 candidate configs、NLL private eval复现资产与最终 30T sample order；
@@ -293,7 +293,7 @@ SFT 约33B，并联合 text/multimodal tasks 以降低 language regression。没
 - Phi-4 code bucket 内 raw/synthetic proportion、完整 source rights/cutoff；
 - Phi-3.5-Vision 500B 的 text/visual/padding/masked token breakdown。
 
-## 掌握标准与推理型自测
+## 读完后应该能回答的问题
 
 应能：
 
@@ -311,7 +311,7 @@ SFT 约33B，并联合 text/multimodal tasks 以降低 language regression。没
 4. MAI 的 NLL objective 若把 multilingual权重从0.05升到0.2，mixture结论为何可能整体变化？
 5. 怎样用同一实验同时检查 synthetic repeat收益与TriviaQA知识退化？
 
-## 原始来源与阅读位置
+## 来源与建议阅读位置
 
 - [MAI-Thinking-1 technical report](https://microsoft.ai/pdf/mai-thinking-1.pdf)：MAI 主锚点；读 §2.2–2.6、Appendix B/C 与 §3 data/RL。
 - [Microsoft AI: seven new MAI models](https://microsoft.ai/news/building-a-hillclimbing-machine-launching-seven-new-mai-models/)：固定 2026 MAI family 与产品边界；不用于补 token 配方。
@@ -323,7 +323,7 @@ SFT 约33B，并联合 text/multimodal tasks 以降低 language regression。没
 - [Phi-4 technical report](https://arxiv.org/abs/2412.08905)：读 synthetic generation、10T mixture/epochs、1T proxy、250B long-context mid-training 与 decontamination。
 - [Phi-4-reasoning technical report](https://arxiv.org/abs/2504.21318)：读 teachable prompt selection、o3-mini reasoning demonstrations 与短RL增量。
 
-## 与主线的关系
+## 这篇案例与主线知识的关系
 
 ```text
 source-governance --bounds--> rights + cutoff claims

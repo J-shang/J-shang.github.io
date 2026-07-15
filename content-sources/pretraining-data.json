@@ -8,7 +8,8 @@
     "industry-data-practices/README.md": "/topics/pretraining-data/",
     "industry-data-practices/TASKS.md": "https://github.com/J-shang/pt-data-learning/blob/main/industry-data-practices/TASKS.md",
     "experiments/README.md": "https://github.com/J-shang/pt-data-learning/blob/main/experiments/README.md",
-    "sources/README.md": "https://github.com/J-shang/pt-data-learning/blob/main/sources/README.md"
+    "sources/README.md": "https://github.com/J-shang/pt-data-learning/blob/main/sources/README.md",
+    "terminology-style-guide.md": "https://github.com/J-shang/pt-data-learning/blob/main/terminology-style-guide.md"
   },
   "discoveryRoots": [
     "README.md",

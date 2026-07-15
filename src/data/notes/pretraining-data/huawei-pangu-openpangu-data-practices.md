@@ -5,27 +5,27 @@ topic: "pretraining-data"
 section: "china-cases"
 slug: "huawei-pangu-openpangu-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 110
 readtime: 32
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/china/huawei-pangu-openpangu.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/china/huawei-pangu-openpangu.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:25d1f8349466d9bb2cadaa00dba4dbee9c8e0bb195682b993a209216f2e2bbf7"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/china/huawei-pangu-openpangu.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:653dfa87e9aaa6a6e30cd964e6ea6d3eef5a2eb7e8602276273e153ffd9869c6"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 辅助视角：`implementation-trace`，用于 PanGu-α 数据管线、PanGu-Σ domain routing 与 openPangu artifact boundary
-> 研究锚点：PanGu-α、PanGu-Σ、PanGu-π/YunShan、Pangu Ultra、openPangu Embedded/2.0
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+<!-- maintenance: secondary-view=`implementation-trace`，用于 PanGu-α 数据管线、PanGu-Σ domain routing 与 openPangu artifact boundary -->
+> 主要模型/资料：PanGu-α、PanGu-Σ、PanGu-π/YunShan、Pangu Ultra、openPangu Embedded/2.0
 
-## 定位
+## 这篇案例研究什么
 
 PanGu 家族的数据史包含三条不能互相补空的证据链：
 
@@ -35,7 +35,7 @@ PanGu 家族的数据史包含三条不能互相补空的证据链：
 
 因此，“openPangu”中的 open 主要描述模型与推理资产的可获得性，不能自动解释为 training data 开放。
 
-## Motivating problem：同一个“行业模型”标签可能对应三种数据关系
+## 核心问题：同一个“行业模型”标签可能对应三种数据关系
 
 ```text
 general corpus + domain tag
@@ -50,7 +50,7 @@ general pretraining mixture already contains industries
 
 三者分别改变 routing、training distribution 与 source mixture。行业 benchmark 提升不能区分这三种机制，也不能反推出 proprietary industry records 的存在。
 
-## 代际与训练阶段表
+## 各代模型和 training stage
 
 | 模型 | 阶段 | 已披露数据与规模 | objective/context | 披露 | 状态 |
 |---|---|---|---|---|---|
@@ -65,7 +65,7 @@ general pretraining mixture already contains industries
 | openPangu Ultra-MoE-718B V1.1 | `P*/A*` | card 未给 pretraining tokens/source；V1.1 强化 agent、降幻觉 | 718B total/39B active；fast/slow | `D1/D3` | model/artifact `verified`；data recipe `open` |
 | openPangu 2.0 Flash | `P*/A1/A2/A3` | 约 34T total training tokens；source/mix 未给 | 约 92B/6B active、512K；SFT + multi-domain RL + online policy distillation | `D1/D3` | total/stage names `verified`；accounting/corpus `open` |
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 维度 | 本篇约束 |
 |---|---|
@@ -78,7 +78,7 @@ general pretraining mixture already contains industries
 | context | native/serving context 与已量化 training exposure 分开；未给 32K/128K token 数时不反推 |
 | 省略效应 | architecture、hardware、tokenizer、data、context、routing 与 post-training 跨代同时改变 |
 
-## 统一数据字段
+## 厂商公开了哪些 data fields
 
 | 字段 | PanGu-α/Σ | PanGu-π/Ultra | openPangu 当前模型 |
 |---|---|---|---|
@@ -163,7 +163,7 @@ T_{\text{continued}}=T_v+T_{\text{replay}}=2T_v,
 \qquad T_{\text{replay}}=T_v.
 $$
 
-`[推导结论 | open]` 这是条件推导，不是报告给出的总 exposure：1:1 也可能按 batch/example 实现，且未给 epochs、sequence length、packing 与 loss mask。复现必须核对 sampler config。
+`[推导结论 | open]` 这是条件推导，不是报告给出的总 exposure：1:1 也可能按 batch/example 实现，且未给 epochs、seqlen、packing 与 loss mask。复现必须核对 sampler config。
 
 ## Pangu Ultra：13.2T phase mixture 与质量分数实验
 
@@ -228,7 +228,7 @@ missing corpus manifest + processing config + global order + logs
   --prevents--> data recipe reproduction
 ```
 
-## Validation、污染与区分性检查
+## 如何验证这些结论，并检查 contamination
 
 | 问题 | 首个可能差异 | 区分性检查 |
 |---|---|---|
@@ -241,7 +241,7 @@ missing corpus manifest + processing config + global order + logs
 
 PanGu-α 的 350M PPL loop、Pangu Ultra 的 2.6B proxy 与 architecture ablations提供局部可检查锚点，但都缺完整 source-group contamination manifest。openPangu cards主要报告 release benchmarks；训练期 held-out source、time boundary、per-domain token count、decision-layer exposure 与 repeated benchmark selection仍不完整。
 
-## 可迁移经验与不可外推部分
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -259,7 +259,7 @@ PanGu-α 的 350M PPL loop、Pangu Ultra 的 2.6B proxy 与 architecture ablatio
 - `[未知 | open]` Embedded/Ultra-MoE/2.0 的 source、rights、cutoff、mixture、dedup/decontam 与 total-token阶段边界；
 - `[待验证假设 | plausible]` Pangu-family evaluator 的质量排序能跨语言、domain、architecture scale 保持校准。
 
-## 掌握标准
+## 读完后应该掌握什么
 
 读完后应能：
 
@@ -269,7 +269,7 @@ PanGu-α 的 350M PPL loop、Pangu Ultra 的 2.6B proxy 与 architecture ablatio
 4. 复原 Pangu Ultra 的 13.2T 三阶段 mixture，并指出 long-context 子预算未知；
 5. 解释为什么 openPangu 2.0 的 34T 不能直接与 dense Pangu Ultra 13.2T做数据效率比较。
 
-## 推理型自测
+## 用这些问题检查自己
 
 1. 若 α 新 filter 使 PPL 降低但法律文本保留率减半，应如何设计多目标 acceptance gate？
 2. Σ 某小域得分提升，怎样排除 expert capacity 而不是 domain data 的作用？
@@ -310,7 +310,7 @@ PanGu-α 的 350M PPL loop、Pangu Ultra 的 2.6B proxy 与 architecture ablatio
     - 为什么读：固定截至核查日最新 34T、512K、SFT/RL/OPD 描述，并检查缺失的 source/accounting字段。
     - 建议位置：简介、架构、license。
 
-## 与主线的关系
+## 这篇案例与主线知识的关系
 
 ```text
 raw snapshot --processed-by--> versioned filtering and dedup

@@ -5,26 +5,26 @@ topic: "pretraining-data"
 section: "cross-cutting"
 slug: "synthetic-data-and-distillation"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 80
 readtime: 16
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/synthetic-and-distillation.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/synthetic-and-distillation.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:bfa9a5c9facb5d73c4a25ec3782800a39b4fc8df5efecbf8f1fa32406f33f514"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/synthetic-and-distillation.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:087ca479d042e7954e3d62763cbc18b9ac43c1e73bb6094af4c850e9845f8f79"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`unified-framework`
-> 案例锚点：NVIDIA Nemotron、Apple AFM、Alibaba Qwen、Xiaomi MiMo；开放控制：AI2 OLMo/Dolma、Apple OpenELM
+<!-- maintenance: reasoning-path=`unified-framework` -->
+> 主要参考案例：NVIDIA Nemotron、Apple AFM、Alibaba Qwen、Xiaomi MiMo；开放控制：AI2 OLMo/Dolma、Apple OpenELM
 
-## 定位与 motivating problem
+## 这篇专题要回答什么
 
 “用了1T synthetic tokens”至少可能表示：对真实网页重写后的P0文本、teacher logits、SFT回答、preference pairs、RL trajectories，或同一source的多个派生版本。若只按最终token相加，会把独立信息、表面多样性和训练监督混成一个量。
 
@@ -40,7 +40,7 @@ source document
   -> student loss
 ```
 
-专题目标不是判断synthetic“好或坏”，而是恢复这条链每一段的统计单位、版本、验证强度与信息损失。
+专题目标不是判断 synthetic “好或坏”，而是说明这条链每一段分别记录什么统计单位、版本和验证强度，以及公开资料在哪些环节仍有缺口。
 
 ## 统一对象
 
@@ -94,7 +94,7 @@ $$
 | verified rollout | `A2/A3` | executable reasoning/agent trajectories | environment leakage、reward overfit |
 | preference synthesis | `A2` | paired/ranked signals | judge self-preference、position/style bias |
 
-## 案例恢复
+## 厂商公开资料实际告诉了我们什么
 
 | 案例 | source→derivative | verification | exposure/边界 |
 |---|---|---|---|
@@ -107,7 +107,7 @@ $$
 | [OLMo/Dolma开放控制](/topics/pretraining-data/ai2-olmo-dolma-data-practices/) | 主要以可版本化自然/公共corpus为对照 | data/config/order/logs可查 | 展示没有synthetic lineage时应怎样闭合source→exposure |
 | [OpenELM开放控制](/topics/pretraining-data/apple-foundation-models-data-practices/) | public named datasets；Instruct=cleaned UltraFeedback | config/logs/checkpoints、固定dataset | pool 1.8T vs sampled 1.5T，说明自然数据同样需分pool/exposure |
 
-## 统一框架恢复各案例时损失了什么
+## 统一比较会丢掉哪些重要差异
 
 - Nemotron-CC的rewrite与QA共享source，统一成“derivative”会隐藏transform目的；需保留transform subtype。
 - Apple logit distillation不一定产生可存储文本，统一成“synthetic sample”会误报dataset size；需保留supervision representation。
@@ -184,7 +184,7 @@ source/benchmark/repo group
 
 这样可区分“更高质量表述”“更多独立知识”“只是更多训练token”。若transform带来长度变化，应按loss tokens而非record count匹配。
 
-## 表面冲突与区分性检查
+## 看似矛盾的说法怎样区分
 
 ### synthetic提高质量 vs synthetic造成collapse
 
@@ -202,7 +202,7 @@ source/benchmark/repo group
 - student训练可能减少，但teacher训练、logit生成、storage和验证仍消耗compute。
 - 区分检查：分别报告teacher amortized cost、student cost和每个accepted/loss token成本。
 
-## 最小manifest
+## 最少需要保存哪些 manifest 信息
 
 ```yaml
 source_id: sha256:...
@@ -221,7 +221,7 @@ sample_count: ...
 loss_tokens: ...
 ```
 
-## 掌握标准与自测
+## 读完后应该能回答的问题
 
 读者应能：
 
@@ -234,7 +234,7 @@ loss_tokens: ...
 
 推理题：若1M seed各生成8个样本，通过率25%，平均512 tokens，训练重复4次，则accepted derivatives、dataset tokens和sampled tokens各是多少？哪些量仍不能说明独立知识覆盖？
 
-## 来源与阅读路径
+## 来源与建议阅读位置
 
 1. [NVIDIA Nemotron](/topics/pretraining-data/nvidia-nemotron-data-practices/)：读Nemotron-CC 4.4T+1.9T及teacher/prompt metadata，再读>98% synthetic alignment与MOPD。
 2. [Apple Foundation Models](/topics/pretraining-data/apple-foundation-models-data-practices/)：读2024 math/tool/code factory和2025 teacher/student、image caption lineage。

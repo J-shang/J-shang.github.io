@@ -5,27 +5,27 @@ topic: "pretraining-data"
 section: "international-cases"
 slug: "xai-grok-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 125
 readtime: 29
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/international/xai-grok.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/international/xai-grok.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:61295fd5a8684c4514ab706dd51ca8d5871672f27ad1f51d1aff4821150724aa"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/international/xai-grok.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:ee49de459c46afb2bcfe266d64e99eb4f934ec66c309c8a8767c4f83829f459c"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 辅助视角：`implementation-trace`，用于 Grok-1 开放权重与 X/Grok 数据控制
-> 研究锚点：Grok-1、3、4/4.1/4.20/4.5；Grok Code Fast 1；xAI FAIF data disclosure
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+<!-- maintenance: secondary-view=`implementation-trace`，用于 Grok-1 开放权重与 X/Grok 数据控制 -->
+> 主要模型/资料：Grok-1、3、4/4.1/4.20/4.5；Grok Code Fast 1；xAI FAIF data disclosure
 
-## 定位
+## 这篇案例研究什么
 
 xAI 的材料最容易把三种时间关系混在一起：
 
@@ -43,7 +43,7 @@ eligible user/X data --may-feed--> future training or finetuning
 
 实时检索不更新当前 checkpoint 权重；政策允许使用某类数据，也不证明某个已发布 checkpoint 实际包含该类数据。
 
-## Motivating problem：Grok 的“实时 X 知识”不是训练集声明
+## 核心问题：Grok 的“实时 X 知识”不是训练集声明
 
 Grok 从首次发布就强调通过 X 获得实时知识。若不拆层，容易出现：
 
@@ -55,7 +55,7 @@ Grok 从首次发布就强调通过 X 获得实时知识。若不拆层，容易
 
 本篇的核心问题是：**公开证据能否把 source class、训练阶段、时间边界、数据 controls 与实际 checkpoint lineage 连起来。**
 
-## 代际与训练阶段表
+## 各代模型和 training stage
 
 | 代际 | 阶段 | 公开数据事实 | token/context/cutoff | 披露等级 | 结论状态 |
 |---|---|---|---|---|---|
@@ -70,7 +70,7 @@ Grok 从首次发布就强调通过 X 获得实时知识。若不拆层，容易
 | Grok 4.5 | `P*/A3` | coding/science/engineering/math；dedup、quality scoring、domain selection；数十万多步SWE/technical RL tasks，automated/model grading | raw/base token、mixture、cutoff、rollout/loss token `unknown`；500K产品context | `D1/D2` | current training description `verified`；lineage/accounting `open` |
 | Grok 5 | training boundary | 2026-01官方仅称正在训练 | 所有data字段 `unknown` | `D0/D1` | status `verified`；recipe `open` |
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 维度 | 本篇约束 |
 |---|---|
@@ -82,7 +82,7 @@ Grok 从首次发布就强调通过 X 获得实时知识。若不拆层，容易
 | RL | “pretraining-scale compute”是 compute comparison，不是 pretraining stage 或 token identity |
 | 省略效应 | architecture、pretraining scale、mid-training、RL、tools 与 test-time compute 同时变化 |
 
-## 统一数据字段
+## 厂商公开了哪些 data fields
 
 | 字段 | Grok-1 | Grok 3/4 | Grok 4.1/4.20/4.5 | 当前结论 |
 |---|---|---|---|---|
@@ -183,7 +183,7 @@ P0 broad pretraining
 
 - source/domain 和是否复用 base corpus；
 - unique/sample/loss tokens；
-- sequence length、packing、replay 和 optimizer schedule；
+- seqlen、packing、replay 和 optimizer schedule；
 - 是否包含 X snapshot、synthetic textbook、tool traces或long-context data；
 - 与 SFT/RL 的去重和 contamination boundary。
 
@@ -254,7 +254,7 @@ repository/task source
 - micro、macro与per-domain training-loss/validation-loss；
 - data ablation、proxy-to-target transfer与seed variance。
 
-## 表面冲突与区分性检查
+## 看似矛盾的说法怎样区分
 
 | 表面冲突 | 首个不同点 | 区分性检查 |
 |---|---|---|
@@ -265,7 +265,7 @@ repository/task source
 | 4.5数十万tasks是否代表多样性 | task ID vs repo/environment/semantic group | 按source group去重并报告effective unique tasks |
 | post-cutoff benchmark是否clean | base corpus cutoff vs later decision exposure | 冻结benchmark、prompt、grader和模型选择协议 |
 
-## 可迁移经验与不可外推部分
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -283,7 +283,7 @@ repository/task source
 - `[未知 | open]` Grok 4.5与Grok 4.20/4.3的base lineage；
 - `[未知 | open]` Grok 5训练配方；正在训练不提供可审计数据事实。
 
-## 掌握标准
+## 读完后应该掌握什么
 
 读完后应能：
 
@@ -293,7 +293,7 @@ repository/task source
 4. 把Grok 4.1的targeted mid-training与SFT/RL分开；
 5. 为数十万agent tasks设计task/trajectory/tool/loss多分母审计。
 
-## 推理型自测
+## 用这些问题检查自己
 
 1. Grok关闭搜索后答不出昨天事件、开启X Search后答出。这个实验支持哪种关系，不支持哪种训练结论？
 2. 用户在2025-01 opt out。如何证明2024 snapshot与2026 model各自是否包含其public posts？还缺什么manifest？
@@ -345,7 +345,7 @@ repository/task source
     - 为什么读：学习coding-focused P0与agentic harness demonstrations的specialist阶段边界。
     - 建议位置：Introduction与training description。
 
-## 与主线的关系
+## 这篇案例与主线知识的关系
 
 ```text
 time-aware data manifest --prerequisite-for--> checkpoint cutoff claim

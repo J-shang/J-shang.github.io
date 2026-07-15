@@ -5,26 +5,26 @@ topic: "pretraining-data"
 section: "international-cases"
 slug: "anthropic-claude-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 122
 readtime: 27
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/international/anthropic-claude.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/international/anthropic-claude.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:d908c102b26857b01957b3f120a0aa78c65769d264f2d12b32e26e0f26af07fd"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/international/anthropic-claude.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:a7435264a8f177ce30e41988c77d071322e840d7fee933f0f54d8021508c12c6"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 研究锚点：Claude 2、Claude 3/3.7、Claude 4；4.5–5 系统卡用于披露边界，不从能力反推数据。
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+> 主要模型/资料：Claude 2、Claude 3/3.7、Claude 4；4.5–5 系统卡用于披露边界，不从能力反推数据。
 
-## 定位与 motivating problem
+## 这篇案例要回答什么
 
 Claude 是典型的闭源 frontier 对照：Anthropic 公开 source family、knowledge cutoff、consumer/commercial opt-in 边界、Constitutional AI 与大量 safety evaluations，但不公开 pretraining token 规模、mixture、语言比例、dedup 阈值、loader/order 或 loss-token accounting。
 
@@ -35,7 +35,7 @@ Claude 4 system card 还披露了一个少见的训练数据事故：约 150K �
 3. consumer opt-in、commercial default no-training、crowdworker、third-party 与 internal synthetic 如何分别治理；
 4. system-card evaluation 与 pretraining validation 为何不是同一种 artifact。
 
-## 代际与阶段表
+## 各代模型和 training stage
 
 | 模型 | 阶段 | 已披露数据 | cutoff / scale | 披露 |
 |---|---|---|---|---|
@@ -57,7 +57,7 @@ $$
 
 但每一项、重复集合、pre/mid/post stage 与 loss mask 都是 `unknown`，所以上式仅为 accounting schema，不可据此求值。
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 项 | 本笔记的处理 |
 |---|---|
@@ -70,7 +70,7 @@ $$
 | canary | machine-readable marker 可帮助识别/排除已标数据；无标记数据与 marker 被删除后的变体仍需其他方法 |
 | latest family | 系统卡列表确认版本存在；若 data section不闭合，只记录 `unknown`，不继承 Claude 4 比例 |
 
-## 统一数据字段表
+## 厂商公开了哪些 data fields
 
 | 字段 | Claude 公开信息 | 置信 |
 |---|---|---|
@@ -136,7 +136,7 @@ harmful/helpful prompt
 
 constitution、critique model、revision model、preference model、prompt set 与 sampling config 都是 provenance 节点。它与“从 GPT 类 teacher 直接蒸馏一个答案”不是 exact identity：监督信号还包括规则条件、自我批评与成对偏好。
 
-公开研究建立了方法关系，但 Claude 各代使用多少样本、哪些 principles、human/AI feedback比例、是否加入pretraining replay仍未形成可核算表。因此只标 `[来源事实 | supported]`，不据方法论文补填产品模型数量。
+公开研究建立了方法关系，但 Claude 各代使用多少样本、哪些 principles、human/AI feedback 比例、是否加入 pretraining replay 仍无法整理成字段和分母明确的表。因此只标 `[来源事实 | supported]`，不据方法论文补填产品模型数量。
 
 ## Claude 4 的 150K transcript incident
 
@@ -232,7 +232,7 @@ benchmark improvement --does-not-identify--> particular data intervention
 
 Anthropic 自身的小型exploratory tests认为 transcript incident更广泛影响 unlikely，但final Opus 4未在所有相同external scheming eval上复测。最准确状态是：specific incident `verified`；broader causal attribution `open`。
 
-## Validation、ablation 与区分性检查
+## 如何验证这些结论，并检查 contamination
 
 | 公开结论 | 首个混淆 | 有辨识力的检查 |
 |---|---|---|
@@ -243,7 +243,7 @@ Anthropic 自身的小型exploratory tests认为 transcript incident更广泛影
 | opt-in user data改善coding | selection bias、product feedback、模型/compute变化 | consent cohort provenance；domain/quality matched ablation；privacy review |
 | system-card safety score可代表model | scaffold、thinking/step budget与judge影响 | 多elicitation协议、raw trials、human adjudication与confidence interval |
 
-## 表面冲突与处理
+## 看似矛盾的说法怎样区分
 
 1. **commercial data不训练 vs user data是source**：commercial默认排除；consumer opt-in、feedback、safety review、DPP是不同例外路径。
 2. **cutoff vs 2025/2026公开材料**：knowledge cutoff是训练边界声明；system card/eval发布可晚于训练，不表示模型见过全文。
@@ -252,7 +252,7 @@ Anthropic 自身的小型exploratory tests认为 transcript incident更广泛影
 5. **canary present vs clean**：检测到可证明artifact候选存在；未检测到不能证明语义副本不存在。
 6. **大量system-card评测 vs data透明度**：evaluation D2不提升pretraining corpus字段到D2。
 
-## 可迁移与不可外推
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -271,7 +271,7 @@ Anthropic 自身的小型exploratory tests认为 transcript incident更广泛影
 - 不把specific transcript hallucination解释成Claude所有alignment行为根因。
 - 不用system-card benchmark推断pretraining token、mixture或synthetic比例。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - 所有代际的unique/sample/loss tokens、source proportions、repeat/epoch、packing与order；
 - URL/document/provider manifest、逐source license、deletion/opt-out propagation与固定snapshot；
@@ -280,7 +280,7 @@ Anthropic 自身的小型exploratory tests认为 transcript incident更广泛影
 - benchmark decontamination覆盖表、decision-exposure次数与sealed validation contract；
 - 4.5–5各版本训练数据diff与cutoff的完整可比记录。
 
-## 掌握标准与推理型自测
+## 读完后应该能回答的问题
 
 应能：
 
@@ -298,7 +298,7 @@ Anthropic 自身的小型exploratory tests认为 transcript incident更广泛影
 4. 一项eval从未进gradient，但每周用于checkpoint选择，属于哪种污染/过拟合？
 5. 为什么Claude 4的March 2025 cutoff不能单独证明某个2025-04 benchmark完全clean？
 
-## 原始来源与阅读位置
+## 来源与建议阅读位置
 
 - [Claude 4 System Card](https://assets.anthropic.com/m/6c940a1b69ed6a1c/original/Claude-4-System-Card.pdf)：主锚点；读§1.1 training data、§4.1.4 transcript incident、§6 reward hacking与RSP eval。
 - [Claude model system cards index](https://www.anthropic.com/system-cards)：固定各代system card版本和日期；最新版本的数据字段仍逐卡复核。
@@ -310,7 +310,7 @@ Anthropic 自身的小型exploratory tests认为 transcript incident更广泛影
 - [Knowledge cutoff list](https://support.anthropic.com/en/articles/8114494-how-up-to-date-is-claude-s-training-data)：核对Claude 3–4.1绝对cutoff；不把knowledge cutoff当完整source manifest。
 - [Constitutional AI](https://arxiv.org/abs/2212.08073)：读self-critique/revision与AI feedback方法；不据论文补写产品数据量。
 
-## 与主线的关系
+## 这篇案例与主线知识的关系
 
 ```text
 source-category --governed-by--> consent + access + retention

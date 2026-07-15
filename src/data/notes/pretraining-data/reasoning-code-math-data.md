@@ -5,26 +5,26 @@ topic: "pretraining-data"
 section: "cross-cutting"
 slug: "reasoning-code-math-data"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 82
 readtime: 17
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/reasoning-code-math-data.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/reasoning-code-math-data.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:0130c07688b253ff7fb862776783fe653242f7ea699dea547ee2be0af13acbec"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/reasoning-code-math-data.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:4be63548054ca602343701ba455b7beead174f8684a84c5f8ebd56872c65e5bc"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`unified-framework`
-> 案例锚点：DeepSeek、Qwen、Apple AFM、ByteDance Seed、GLM、MiniMax、NVIDIA Nemotron；开放控制：AI2 OLMo/Dolma
+<!-- maintenance: reasoning-path=`unified-framework` -->
+> 主要参考案例：DeepSeek、Qwen、Apple AFM、ByteDance Seed、GLM、MiniMax、NVIDIA Nemotron；开放控制：AI2 OLMo/Dolma
 
-## Motivating problem
+## 这篇专题要回答什么
 
 “reasoning data”可能是数学网页、代码仓库、教材式合成文本、SFT chain-of-thought、RL问题、每题多条rollout，或仅用于reward的tests。它们对模型施加的监督不同，统计单位也不同。
 
@@ -82,13 +82,13 @@ $$
 | symbolic/proof checker | math/formal | proof在固定系统通过 | formalization错误、library泄漏 |
 | compiler + unit tests | code | tests覆盖行为通过 | hidden spec、弱tests、依赖漂移 |
 | sandbox/environment | agent/code | 状态转移与outcome | flaky service、奖励捷径 |
-| execution trace rules | tool use | schema/sequence约束 | 语义正确性不完整 |
+| execution trace rules | tool use | schema/sequence 约束 | 语义正确性不完整 |
 | LLM judge/RM | open reasoning | learned preference | self-bias、verbosity/style、drift |
 | human review | ambiguous tasks | contextual judgment | 成本、分歧、版本化困难 |
 
 “verifiable”必须写被验证property，不是全局正确标签。
 
-## 案例恢复
+## 厂商公开资料实际告诉了我们什么
 
 | 案例 | P0/P2 | A1/A2/A3 | 关键边界 |
 |---|---|---|---|
@@ -101,7 +101,7 @@ $$
 | [Nemotron](/topics/pretraining-data/nvidia-nemotron-data-practices/) | math/code/SFT-style phase data | code/search/tool/GPU/RTL factories、MOPD | benchmark concept seeds与teacher lineage |
 | [OLMo/Dolma控制](/topics/pretraining-data/ai2-olmo-dolma-data-practices/) | open source/version/order/logs | 不代表完整reasoning RL | 校准P0 artifact与eval可复现性 |
 
-## 框架的信息损失
+## 统一比较会丢掉哪些重要差异
 
 - code与math的verifier可执行性不同，不能用一个“pass rate”横向排名；
 - on-policy数据分布随checkpoint变，静态manifest需加policy/version与iteration；
@@ -155,7 +155,7 @@ train/eval在派生后随机split会造成semantic leakage。需要problem-famil
 
 第三层即使没有文本重叠也会过拟合。应保存experiment registry：每次decision看过哪些eval、何时冻结clean set。
 
-## RL数据账本
+## RL data 需要分别记录哪些对象
 
 推荐按domain $d$ 记录：
 
@@ -190,7 +190,7 @@ train/eval在派生后随机split会造成semantic leakage。需要problem-famil
 
 比较benchmark-derived concepts与domain-matched independent seeds，在clean out-of-family eval上测迁移，区分task-format specialization和广泛能力。
 
-## 表面冲突与区分性检查
+## 看似矛盾的说法怎样区分
 
 ### more CoT improves reasoning vs visible CoT causes imitation
 
@@ -214,9 +214,9 @@ train/eval在派生后随机split会造成semantic leakage。需要problem-famil
 - 不把response length当真实difficulty；
 - 不把benchmark train concepts生成的数据称为clean independent source；
 - 不把某家pass@K、domain ratio或prompt count当通用最优；
-- 不根据最终reasoning benchmark反推数据配方。
+- 不根据最终reasoning benchmark反推 data recipe。
 
-## 最小manifest
+## 最少需要保存哪些 manifest 信息
 
 ```yaml
 problem_family: ...
@@ -234,7 +234,7 @@ loss_token_count: ...
 benchmark_overlap: exact|near|semantic|none|unknown
 ```
 
-## 掌握标准与自测
+## 读完后应该能回答的问题
 
 读者应能：
 
@@ -247,7 +247,7 @@ benchmark_overlap: exact|near|semantic|none|unknown
 
 推理题：10K prompts各采8条平均2K-token rollouts，75%完成，完成中40%通过，训练只消费通过rollouts的80% response tokens。分别计算nominal、completed、passed与consumed tokens；还缺哪些mask信息才能得到loss tokens？
 
-## 来源与阅读路径
+## 来源与建议阅读位置
 
 1. [DeepSeek](/topics/pretraining-data/deepseek-data-practices/)与[Qwen](/topics/pretraining-data/qwen-data-practices/)：比较specialist pretraining、reasoning RL与distillation阶段。
 2. [Apple AFM](/topics/pretraining-data/apple-foundation-models-data-practices/)：读math evolution、code execution、tool data与RLOO rewards。

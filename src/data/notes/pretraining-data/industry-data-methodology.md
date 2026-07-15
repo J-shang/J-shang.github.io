@@ -5,26 +5,26 @@ topic: "pretraining-data"
 section: "methodology"
 slug: "industry-data-methodology"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 70
 readtime: 18
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/methodology.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/methodology.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:8c868c6ce08fe946416162ad9a46970f6427927b97d75c66712f959748031931"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/methodology.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:da3f01ad890971c5273acd5449ca42fbf1da670c5e8ae1cf7eae059edb852464"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`core`
 > 版本：`v1.0`
 > 最近复核：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`；涉及真实配置和代码时切换为 `implementation-trace`。
+<!-- maintenance: reasoning-path=`method-family/historical trace`；涉及真实配置和代码时切换为 `implementation-trace` -->
 
-## 1. Motivating problem
+## 1. 这套方法要避免什么错误
 
 “模型训练了 15T tokens”没有稳定含义：它可能是原始语料规模、去重后的 unique tokens、带重复采样的 sampled tokens、进入 loss 的 non-padding tokens，或多个训练阶段的累计数。厂商材料的披露粒度又不同，直接把这些数字放进一张表会制造虚假的可比性。
 
@@ -39,7 +39,7 @@ source:
 
 只有在 tokenizer、mask 和 packing 合同固定时，`sampled tokens` 才能进一步对应训练 exposure；因此 A 与 B 的“2T”既不是同一对象，也不能据此判断哪份数据更多或更好。
 
-## 2. 分析单位
+## 2. 一条记录代表什么
 
 每条记录的主键为：
 
@@ -55,7 +55,7 @@ source:
 
 产品别名只有在能证明映射到具体训练代际时才写入。持续更新的线上模型若 checkpoint 不固定，必须标记 `rolling/unknown`。
 
-## 3. 训练阶段 taxonomy
+## 3. 怎样区分 training stage
 
 阶段标签描述数据在训练中的角色，不强制所有厂商遵循同一时间顺序。
 
@@ -63,15 +63,15 @@ source:
 |---|---|---|---|
 | `P0` | base pretraining | 从初始化或早期 checkpoint 进行大规模 next-token/多模态基础训练 | 把语料池规模当成 loss tokens |
 | `P1` | continued/mid-training | 在 base checkpoint 上继续训练，目标是更新领域、能力或数据分布 | 与 SFT、domain adaptation 混写 |
-| `P2` | annealing / high-quality finishing | 训练末段改变数据配方和/或学习率，以高质量、目标域数据收尾 | 把效果全部归因于数据，忽略 LR 与 checkpoint averaging |
-| `P3` | context extension | 用更长序列或专门长文档 mixture 扩展 context | 把最大 context 长度当成真实长数据占比 |
+| `P2` | annealing / high-quality finishing | 训练末段改变 data recipe 和/或 learning rate，以高质量、目标域数据收尾 | 把效果全部归因于数据，忽略 learning rate 与 checkpoint averaging |
+| `P3` | context extension | 用更长 sequence 或专门长文档 mixture 扩展 context | 把最大 context 长度当成真实长数据占比 |
 | `A1` | supervised post-training | instruction/SFT 等监督训练 | 与预训练合成文本混写 |
 | `A2` | preference / RL | DPO、RLHF、RLVR、reasoning RL 等偏好或强化学习 | 把 rollout tokens 加进 pretraining tokens |
 | `A3` | agent/multimodal specialization | tool trajectory、computer use、模态适配等专项训练 | 与部署时 test-time compute 混写 |
 
 `P2` 可以是 `P1` 的 special case，但只有报告明确将其作为收尾阶段时才使用 `P2`。`A2` 与 `P0` 不是可相加的同质 token budget。
 
-## 4. 字段 contract
+## 4. 每篇案例要记录哪些字段
 
 ### 4.1 身份和时间
 
@@ -142,7 +142,7 @@ source:
 
 等级按“模型代际 × 阶段/字段”评定。`D4` 不保证低偏差、许可无争议或模型能力更强；`D1` 也不证明数据质量差。
 
-## 6. Assumption ledger
+## 6. 阅读结论前先确认哪些前提
 
 每篇厂商笔记至少记录：
 
@@ -156,7 +156,7 @@ source:
 | 近似 | token 换算、epoch/exposure 或跨模型比较用了什么近似？ |
 | 省略效应 | 架构、优化器、compute、checkpoint averaging、eval 变化是否混杂？ |
 
-## 7. 同厂商跨代际 diff
+## 7. 同一厂商的新旧模型怎样比较
 
 不重复抄写所有背景，只记录第一个发生变化的对象：
 
@@ -195,20 +195,20 @@ Confidence:
 
 > 状态：draft
 > 核查截止：YYYY-MM-DD
-> 主要 reasoning path：...
-> 研究锚点：...
+<!-- maintenance: reasoning-path=... -->
+> 主要模型/资料：...
 
-## 定位与 motivating problem
-## 代际/阶段表
-## Assumption ledger
-## 数据字段表
+## 这篇案例要回答什么
+## 各代模型和 training stage
+## 阅读这些结论前先确认的前提
+## 厂商公开了哪些 data fields
 ## Pipeline、采样与阶段变化
 ## Validation / contamination / ablation
 ## 可检查锚点（公式、shape、config、manifest 或诊断）
-## 表面冲突与区分性检查
-## 明确未知项
-## 可迁移经验与不可外推
-## 掌握标准与推理型自测
+## 看似矛盾的说法怎样区分
+## 目前仍不知道什么
+## 哪些经验可以借鉴，哪些不能直接照搬
+## 读完后应该能回答的问题
 ## 来源（为什么读、读哪里、版本/日期）
 ```
 
@@ -230,12 +230,12 @@ Confidence:
 - 历史结论不被新代覆盖；新增 `Generation A -> B` diff。
 - 每张表保留绝对日期，不使用“当前”“最近”等无时间锚点表述。
 
-## 12. 质量门槛
+## 12. 一篇案例达到什么条件才进入索引
 
 一篇案例进入索引前必须具备：
 
 - 至少一张阶段表和一张统一字段表；
-- 主要 reasoning path 与 assumption ledger；
+- 已记录主要分析方式，以及阅读结论所需的关键前提；
 - 至少一个可检查 operational anchor；
 - validation/contamination/ablation 的证据边界；
 - 冲突或缺失字段的区分性检查；

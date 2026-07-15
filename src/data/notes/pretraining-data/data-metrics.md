@@ -5,36 +5,36 @@ topic: "pretraining-data"
 section: "measurement"
 slug: "data-metrics"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 order: 50
 readtime: 17
 source:
   repository: "J-shang/pt-data-learning"
   path: "knowledge-map/04-measurement/data-metrics.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/48b6c6907a65afc718659f922895f835335be1d3/knowledge-map/04-measurement/data-metrics.md"
-  revision: "48b6c6907a65afc718659f922895f835335be1d3"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:09ecae2a9edbc7eb281e9fe2625d22e5d20c44db8f1011ced0e3a520652a8af8"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/knowledge-map/04-measurement/data-metrics.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:46e9741a68ef63c39790c596e9ab9ca079e09bf6de59ae7a4b31c82e81779281"
   manifest: "pretraining-data"
   managed: true
 ---
 > 层级：04 Measurement
 > 状态：`core`
 > 初始资料核查截止：2026-07-14
-> 主要 reasoning path：`phenomenon-to-mechanism`
-> 证据姿态：指标定义/聚合恒等式为 `verified`；从曲线模式到数据原因的映射只生成 `plausible` 假设
+<!-- maintenance: reasoning-path=`phenomenon-to-mechanism` -->
+> 证据说明：指标定义/聚合恒等式为 `verified`；从曲线模式到数据原因的映射只生成 `plausible` 假设
 
-## 一句话定位
+## 这篇笔记帮助你回答什么
 
 数据指标体系把 corpus、pipeline、sampler 和模型行为连接成分层可观测系统；它的任务是定位和决策，而不是制造一个“数据质量总分”。
 
-## Motivating Problem
+## 为什么需要这个概念
 
 一个全局 validation loss 可以改善，同时代码域、低资源语言或某个 source 严重退化；一个“quality score”也可能上升，却只是过滤器更偏好某种文体。指标系统需要的性质是：每个数都有明确对象和分母，能从异常下钻到 exposure、pipeline 与 source，并把因果故事保留为可检验假设。
 
 本笔记从现象到机制：先把异常变成可测模式，再列竞争解释，最后用 slice、lineage、counter 和 ablation 区分。
 
-## Minimal Motivating Example
+## 先看一个最小例子
 
 validation 中 web 占 90%、code 占 10%。如果 web loss 降 0.05、code loss 升 0.30，micro average 仍可能改善。一个全局数字因此不能回答“所有关键能力是否改善”，但这也不等于 code 退化必然由数据 mixture 引起；tokenizer、loader、评测版本和训练配置都是竞争解释。
 
@@ -49,7 +49,7 @@ $$
 
 例如 `duplicate_rate=12%` 不完整；需要说明是 document 还是 token、exact 还是 near、比较范围、threshold、canonicalization、数据版本以及估计误差。
 
-## Assumptions and Validity
+## 这些结论依赖哪些前提
 
 | 关系或结论 | 类型与条件 | 置信状态 |
 |---|---|---|
@@ -63,9 +63,9 @@ $$
 
 ## Alternative Explanations or Conflicts
 
-“训练 loss 降得更快说明数据更好”至少与三种解释竞争：数据更有学习价值、数据更容易、数据更重复。它们在 unique exposure、held-out transfer、memorization 和 loss slope 上作出不同预测。区分检查是固定 sampled/loss tokens 与优化配置，比较 dedup 后的 unique coverage、独立 held-out loss、重复序列提取和下游 slice；未做这些检查前，结论保持 `plausible`。
+“训练 loss 降得更快说明数据更好”至少与三种解释竞争：数据更有学习价值、数据更容易、数据更重复。它们在 unique exposure、held-out transfer、memorization 和 loss slope 上作出不同预测。区分检查是固定 sampled/loss tokens 与优化配置，比较 dedup 后的 unique coverage、独立 held-out loss、重复 sequence 提取和下游 slice；未做这些检查前，结论保持 `plausible`。
 
-## 相关知识展开
+## 机制与相关知识
 
 ### 1. 四层指标：不要跨层偷换结论
 
@@ -200,13 +200,13 @@ run summary
 
 每个指标卡记录 owner、更新频率、expected range、alert threshold、runbook 和版本。alert 只指出异常，不直接给因果结论。
 
-## 与 Pretraining Data 主线的关系
+## 它怎样影响 pretraining data 工作
 
 关系类型：指标 schema `implemented-by` counters/manifests/dashboards；异常模式与根因仅是待区分的 `empirically-associated-with`。
 
 指标体系是闭环的观察层：token accounting 给分母，lifecycle 给 lineage，curation 给 stage 变化，mixture 给 exposure，validation 给模型响应。它使数据版本之间的差异可以定位，并为 ablation 提供假设。
 
-## 目标掌握程度
+## 读完后应该掌握什么
 
 - 能为任意指标补全 object/unit/denominator/slice/version/uncertainty。
 - 能推导 micro/macro/worst-group 并解释各自掩盖什么。
@@ -221,13 +221,13 @@ run summary
 - 跨 tokenizer 比较 token-level PPL。
 - 指标阈值变了却沿用同一名称和历史曲线。
 
-## 自测问题
+## 用这些问题检查自己
 
 1. 过滤后 PPL 下降、downstream 也上升，仍不能证明过滤器普遍有效。列出需要控制或切片的变量。
 2. 何时 macro average 会比 micro average 更误导？构造一个小域样本量极小的例子并提出修正。
 3. 某 domain 的 target mixture 正常，但 loss tokens share 偏低。可能是哪几类 packing/mask/loader 问题？
 
-## 参考入口
+## 来源与建议阅读位置
 
 - [Li et al., 2024, DataComp-LM](https://arxiv.org/abs/2406.11794) — 阅读其固定训练与评测设计，观察数据策略如何用模型响应比较。
 - [Penedo et al., 2024, FineWeb](https://arxiv.org/abs/2406.17557) — 关注 curation ablation、数据统计和小模型评估如何结合。

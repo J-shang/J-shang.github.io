@@ -5,26 +5,26 @@ topic: "pretraining-data"
 section: "china-cases"
 slug: "stepfun-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 106
 readtime: 31
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/china/stepfun.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/china/stepfun.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:9f0266aba14134afab1e49393123121baf1b0cea749b0c6ecf3bf61b3f06a035"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/china/stepfun.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:6c8079752cdc864e603f8b758c8f1ae9e6c4fc9a20c11b510582722bc17e19a5"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 研究锚点：Step 3.5 Flash、STEP3-VL-10B、Predictable Scale / Step Law；Step-1/2/3/3.7 只作披露边界。
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+> 主要模型/资料：Step 3.5 Flash、STEP3-VL-10B、Predictable Scale / Step Law；Step-1/2/3/3.7 只作披露边界。
 
-## 定位与 motivating problem
+## 这篇案例要回答什么
 
 StepFun 的早期 Step-1/2 产品材料很难支持精细的数据审计；Step 3.5 Flash 报告则公开了从 14.6T open-domain 到 3T annealing、750B mid-training，再到 871K/7.23B SFT 和 agent RL 的完整链路。STEP3-VL-10B 又提供 1.2T multimodal tokens 的单阶段全参数训练和 900B→300B quality cooldown，对比价值很高。
 
@@ -35,7 +35,7 @@ StepFun 的早期 Step-1/2 产品材料很难支持精细的数据审计；Step 
 3. 1.2T multimodal tokens 怎样拆成视觉任务家族、两段 quality schedule 与后续 SFT/RL；
 4. 3,700 个 proxy models / 约 100T aggregate training exposure 的 Step Law 能预测什么，不能替代什么。
 
-## 代际与阶段表
+## 各代模型和 training stage
 
 | 模型/研究 | 阶段 | 已披露数据规模 | mixture / context | 披露 |
 |---|---|---:|---|---|
@@ -71,7 +71,7 @@ $$
 
 这是 sampled-exposure accounting；自然长文、90B PR-dialogue、12B rewrite 等 corpus slice 可能被重复采样，不能与阶段总数直接相加。
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 项 | 本笔记的处理 |
 |---|---|
@@ -84,7 +84,7 @@ $$
 | cutoff | corpus snapshot 与统一 cutoff 未公开；RL 明确排除 2024–2026 competitions 是局部去污染，不是全局 cutoff |
 | rights | robots.txt、licensed/open-source 等 source 声明逐项记录，不据此推断所有下游使用权 |
 
-## 统一数据字段表
+## 厂商公开了哪些 data fields
 
 | 字段 | Step 3.5 Flash | STEP3-VL-10B | 置信 |
 |---|---|---|---|
@@ -240,7 +240,7 @@ candidate records -> attempted builds -> successful environments
 
 40% 不能与 50K 反推出唯一 candidate count，除非二者来自同一固定 snapshot；报告没有明确建立这个 exact relation。
 
-## Validation、ablation 与区分性检查
+## 如何验证这些结论，并检查 contamination
 
 | 公开结论 | 首个混淆 | 有辨识力的检查 |
 |---|---|---|
@@ -252,7 +252,7 @@ candidate records -> attempted builds -> successful environments
 | VL fully-unfrozen 1.2T有效 | encoder、corpus、tokens、schedule联合变化 | freeze/projector-only/unfreeze matched-token；自然/合成与task family分桶 |
 | parallel reasoning RL有效 | 更多total context/rollout evidence | 固定total generated tokens、wall time与unique prompts，对比sequential/parallel |
 
-## 表面冲突与处理
+## 看似矛盾的说法怎样区分
 
 1. **17.6T 与 14.6T+3T**：exact closure；750B mid 独立列出，不混为 18.35T “pretraining corpus”。
 2. **386B/364B 与 81B/10.5B replay**：replay 是子集 exposure，不能重复相加。
@@ -261,7 +261,7 @@ candidate records -> attempted builds -> successful environments
 5. **Step Law ~100T**：是 3,700 experiments 的总训练量，不是 Step 3.5 生产 corpus。
 6. **Step-3.7 是后继版本**：最新不等于数据披露更完整；未公开字段保持 `unknown`。
 
-## 可迁移与不可外推
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -280,7 +280,7 @@ candidate records -> attempted builds -> successful environments
 - 不把 VL benchmark/RL 增长直接归因于 1.2T pretraining；teacher、SFT、RL 与 test-time compute均变化。
 - 不从 Step-3.7 能力或架构反推其沿用 3.5/VL 数据。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - Step-1/2/3/3.7 的完整 source、token、mixture、cutoff、pipeline 与 validation contract；
 - StepCrawl URL/document manifest、snapshot date、retention、language/domain proportions 与 rights ledger；
@@ -290,7 +290,7 @@ candidate records -> attempted builds -> successful environments
 - VL 1.2T 的 text/visual token breakdown、image repeat、task share、modality tokenizer accounting；
 - agent/RL 的 unique prompts、accepted trajectories、tool calls、actual rollout tokens 和 fixed environment snapshot。
 
-## 掌握标准与推理型自测
+## 读完后应该能回答的问题
 
 应能：
 
@@ -308,7 +308,7 @@ candidate records -> attempted builds -> successful environments
 4. 6,660,096 nominal rollouts 为什么不是 RL sample efficiency 的充分分母？
 5. 怎样验证 30B-A3B proxy 的 data ranking 能迁移到 196B-A11B，而不训练所有候选到终点？
 
-## 原始来源与阅读位置
+## 来源与建议阅读位置
 
 - [Step 3.5 Flash technical report](https://arxiv.org/abs/2602.10604)：主锚点；读 §4 training curriculum、§5 data synthesis、Appendix A.3/C/D/E。
 - [Step 3.5 Flash official repository](https://github.com/stepfun-ai/Step-3.5-Flash)：核对权重、模型卡、训练代码入口和版本；数据发布承诺需按 revision 复核。
@@ -319,7 +319,7 @@ candidate records -> attempted builds -> successful environments
 - [Step-3 system report](https://arxiv.org/abs/2507.19427)：用于确认 Step-3 重点为 model-system co-design；不提供等价的训练数据 recipe。
 - [Step-3.7 Flash official repository](https://github.com/stepfun-ai/Step-3.7-Flash)：用于固定最新开放 checkpoint 边界；本轮不从其能力反推数据。
 
-## 与主线的关系
+## 这篇案例与主线知识的关系
 
 ```text
 crawl-scheduling --changes--> source distribution

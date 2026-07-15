@@ -5,27 +5,27 @@ topic: "pretraining-data"
 section: "international-cases"
 slug: "apple-foundation-models-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 129
 readtime: 27
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/international/apple-foundation-models.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/international/apple-foundation-models.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:55a590229355ba747dee04de2df79b8158bac5627d9066f615cab084734daaf1"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/international/apple-foundation-models.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:2789e272398f10ff5626722b6782f2644bb557da2346958b32a27d80ad3cd41b"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family trace`
-> 辅助视角：`implementation-trace`，用于2024三阶段配方、2025多模态数据流与OpenELM开放对照
-> 研究锚点：OpenELM、AFM 2024、AFM 2025、AFM 3（2026）
+<!-- maintenance: reasoning-path=`method-family trace` -->
+<!-- maintenance: secondary-view=`implementation-trace`，用于2024三阶段配方、2025多模态数据流与OpenELM开放对照 -->
+> 主要模型/资料：OpenELM、AFM 2024、AFM 2025、AFM 3（2026）
 
-## 定位
+## 这篇案例研究什么
 
 Apple 同时提供三种不同披露形态：
 
@@ -52,13 +52,13 @@ source/pipeline
 
 每个箭头都有不同的数据分母，不能把所有数字相加后称作“语料规模”。
 
-## Motivating problem：一个“训练 token 总量”会隐藏什么
+## 核心问题：一个“训练 token 总量”会隐藏什么
 
 以2024 AFM-server为例：core为6.3T@4K，continued为1T@8K，context lengthening为100B@32K。若只写“7.4T”，会丢失至少三件事：
 
 - 1T阶段down-weight bulk crawl、up-weight math/code并加入licensed long data；
 - 100B阶段混入synthetic long-context QA；
-- context、学习率与mixture同时变化，不能把效果只归因于数据量。
+- context、learning rate 与mixture同时变化，不能把效果只归因于数据量。
 
 在阶段互不重叠且“tokens”统计口径相同的假设下，才可计算target sampled exposure：
 
@@ -70,7 +70,7 @@ $$
 
 这个推导不包括on-device pruning-mask学习的188B、teacher预训练、SFT/RL或adapter数据；也不等于unique corpus。
 
-## 代际与训练阶段表
+## 各代模型和 training stage
 
 | 家族/代际 | 阶段 | 数据与规模 | sequence / mixture | 披露 | 状态 |
 |---|---|---|---|---|---|
@@ -89,7 +89,7 @@ $$
 | AFM 2025 | `A1/A2/A3` | human+synthetic multilingual/multimodal/tool data；SFT/RL均English:multilingual=80:20 | SFT→asynchronous RLOO；RM/rule/code/judge rewards | `D2` | stage/mix `verified`；counts/rollout tokens `open` |
 | AFM 3（2026） | `P*/A*` | public、licensed/purchased、open-source、dedicated studies、synthetic；无用户私密数据/交互 | common initial foundation→audio/image/long/reasoning specialization→SFT+multi-stage RL | `D1` | family/stage taxonomy `verified`；token/mix/pipeline `open` |
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 维度 | 本篇约束 |
 |---|---|
@@ -104,7 +104,7 @@ $$
 | AFM 3 | 2026-06-08为预览性发布，报告承诺later summer；不从Google协作推测具体训练模型或数据 |
 | 省略效应 | architecture、tokenizer、hardware、quantization、optimizer、context与data均跨代变化 |
 
-## 统一数据字段
+## 厂商公开了哪些 data fields
 
 | 字段 | OpenELM | AFM 2024/2025 | AFM 3（2026） |
 |---|---|---|---|
@@ -133,7 +133,7 @@ $$
 
 与1.5T headline接近，差异来自“约4M”及batch/packing细节。它是sanity check，不覆盖正式日志计数。
 
-on-the-fly过滤要求sequence至少200 characters且至少256 tokens；使用Llama tokenizer。开放framework、配置、日志和multiple checkpoints使loss curve与data/config版本可关联。
+on-the-fly过滤要求 sequence 至少200 characters且至少256 tokens；使用Llama tokenizer。开放framework、配置、日志和multiple checkpoints使loss curve与data/config版本可关联。
 
 `[重要边界 | verified]` pool 1.8T与sampled 1.5T不是同一量；“比OLMo少2× data”是特定模型/benchmark比较，不是架构普适数据效率定律。
 
@@ -164,7 +164,7 @@ AFM-server从头训练6.3T@4096。AFM-on-device初始化自pruned 6.4B model：�
 
 continued阶段两者各1T@8192，upweight math/code、downweight bulk web、加入licensed long data；on-device此阶段不继续使用distillation loss。
 
-context阶段各100B@32768，复用continued mix并加入synthetic long-context QA。报告明确多数pretraining documents显著短于32K，因此32K sequence并不等价于100B natural long-document tokens。
+context阶段各100B@32768，复用continued mix并加入synthetic long-context QA。报告明确多数pretraining documents显著短于32K，因此32K sequence 并不等价于100B natural long-document tokens。
 
 ### post-training data factory
 
@@ -178,7 +178,7 @@ AFM 2024用human demonstrations、pairwise/single-sided preference与synthetic d
 
 报告还称超过10%的training data为adversarial或safety-related，但上下文覆盖SFT/RLHF/adapter safety流程，不能当作P0比例。
 
-## AFM 2025：text、vision 与 multilingual 三条账本
+## AFM 2025：text、vision 与 multilingual 三组统计记录
 
 ### web/data pipeline diff
 
@@ -208,7 +208,7 @@ dense checkpoint --sparse-upcycle--> MoE teacher
   -> provides logits to student
 ```
 
-`[重要边界 | verified]` teacher 1T影响student supervision，但不是student直接sampled exposure。若核算总项目compute/data processing，可另列teacher branch；不能加入student token headline。
+`[重要边界 | verified]` teacher 1T 影响 student supervision，但不是 student 直接 sampled exposure。若统计整个项目的 compute 和 data processing，可另列 teacher branch；不能加入 student token headline。
 
 ### text continued multilingual curriculum
 
@@ -303,7 +303,7 @@ checkpoint + exact data manifest
 - 区分检查：发布source-to-derived lineage和unique image hash counts。
 - 结论：不得相加为21B unique pairs。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - AFM各代完整source manifest、snapshot/cutoff、逐源rights与删除传播；
 - raw/processed/unique corpus、packing、padding/mask与loss-token；
@@ -314,12 +314,12 @@ checkpoint + exact data manifest
 - 2025是否完全复用811-benchmark规则及clean-subset结果；
 - AFM 3 token、pipeline、model-to-model lineage和Google协作的具体数据边界。
 
-## 可迁移经验与不可外推
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 可迁移：
 
-- 训练账本分target、mask-learning、teacher和distillation replay；
-- core→continued→context/multimodal阶段分别报告token、sequence与mixture；
+- 训练统计分 target、mask-learning、teacher 和 distillation replay；
+- core→continued→context/multimodal阶段分别报告token、sequence 与mixture；
 - decontam必须给n-gram范围、document policy和common-phrase exception；
 - 图像同时报告unique image、pairs、interleaved docs、sampled embeddings与loss mask；
 - 多语言分别报告P0/P2、SFT与RL的分母；
@@ -334,7 +334,7 @@ checkpoint + exact data manifest
 - 不把“quality more important than quantity”当跨规模定律；
 - 不从2026合作伙伴关系推测AFM 3训练数据或基础checkpoint。
 
-## 与主线关系
+## 这篇案例与主线知识的关系
 
 ```text
 token accounting --prerequisite-for--> target/teacher exposure separation
@@ -345,7 +345,7 @@ locale validation --diagnoses--> multilingual mixture regressions
 OpenELM --open-control-for--> AFM artifact disclosure
 ```
 
-## 掌握标准
+## 读完后应该掌握什么
 
 读者应能：
 
@@ -357,11 +357,11 @@ OpenELM --open-control-for--> AFM artifact disclosure
 6. 用lineage解释10B/5B/6B为何不能直接相加；
 7. 说明AFM 3哪些字段已知、哪些必须等技术报告。
 
-## 推理型自测
+## 用这些问题检查自己
 
 1. 若2024 core/continued/context存在大量replay，7.4T能否称为unique tokens？为什么？
 2. 2025 server的13.4T和on-device的14T使用相同tokenizer吗？缺什么证据才能比文本量？
-3. 60/10/28.5/1.5若按sequence而非token采样，上述780B等推导会怎样失效？
+3. 60/10/28.5/1.5若按 sequence 而非token采样，上述780B等推导会怎样失效？
 4. 为什么4–13 gram去污染加common threshold仍可能漏掉semantic contamination？
 5. tree-structured tool data应按trajectory、turn、tool call还是loss token统计？请为不同问题选单位。
 6. AFM 3声明不使用user interactions后，为什么dedicated studies仍需要单独rights ledger？
@@ -371,7 +371,7 @@ OpenELM --open-control-for--> AFM artifact disclosure
 1. [OpenELM](https://machinelearning.apple.com/research/openelm)：读公开数据组成、on-the-fly过滤、训练配置、logs/checkpoints与Instruct数据；重点看Section 2.2、Table 2/9和release links。
 2. [Apple Intelligence Foundation Language Models 2024](https://arxiv.org/abs/2407.21075)：核心来源；读Section 3的Applebot/811 benchmarks、6.3T→1T→100B、on-device pruning/distillation，Section 4 synthetic/SFT/RL与Appendix阶段eval。
 3. [Introducing Apple’s On-Device and Server Foundation Models](https://machinelearning.apple.com/research/introducing-apple-foundation-models)：读2024产品映射、隐私与评测版本；技术细节以论文为准。
-4. [Apple Intelligence Foundation Language Models Tech Report 2025](https://arxiv.org/abs/2507.13575)：读web pipeline diff、10B/5B/6B图像账本、13.4T/14T、8%→30%、multimodal mixture、65K context和异步RL。
+4. [Apple Intelligence Foundation Language Models Tech Report 2025](https://arxiv.org/abs/2507.13575)：读 web pipeline diff、10B/5B/6B 图像统计口径、13.4T/14T、8%→30%、multimodal mixture、65K context 和异步 RL。
 5. [Updates to Apple’s On-Device and Server Foundation Language Models](https://machinelearning.apple.com/research/apple-foundation-models-2025-updates)：读2025产品/报告映射与adapter recovery；用于确认版本，不替代technical report。
 6. [Introducing the Third Generation of Apple’s Foundation Models](https://machinelearning.apple.com/research/introducing-third-generation-of-apple-foundation-models)：2026-06-08 AFM 3五模型、source taxonomy、common foundation→specialization→multi-stage RL与待发布报告边界。
 7. [DataComp-LM](https://machinelearning.apple.com/research/datacomp-lm-search)：开放数据选择控制；读240T candidate pool、标准训练/eval设计，不能视为AFM生产pipeline。

@@ -5,27 +5,27 @@ topic: "pretraining-data"
 section: "international-cases"
 slug: "amazon-nova-forge-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 126
 readtime: 28
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/international/amazon-nova-forge.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/international/amazon-nova-forge.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:bbdd04055065ba3061d4893e83c75c3d3c34c772e16a24a35d0a7926193c6801"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/international/amazon-nova-forge.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:9e1b9cb5f294d39d5cca6c3c2cb1cc08420f84fcf247bc131fe1f5b7d3e70bed"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`implementation-trace`
-> 辅助视角：`method-family/historical trace`，用于 Nova 1→2 checkpoint/stage 演化
-> 研究锚点：Nova Micro/Lite/Pro、Nova 2 Lite、Nova Forge CPT/SFT/RFT/data mixing
+<!-- maintenance: reasoning-path=`implementation-trace` -->
+<!-- maintenance: secondary-view=`method-family/historical trace`，用于 Nova 1→2 checkpoint/stage 演化 -->
+> 主要模型/资料：Nova Micro/Lite/Pro、Nova 2 Lite、Nova Forge CPT/SFT/RFT/data mixing
 
-## 定位
+## 这篇案例研究什么
 
 Amazon Nova 的公开材料形成一个少见的分层结构：
 
@@ -35,7 +35,7 @@ Amazon Nova 的公开材料形成一个少见的分层结构：
 
 这里的 “open training” 是受控环境中的训练入口，不是 open weights、open data 或 D4 reproduction。
 
-## Motivating problem：数据可用、数据可见与数据可下载不是一回事
+## 核心问题：数据可用、数据可见与数据可下载不是一回事
 
 ```text
 Amazon proprietary/curated catalog
@@ -51,7 +51,7 @@ customer S3 data
 
 这产生四种不同的审计能力：能否选择 category、能否知道 sample/token ratio、能否检查具体 example、能否导出 resulting weights。Nova Forge 对前两项较强，对后两项仍有限。
 
-## 代际与训练阶段表
+## 各代模型和 training stage
 
 | 模型/服务 | 阶段 | 已披露数据与规模 | context/objective | 披露 | 状态 |
 |---|---|---|---|---|---|
@@ -65,7 +65,7 @@ customer S3 data
 | Nova Forge RFT | customer `A2` | messages + reference answer/evaluation criteria；可编程或model judge reward | text-only；adaptive curriculum | `D3` control | schema/config `verified`；rollout/loss accounting需job日志 |
 | RAI Toolkit | `A1/A2/eval/runtime` | RAI training category + safety eval + runtime controls | customization后shared responsibility | `D2/D3` | components `verified`；training/eval overlap `open` |
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 维度 | 本篇约束 |
 |---|---|
@@ -78,7 +78,7 @@ customer S3 data
 | weights | base/derived weights proprietary；escrow URI 可供后续 AWS job引用，不等于客户拥有可检查的完整权重文件 |
 | 省略效应 | checkpoint、learning rate、total exposure、customer ratio、Nova category 与 safety alignment会同时改变 |
 
-## 统一数据字段
+## 厂商公开了哪些 data fields
 
 | 字段 | Nova production family | Nova Forge customization |
 |---|---|---|
@@ -184,7 +184,7 @@ T_{\text{nominal positions}}
 =L_{\max}\times B_{\text{global}}\times N_{\text{steps}}.
 $$
 
-$L_{\max}$是configured sequence length，$B$是每step samples。若dynamic padding、packing、masked positions或short documents存在，实际input/loss tokens会小于nominal positions；manifest应另存non-padding与supervised token counts。
+$L_{\max}$是configured seqlen，$B$是每step samples。若dynamic padding、packing、masked positions或short documents存在，实际input/loss tokens会小于nominal positions；manifest应另存non-padding与supervised token counts。
 
 ## SFT/RFT：sample catalog、reasoning trace 与验证缺口
 
@@ -259,7 +259,7 @@ Forge公开SDK、recipe schema、category names、training/evaluation入口、ma
 | base/derived full weights | managed access，非open weights |
 | original Nova global order/logs | `D0` |
 
-## Validation、污染与区分性检查
+## 如何验证这些结论，并检查 contamination
 
 | 问题 | 首个可能差异 | 区分性检查 |
 |---|---|---|
@@ -273,11 +273,11 @@ Forge公开SDK、recipe schema、category names、training/evaluation入口、ma
 
 Nova production report有大量release benchmark和RAI evaluation，却没有完整pretraining validation contract。Forge使客户实验更可操作，但customer无法查看Nova raw rows，因而cross-corpus dedup/decontamination存在结构性盲区。
 
-## 可迁移经验与不可外推部分
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
-- `[综合判断 | supported]` checkpoint stage是domain adaptation的数据变量；必须与customer corpus和learning rate一起记录。
+- `[综合判断 | supported]` checkpoint stage是domain adaptation的数据变量；必须与customer corpus和 learning rate 一起记录。
 - `[综合判断 | supported]` 两层mix应保存overall customer share与Nova内部conditional distribution，避免把45%误读成overall 45%。
 - `[综合判断 | supported]` fixed-customer-token与fixed-total实验回答不同问题；前者评估追加replay的成本收益，后者更接近pure mix ablation。
 - `[综合判断 | supported]` managed proprietary catalog也可以提供category-level控制，但不能替代source/provenance/rights审计。
@@ -291,7 +291,7 @@ Nova production report有大量release benchmark和RAI evaluation，却没有完
 - `[未知 | open]` proprietary Nova catalog与customer validation/benchmark的跨库污染；
 - `[待验证假设 | plausible]` 文档中的>10B、1T+/100B+/1B+ checkpoint guidance可跨domain和model size稳定迁移。
 
-## 掌握标准
+## 读完后应该掌握什么
 
 读完后应能：
 
@@ -301,7 +301,7 @@ Nova production report有大量release benchmark和RAI evaluation，却没有完
 4. 解释AWS 5B示例为何同时改变mix和total compute；
 5. 说明Bedrock inference privacy承诺为何不能替代Forge training-data lineage。
 
-## 推理型自测
+## 用这些问题检查自己
 
 1. 90% customer mix优于100%，怎样判断收益来自0.56B replay还是总token增加？
 2. 客户看不到Nova examples时，怎样最低限度审计benchmark contamination？
@@ -342,7 +342,7 @@ Nova production report有大量release benchmark和RAI evaluation，却没有完
     - 为什么读：检查可执行的dataset transform、recipe、training/eval orchestration和公开代码边界。
     - 建议位置：dataset loader、trainer/config enums、examples与license。
 
-## 与主线的关系
+## 这篇案例与主线知识的关系
 
 ```text
 checkpoint stage --controls--> adaptation plasticity and inherited exposure

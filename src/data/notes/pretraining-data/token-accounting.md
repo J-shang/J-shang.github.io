@@ -5,36 +5,36 @@ topic: "pretraining-data"
 section: "foundations"
 slug: "token-accounting"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 order: 10
 readtime: 16
 source:
   repository: "J-shang/pt-data-learning"
   path: "knowledge-map/00-foundations/token-accounting.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/48b6c6907a65afc718659f922895f835335be1d3/knowledge-map/00-foundations/token-accounting.md"
-  revision: "48b6c6907a65afc718659f922895f835335be1d3"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:aa8b07f3107939696eb28c8fae3c079b82c3cfa8058f555ec3aeed619fb1811d"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/knowledge-map/00-foundations/token-accounting.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:7d129c03b4d94222eb783c10e6e63367a7a20bac1bde95bae3d4f2b069885d0a"
   manifest: "pretraining-data"
   managed: true
 ---
 > 层级：00 Foundations
 > 状态：`core`
 > 初始资料核查截止：2026-07-14
-> 主要 reasoning path：`constraint-driven derivation`
-> 证据姿态：计数恒等式在声明的 loader contract 下为 `verified`；跨 tokenizer/任务的效应判断通常为 `supported` 或 `plausible`
+<!-- maintenance: reasoning-path=`constraint-driven derivation` -->
+> 证据说明：计数恒等式在声明的 loader contract 下为 `verified`；跨 tokenizer/任务的效应判断通常为 `supported` 或 `plausible`
 
-## 一句话定位
+## 这篇笔记帮助你回答什么
 
 Token accounting 是把原始数据规模、采样配方和训练计算统一到可审计分母上的方法，是解释所有数据指标和实验预算的前置条件。
 
-## Motivating Problem
+## 为什么需要这个概念
 
 两个团队都说“训练了 1T tokens”，仍可能使用了不同 tokenizer、重复曝光、packing、padding 和 loss mask。所需性质不是再造一个总量，而是建立一套**可以从配置推导、从运行计数器复核、并能定位差异来源**的共同计量语言。
 
 这里采用教学重构而非历史叙事：先要求“名义预算必须等于可解释的计数分解”，再从 batch 与 mask 约束推出各类 token。
 
-## Minimal Motivating Example
+## 先看一个最小例子
 
 两个 run 都读取一个长度为 2048 的 sequence。Run A 的 2048 个位置全部计入 loss；Run B 有 400 个 padding/prefix 位置被 mask。二者的 `sampled_tokens` 都是 2048，但 `loss_tokens` 分别是 2048 和 1648。仅比较“训练 tokens”会把输入吞吐与优化目标分母混为一谈。
 
@@ -48,7 +48,7 @@ $$
 
 它依赖 tokenizer、规范化、是否插入 BOS/EOS，以及文档在 tokenize 前还是后被去重。训练过程实际采样的 token 数 $N_{\text{sampled}}$ 可大于或小于它；真正进入 loss 分母的 $N_{\text{loss}}$ 还要扣除 padding、被 mask 的边界/前缀等位置。
 
-## Assumptions and Validity
+## 这些结论依赖哪些前提
 
 | 关系或结论 | 类型与条件 | 置信状态 |
 |---|---|---|
@@ -58,9 +58,9 @@ $$
 | $r_k=E_k/N_k$ 表示平均曝光倍数 | `approximation`；假设 domain 内近似均匀 token sampling，忽略长度、内部重复和 sampler correlation | `supported` |
 | fertility 影响跨语言/代码的有效字符覆盖 | `empirical association`；依赖 normalization、tokenizer revision、统计单位和语料 | `supported` |
 
-本文默认 causal LM、固定 tokenizer revision、明确 BOS/EOS 和 loss mask 语义。动态 sequence length、token-based batching、sequence parallel 对 $WbaS$ 的简单形式有影响时，应直接累计实际 sampled/loss counters，不套用固定长度公式。
+本文默认 causal LM、固定 tokenizer revision、明确 BOS/EOS 和 loss mask 语义。动态 seqlen、token-based batching、sequence parallel 对 $WbaS$ 的简单形式有影响时，应直接累计实际 sampled/loss counters，不套用固定长度公式。
 
-## 相关知识展开
+## 机制与相关知识
 
 ### 1. 六个不可互换的规模单位
 
@@ -77,7 +77,7 @@ $$
 
 ### 2. 从 global batch 到训练 token
 
-假设 data-parallel world size 为 $W$，每个 rank 的 micro-batch 为 $b$，梯度累积步数为 $a$，sequence length 为 $S$，optimizer steps 为 $U$。没有动态长度时，名义 sampled tokens 为：
+假设 data-parallel world size 为 $W$，每个 rank 的 micro-batch 为 $b$，梯度累积步数为 $a$，seqlen 为 $S$，optimizer steps 为 $U$。没有动态长度时，名义 sampled tokens 为：
 
 $$
 \begin{aligned}
@@ -142,7 +142,7 @@ $$
 
 若某代码域含 10M unique tokens，但目标 mixture 给它 20%，则预期 sampled exposure 是 26.2144M tokens，近似重复曝光 $2.62$ 次。报告“代码占 20%”而不报告这个倍数，会隐藏小域 oversampling。
 
-### 6. 可执行核算流程
+### 6. 可执行的 token accounting 流程
 
 ```text
 for each frozen domain shard:
@@ -162,13 +162,13 @@ at checkpoint:
 
 最小正确性测试：用 3 个长度已知的人工文档，手算 BOS/EOS、padding 和 loss mask，再逐项比对 loader 输出。先通过这个 fixture，才在大数据上相信计数器。
 
-## 与 Pretraining Data 主线的关系
+## 它怎样影响 pretraining data 工作
 
 关系类型：`prerequisite-for` 可比的数据实验；`implemented-by` loader/sampler/mask counters。
 
-这是所有数据实验的共同坐标系。过滤器改变 unique tokens；mixture 改变 sampled tokens；packing/masking 改变 loss tokens；validation 指标的加权分母也通常是 loss tokens。若不先统一口径，数据配方的“等预算对照”很可能实际上没有等预算。
+这是所有数据实验的共同坐标系。过滤器改变 unique tokens；mixture 改变 sampled tokens；packing/masking 改变 loss tokens；validation 指标的加权分母也通常是 loss tokens。若不先统一口径，data recipe 的“等预算对照”很可能实际上没有等预算。
 
-## 目标掌握程度
+## 读完后应该掌握什么
 
 - 能从训练配置手算名义 sampled tokens，并从 loss mask 得到实际 loss tokens。
 - 能解释 tokenizer、去重、packing、重采样分别改变哪一种计数。
@@ -179,16 +179,16 @@ at checkpoint:
 
 - 把 dataset card 的 token 数直接当作自己的训练 token 数，忽略 tokenizer/version。
 - 把一次 epoch 当作跨数据集可比单位；streaming mixture 和 oversampling 下 epoch 常无统一语义。
-- 只看 sequence length 与 step 数，不检查 padding、mask 和 dropped remainder。
+- 只看 seqlen 与 step 数，不检查 padding、mask 和 dropped remainder。
 - 用不同 tokenizer 的 token-level perplexity 直接排名模型或语料。
 
-## 自测问题
+## 用这些问题检查自己
 
 1. 两个实验都报告训练 100B tokens，但一个把 prompt prefix mask 掉 20%，另一个不 mask。它们在哪些意义上不等预算？你会补报什么？
 2. tokenizer B 对代码的 fertility 比 tokenizer A 高 30%。在固定 10B sampled tokens 时，如何影响可见字符量和 mixture 解释？
 3. 一个占 mixture 1% 的小域只有 50M unique tokens，总训练预算 1T tokens。估算曝光倍数，并设计两个过拟合/记忆风险诊断。
 
-## 参考入口
+## 来源与建议阅读位置
 
 - [Hoffmann et al., 2022, Training Compute-Optimal Large Language Models](https://arxiv.org/abs/2203.15556) — 从 token 数与模型规模共同约束 compute 的实验视角阅读；重点看其 token/parameter 结论依赖的训练设置。
 - [DataTrove official repository](https://github.com/huggingface/datatrove) — 阅读 token estimation、tokenization pipeline 和 summary statistics，观察工程计数如何进入 sampler 配置。

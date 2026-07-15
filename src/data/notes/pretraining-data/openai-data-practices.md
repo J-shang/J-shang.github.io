@@ -5,32 +5,32 @@ topic: "pretraining-data"
 section: "international-cases"
 slug: "openai-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 120
 readtime: 25
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/international/openai.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/international/openai.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:07d92182a567c698f78978fcbbdff2cb5db0457fe981f45c1c4db8e944ccf182"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/international/openai.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:8add546098c2135e106a465e0dfd391724c1c1ed65c5286c2986947580db9ceb"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 研究锚点：GPT-3、GPT-4、GPT-4.5、o1 与 GPT-5.6；不把 API 小版本自动视为新的训练代际。
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+> 主要模型/资料：GPT-3、GPT-4、GPT-4.5、o1 与 GPT-5.6；不把 API 小版本自动视为新的训练代际。
 
-## 定位与 motivating problem
+## 这篇案例要回答什么
 
 OpenAI 是闭源压力测试：同一组织在 GPT-3 论文中披露了定量 mixture、exposure 和 contamination bug；GPT-4 以后更多只披露来源类别、过滤目标、训练阶段和安全/能力评测。研究重点不是填补商业机密，而是确定每一代公开证据允许的最强结论。
 
 截至 2026-07-14，最新锚点为 2026-07-09 发布的 GPT-5.6。它的 system card 能确认高层 source 类别、过滤和 reasoning RL，但不能确认 token 规模、mixture、cutoff、dedup 或 pretraining validation contract。
 
-## 代际与阶段表
+## 各代模型和 training stage
 
 | 代际 | 阶段 | 已披露数据/方法 | 关键未知 | 披露等级 |
 |---|---|---|---|---|
@@ -42,9 +42,9 @@ OpenAI 是闭源压力测试：同一组织在 GPT-3 论文中披露了定量 mi
 | o1/o1-mini | `P0` | public/open data、reasoning data、scientific literature、partnership/paywalled/specialized archives、in-house custom data；PII/safety filtering | token、mixture、cutoff、pipeline 阈值 | `D1` |
 | o1 | `A2` | large-scale RL 训练 chain-of-thought reasoning | rollout/verifier/teacher、token accounting | `D1` |
 | GPT-5.6 family | `P0/P1`（官方未细分） | public internet、third-party partnerships、users/human trainers/researchers provide or generate；质量/PII/safety filtering | token、mixture、cutoff、dedup、synthetic 占比、pretraining validation | `D1` |
-| GPT-5.6 reasoning models | `A2` | reasoning through reinforcement learning | 数据配方、verifier、rollout、训练 compute | `D1` |
+| GPT-5.6 reasoning models | `A2` | reasoning through reinforcement learning | data recipe、verifier、rollout、训练 compute | `D1` |
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 项 | 本笔记的处理 |
 |---|---|
@@ -56,7 +56,7 @@ OpenAI 是闭源压力测试：同一组织在 GPT-3 论文中披露了定量 mi
 | synthetic | “researchers provide or generate”“data derived from smaller models”表明生成数据存在，但不自动等价于某代 pretraining 的定量 synthetic mixture |
 | 省略效应 | benchmark 改善混合了模型、数据、compute、post-training、test-time reasoning 与 eval 版本，不能用于数据因果归因 |
 
-## 数据字段表
+## 厂商公开了哪些 data fields
 
 | 字段 | GPT-3 | GPT-4 / GPT-4.5 | o1 / GPT-5.6 | 置信 |
 |---|---|---|---|---|
@@ -139,7 +139,7 @@ $$
 
 GPT-5.6 system card 公开大量 safety、health、alignment、cyber/biology 和 deployment simulation 评测；这些能审计部署/安全主张的部分边界。它们不提供固定 tokenizer、source-domain held-out loss、每域 token 数或 pretraining decontamination contract，因此不能替代本项目定义的 pretraining validation。
 
-## 表面冲突与区分性检查
+## 看似矛盾的说法怎样区分
 
 ### “OpenAI 使用 synthetic data”与“GPT-5.6 的 synthetic 占比未知”
 
@@ -155,7 +155,7 @@ GPT-5.6 system card 公开大量 safety、health、alignment、cyber/biology 和
 - 区分性检查：复现原始 manifest、修复 filter 后重训，或至少做多种 overlap detector 和难度匹配 clean subset。
 - 结论：bug 为 `verified`；广义影响大小为 `open`。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - `[未知 | open]` GPT-4、GPT-4.5、o1、GPT-5.6 的 unique/sample/loss token 数与 tokenizer accounting。
 - `[未知 | open]` GPT-5.6 的精确 data cutoff、domain/language/modality mixture、dedup 和 benchmark decontamination pipeline。
@@ -164,7 +164,7 @@ GPT-5.6 system card 公开大量 safety、health、alignment、cyber/biology 和
 - `[未知 | open]` reasoning RL 的 rollout、verifier、rejection、token budget 和与 base pretraining 的边界。
 - `[未知 | open]` 最新产品别名与固定训练 checkpoint 的一一映射；线上版本可能持续更新。
 
-## 可迁移经验与不可外推
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -180,7 +180,7 @@ GPT-5.6 system card 公开大量 safety、health、alignment、cyber/biology 和
 - 不把公开 source 称为开放许可，也不把 partnership 自动视为所有用途授权。
 - 不把 D1 披露等级解释为数据质量低；它只说明外部审计能力有限。
 
-## 掌握标准与推理型自测
+## 读完后应该能回答的问题
 
 掌握本案例后应能：
 
@@ -191,7 +191,7 @@ GPT-5.6 system card 公开大量 safety、health、alignment、cyber/biology 和
 
 自测：如果一份新 system card 只写“加入更多高质量 code data，代码能力提升”，需要哪些 stage、token、control 和 contamination 信息，才能把关系从 empirical association 提升为受控数据因果证据？
 
-## 一手来源
+## 来源与建议阅读位置
 
 - [Brown et al., 2020, GPT-3](https://arxiv.org/abs/2005.14165)：为什么读：OpenAI 家族最完整的公开 mixture/token/contamination 锚点；重点读 §2.2、§4.1、Appendix B/C。
 - [GPT-4 Technical Report](https://cdn.openai.com/papers/gpt-4.pdf)：为什么读：明确写出 public/licensed source 与“不披露 dataset construction”的边界，同时包含 scaling loss 与 contamination 分析；重点读 §2、§3、§4 和 Appendix C/D。

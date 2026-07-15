@@ -5,27 +5,27 @@ topic: "pretraining-data"
 section: "china-cases"
 slug: "baidu-ernie-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 109
 readtime: 27
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/china/baidu-ernie.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/china/baidu-ernie.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:248334b0e1f63834282c9866cd6a83b02f6c60f9d273dbeeeae153317bcfef9a"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/china/baidu-ernie.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:3405b7c30fda13bc1c10fad98f53114a31b25b5976f08df9e54a1211530a84d7"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 辅助视角：`implementation-trace`，用于 ERNIE 4.5 REEAO 与 multimodal loss accounting
-> 研究锚点：ERNIE 3.0、ERNIE 4.5、ERNIE-4.5-VL Thinking、ERNIE 5.0/5.1
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+<!-- maintenance: secondary-view=`implementation-trace`，用于 ERNIE 4.5 REEAO 与 multimodal loss accounting -->
+> 主要模型/资料：ERNIE 3.0、ERNIE 4.5、ERNIE-4.5-VL Thinking、ERNIE 5.0/5.1
 
-## 定位
+## 这篇案例研究什么
 
 ERNIE 的代际演化不能简化成“百度一直使用知识增强”：
 
@@ -34,7 +34,7 @@ ERNIE 的代际演化不能简化成“百度一直使用知识增强”：
 - ERNIE 5.0 从训练起点统一text/image/video/audio的理解与生成，但只披露“trillions of text tokens and multimodal instances”，无法与3.0的4TB直接换算；
 - ERNIE 5.1主要通过5.0 super-network抽取sub-network继承预训练知识，低pretraining cost不等于另一个小corpus recipe。
 
-## Motivating problem：“知识增强”究竟是数据、标签、目标还是模型结构
+## 核心问题：“知识增强”究竟是数据、标签、目标还是模型结构
 
 至少要区分：
 
@@ -53,7 +53,7 @@ structured knowledge sources
 
 三条链都可能被称为knowledge-enhanced，但它们的可检查锚点和失败模式不同。benchmark knowledge score不能反推出采用了哪条链。
 
-## 代际与训练阶段表
+## 各代模型和 training stage
 
 | 模型 | 阶段 | 已披露数据与规模 | objective/context | 披露 | 状态 |
 |---|---|---|---|---|---|
@@ -69,7 +69,7 @@ structured knowledge sources
 | ERNIE 5.0 | `A2/A3` | multimodal RL；prompt/rollout/loss规模未知 | U-RB、MISC/WPSM、AHRL hint schedule | `D2` | mechanisms `verified`；data counts `open` |
 | ERNIE 5.1 | inherited `P0` + new `A*` | 从5.0 elastic sub-model matrix抽取；称约6% comparable pretraining cost | 非独立from-scratch recipe | `D1` | lineage `verified`；data diff `open` |
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 维度 | 本篇约束 |
 |---|---|
@@ -83,7 +83,7 @@ structured knowledge sources
 | cutoff | 4.5/5.0完整training cutoff未披露；source页面访问日期不替代snapshot |
 | 省略效应 | architecture、objective、tokenizer、modality、context、routing、data与RL跨代同时变化 |
 
-## 统一数据字段
+## 厂商公开了哪些 data fields
 
 | 字段 | ERNIE 3.0 | ERNIE 4.5 | ERNIE 5.0/5.1 |
 |---|---|---|---|
@@ -196,7 +196,7 @@ Stage II先用小LM+large image-text pairs训练ViT；pre-alignment冻结LLM/ViT
 
 `[未知 | open]` 报告没有给每段token、pair、step、repeat或mixture，所以只能记录阶段顺序，不能计算总sampled exposure。
 
-### loss tokens与sequence tokens不能混用
+### loss tokens与 sequence tokens不能混用
 
 设样本$i$的masked positions为$M_i$，unmasked output text positions为$U_i$。传统per-sample loss为：
 
@@ -213,7 +213,7 @@ $$
 
 `[推导结论 | verified]` 分母是total sequence positions，求和仍只含unmasked loss tokens。这是`implementation relation`，不是把image token变成language target。
 
-审计时必须同时报告sequence tokens、unmasked loss tokens、modality tokens与per-sample normalization。
+审计时必须同时报告 sequence tokens、unmasked loss tokens、modality tokens与per-sample normalization。
 
 ## 4.5 post-training：2.3M SFT与动态RL分母
 
@@ -262,7 +262,7 @@ $$
 
 `[未知 | open]` 5.1是否做额外continued pretraining、用了哪些post-training data与5.0 corpus的何种exposure，当前发布稿未量化。
 
-## Validation、污染与区分性检查
+## 如何验证这些结论，并检查 contamination
 
 | 问题 | 首个可能差异 | 区分性检查 |
 |---|---|---|
@@ -275,13 +275,13 @@ $$
 
 ERNIE 4.5公开了base/post benchmark与router loss fixed-data ablation，5.0也报告elastic submodel held-out loss；但完整validation source、time boundary、split unit、token counts、decision exposure和跨模态decontam manifest仍缺。
 
-## 可迁移经验与不可外推部分
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
 - `[综合判断 | supported]` “知识增强”要拆成source、alignment、label、objective和mixture五层。
 - `[综合判断 | supported]` distributed data manager必须保证global token order与topology/restart解耦，并保存source consumption ledger。
-- `[综合判断 | supported]` masked multimodal training应报告sequence与loss分母；token-balanced loss给出明确operational anchor。
+- `[综合判断 | supported]` masked multimodal training应报告 sequence 与loss分母；token-balanced loss给出明确operational anchor。
 - `[综合判断 | supported]` 同一source跨caption/parsing/reasoning任务时，应按source group做validation split。
 - `[综合判断 | supported]` inherited super-network compute不能解释成from-scratch data efficiency。
 
@@ -293,7 +293,7 @@ ERNIE 4.5公开了base/post benchmark与router loss fixed-data ablation，5.0也
 - `[待验证假设 | plausible]` 五级knowledge classifier在不同语言/domain中具有可比校准；
 - `[待验证假设 | plausible]` 5.0的unified codec space不会在低资源模态上形成隐性gradient underweighting。
 
-## 掌握标准
+## 读完后应该掌握什么
 
 读完后应能：
 
@@ -303,7 +303,7 @@ ERNIE 4.5公开了base/post benchmark与router loss fixed-data ablation，5.0也
 4. 写出token-balanced loss并指出masked image/prompt仍不进入loss；
 5. 解释5.1“6% pretraining cost”为何不是6% corpus。
 
-## 推理型自测
+## 用这些问题检查自己
 
 1. 若knowledge benchmark提升，怎样区分KG objective、key-point synthetic与更多high-value text？
 2. 两次4.5训练最终权重相同，但raw web snapshot不同，能否称data reproducible？为什么？
@@ -340,7 +340,7 @@ ERNIE 4.5公开了base/post benchmark与router loss fixed-data ablation，5.0也
    - 为什么读：确认5.1从5.0 elastic matrix抽取，避免把6% cost误写成data ratio。
    - 建议位置：model lineage与pretraining cost段落。
 
-## 与主线的关系
+## 这篇案例与主线知识的关系
 
 ```text
 knowledge graph fact --aligned-with--> encyclopedia sentence

@@ -5,28 +5,28 @@ topic: "pretraining-data"
 section: "china-cases"
 slug: "moonshot-kimi-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 104
 readtime: 38
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/china/moonshot-kimi.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/china/moonshot-kimi.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:3611f187799774a68a68b692f6996570204e47f6ee8bea3e502104ffa150a399"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/china/moonshot-kimi.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:cf2aed8ca97d1341489d1d9e5410a00b92ba5657af329428b08d9660bbac0756"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 研究锚点：Kimi k1.5、Moonlight、Kimi K2、Kimi K2.5；Kimi-VL 只作多模态实现旁证。
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+> 主要模型/资料：Kimi k1.5、Moonlight、Kimi K2、Kimi K2.5；Kimi-VL 只作多模态实现旁证。
 
-## 定位与 motivating problem
+## 这篇案例要回答什么
 
-Moonshot 的公开材料把三个通常分散的问题连在一起：数据配方、optimizer token efficiency 与 agentic data。Kimi k1.5 给出语言/多模态清洗、cooldown、长上下文激活和 RL prompt curation；Moonlight 用同架构、同数据预算的 Muon/AdamW 对照研究 optimizer；K2 则把 MuonClip、15.5T corpus、knowledge/math rephrasing 与 agent trajectory synthesis 合并到一个大模型；K2.5 又研究固定 vision-text token budget 下的 injection timing、ratio 和 multimodal RL。
+Moonshot 的公开材料把三个通常分散的问题连在一起：data recipe、optimizer token efficiency 与 agentic data。Kimi k1.5 给出语言/多模态清洗、cooldown、长上下文激活和 RL prompt curation；Moonlight 用同架构、同数据预算的 Muon/AdamW 对照研究 optimizer；K2 则把 MuonClip、15.5T corpus、knowledge/math rephrasing 与 agent trajectory synthesis 合并到一个大模型；K2.5 又研究固定 vision-text token budget 下的 injection timing、ratio 和 multimodal RL。
 
 这里最容易出现四种错误：
 
@@ -37,7 +37,7 @@ Moonshot 的公开材料把三个通常分散的问题连在一起：数据配�
 
 本笔记的核心问题是：**在 optimizer、data transformation、context curriculum 和交互式训练同时扩展时，怎样保留能够区分各机制的统计单位与实验边界？**
 
-## 代际与阶段表
+## 各代模型和 training stage
 
 | 模型/阶段 | 阶段 | 数据与操作 | 公开规模/长度 | 关键边界 | 披露 |
 |---|---|---|---|---|---|
@@ -54,7 +54,7 @@ Moonshot 的公开材料把三个通常分散的问题连在一起：数据配�
 | Kimi K2.5 long/mid | `P2/P3` | high-quality text/multimodal、long text/video、reasoning、long-CoT | 表列 500B→200B；32K→262,144 | 箭头表示两个阶段/长度，不应解释为减少 300B | `D2/D3` |
 | Kimi K2.5 SFT/RL/PARL | `A1/A2/A3` | zero-vision SFT、outcome visual RL、joint RL、Agent Swarm synthetic prompts | sample/trajectory/loss tokens `unknown` | orchestrator 与 frozen subagents 分离训练；并行 wall time 不等于总 token compute | `D2/D3` |
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 项 | 本笔记的处理 |
 |---|---|
@@ -62,14 +62,14 @@ Moonshot 的公开材料把三个通常分散的问题连在一起：数据配�
 | token 单位 | 报告中的 training/processed tokens 记 sampled exposure；unique、non-padding、loss tokens 未披露时均为 `unknown` |
 | image/video token | 不假设与 text token 具有相同信息密度；K2.5 的 mixed token 只在其 tokenizer/packing 内成立 |
 | epoch | K2 rephrasing experiment 的 epoch 是对选定 knowledge subset 的 exposure，不代表全 corpus epoch |
-| optimizer relation | Muon/MuonClip 与数据配方是相互作用关系；只有固定架构、数据与预算的对照支持 optimizer 局部结论 |
+| optimizer relation | Muon/MuonClip 与 data recipe 是相互作用关系；只有固定架构、数据与预算的对照支持 optimizer 局部结论 |
 | long context | maximum sequence、full/partial attention、input context、output budget 分开 |
 | agent unit | tool spec、agent prompt、task、rubric、trajectory、turn、tool call、environment state、accepted sample 分开 |
 | cutoff/rights | 全家族统一 cutoff 与 source-level rights 基本 `unknown`；公开 source 不等于统一许可 |
 | lineage | K2.5 明确建立在 K2 checkpoint；Moonlight、k1.5 与 K2 的具体 corpus/checkpoint 共用关系不自动补齐 |
-| 省略效应 | optimizer、MoE sparsity、attention、data、sequence length、post-training 与 inference budget 会同时变化 |
+| 省略效应 | optimizer、MoE sparsity、attention、data、seqlen、post-training 与 inference budget 会同时变化 |
 
-## 统一数据字段表
+## 厂商公开了哪些 data fields
 
 | 字段 | k1.5 | Moonlight / K2 | K2.5 | 置信 |
 |---|---|---|---|---|
@@ -105,7 +105,7 @@ long-context activation: 4K → 32K → 128K
 
 `[来源事实 | verified]` long-context 阶段使用 40% full-attention data 与 60% partial-attention data。前者来自高质量 natural long data 与 synthetic long QA/summary，后者来自 cooldown data 的 uniform sample。
 
-`[综合判断 | supported]` 40/60 不是 natural/synthetic mixture，也不是 unique/sample token 比例；它首先是 attention treatment 与 source construction 的组合字段。复现实验需要同时记录 sample origin、sequence length、attention mask 和 loss mask。
+`[综合判断 | supported]` 40/60 不是 natural/synthetic mixture，也不是 unique/sample token 比例；它首先是 attention treatment 与 source construction 的组合字段。复现实验需要同时记录 sample origin、seqlen、attention mask 和 loss mask。
 
 ## k1.5 RL：prompt set 是在线训练分布的入口
 
@@ -238,7 +238,7 @@ rubric LLM judge / executable tests → accepted trajectories
 
 `[来源事实 | verified]` text 延续 K2 四域并提高 repo、issue、review、commit history 与 PDF/web code document 权重。vision 七类为 caption、interleaving、OCR、knowledge、perception、video、agent；synthetic caption 比例受限；另含 academic problem reformulation、rendered image-code pairs、GUI screenshot/action trajectories、human demonstrations、grounding/segmentation。
 
-`[来源事实 | verified]` data loader 支持 dynamic shuffle/blend/tokenization/loss masking/packing；保存 random seed 与 worker state，使中断恢复后的 data sequence 与不中断训练一致。
+`[来源事实 | verified]` dataloader 支持 dynamic shuffle/blend/tokenization/loss masking/packing；保存 random seed 与 worker state，使中断恢复后的 data sequence 与不中断训练一致。
 
 这提供一个难得的 implementation invariant：
 
@@ -272,7 +272,7 @@ $$
 
 因此“4.5× faster”不能解释为 token efficiency 或 training-data efficiency 提高。
 
-## Validation、ablation 与区分性检查
+## 如何验证这些结论，并检查 contamination
 
 ### 有辨识力的公开锚点
 
@@ -299,7 +299,7 @@ $$
 
 所有家族仍缺少统一的 pretraining held-out manifest：source snapshot、time cutoff、dedup/decontam boundary、tokenizer、domain token 数、micro/macro/per-domain loss 与 checkpoint selection rule。benchmark 表不能代替该 contract。
 
-## 表面冲突与边界
+## 看似矛盾的说法怎样区分
 
 ### K2 15.5T 与 400B+60B
 
@@ -325,7 +325,7 @@ k1.5 从语言 foundation 逐步提高 vision 到30%；K2.5 在已有 K2 text ch
 
 zero-vision 只描述 post-training input；其能力依赖此前 joint multimodal pretraining。不是“没有视觉训练数据”。
 
-## 可迁移与不可外推
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -346,7 +346,7 @@ zero-vision 只描述 post-training input；其能力依赖此前 joint multimod
 - `[综合判断 | open]` zero-vision SFT 的结果不能外推到没有大规模 joint pretraining 的模型。
 - `[综合判断 | open]` synthetic simulator 上的 accept rate 不能替代 real-environment transfer。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - `[未知 | open]` k1.5、Moonlight、K2、K2.5 完整 source list、snapshot、rights、consent 与统一 cutoff。
 - `[未知 | open]` unique documents/tokens、exact repeats、padding/packing waste、loss tokens。
@@ -359,7 +359,7 @@ zero-vision 只描述 post-training input；其能力依赖此前 joint multimod
 - `[未知 | open]` benchmark contamination/decontamination 的 n-gram/semantic/temporal protocol。
 - `[未知 | open]` 所有模型的 frozen per-domain pretraining validation contract。
 
-## 掌握标准与推理型自测
+## 读完后应该能回答的问题
 
 掌握本案例后，应能：
 
@@ -380,7 +380,7 @@ zero-vision 只描述 post-training input；其能力依赖此前 joint multimod
 5. 15T mixed tokens 中 image token 和 text token 是否能按信息量等价解释？为什么？
 6. swarm wall time 减半、generated tokens 翻倍时，能否称 token efficiency 提高？
 
-## 来源与阅读顺序
+## 来源与建议阅读位置
 
 1. [Kimi k1.5: Scaling Reinforcement Learning with LLMs](https://arxiv.org/abs/2501.12599)：先读§2.1 prompt curation、§2.3 sampling/verifier、§2.5 stages，再读Appendix B的language/multimodal pipeline、30% vision与40/60 long-context treatment。
 2. [Muon is Scalable for LLM Training / Moonlight](https://arxiv.org/abs/2502.16982)：读§3.2 fixed-budget scaling law、§3.3的5.7T三阶段与1.2T Muon/AdamW对照；不要从optimizer report补写未披露source。

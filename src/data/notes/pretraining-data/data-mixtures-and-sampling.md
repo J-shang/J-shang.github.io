@@ -5,36 +5,36 @@ topic: "pretraining-data"
 section: "mixtures"
 slug: "data-mixtures-and-sampling"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 order: 40
 readtime: 17
 source:
   repository: "J-shang/pt-data-learning"
   path: "knowledge-map/03-mixtures/data-mixtures-and-sampling.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/48b6c6907a65afc718659f922895f835335be1d3/knowledge-map/03-mixtures/data-mixtures-and-sampling.md"
-  revision: "48b6c6907a65afc718659f922895f835335be1d3"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:f825b19e5910fe403fac331fe73168cbf88934985102dfc74d7e83cc1995fd4d"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/knowledge-map/03-mixtures/data-mixtures-and-sampling.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:9f2054ace8dba887c5a86ecf99b6e6a0d039a64db77852de03e331c34feb29ac"
   manifest: "pretraining-data"
   managed: true
 ---
 > 层级：03 Mixtures
 > 状态：`core`
 > 初始资料核查截止：2026-07-14
-> 主要 reasoning path：`unified-framework`
-> 证据姿态：exposure 的期望关系在 sampler contract 下为 `verified`；“最佳 mixture”及 proxy 迁移为 `supported`、`plausible` 或 `open`
+<!-- maintenance: reasoning-path=`unified-framework` -->
+> 证据说明：exposure 的期望关系在 sampler contract 下为 `verified`；“最佳 mixture”及 proxy 迁移为 `supported`、`plausible` 或 `open`
 
-## 一句话定位
+## 这篇笔记帮助你回答什么
 
 数据 mixture 把静态 corpus 变成训练时的 token exposure 分布；同一批 unique data 仅改变采样权重和顺序，就会改变能力、记忆风险与优化轨迹。
 
-## Motivating Problem
+## 为什么需要这个概念
 
 数据集的原始占比并不等于模型实际看到的占比；按文档采样也不等于按 token 采样。需要一个共同对象，把自然采样、温度采样、手工配比、proxy-learned 和 online selection 都映射到可审计的目标/实际 exposure，同时保留它们不等价的状态与反馈路径。
 
 本笔记用目标 token 分布 $q$ 作为统一框架。这个统一只覆盖“期望曝光”这一共同属性，不声称各种 sampler 在 batch correlation、时序、计算成本或优化行为上等价。
 
-## Minimal Motivating Example
+## 先看一个最小例子
 
 假设 web 有 900M unique tokens，math 有 100M；总训练预算 1B。若目标 mixture 给 math 50%，math 平均曝光约 5 次，而 web 约 0.56 次。只写“50/50 mixture”会隐藏两个 domain 完全不同的重复程度。
 
@@ -48,7 +48,7 @@ $$
 
 $N_k$ 是指定 tokenizer、指定数据版本下的 unique tokens；$r_k$ 是近似 exposure/epoch 倍数。真正执行后还要用 observed counts $\hat E_k$ 验证 sampler。
 
-## Assumptions and Validity
+## 这些结论依赖哪些前提
 
 | 关系或结论 | 类型与条件 | 置信状态 |
 |---|---|---|
@@ -64,7 +64,7 @@ $N_k$ 是指定 tokenizer、指定数据版本下的 unique tokens；$r_k$ 是�
 
 “高 loss 数据更值得采样”和“高 loss 数据多为噪声”研究的隐藏对象不同：前者把 loss 当尚未学习的信号，后者把 loss 当解析错误或分布外信号。第一个分歧是高 loss 样本在人工质量、reference-model excess loss、后续 loss slope 和 held-out transfer 上是否表现不同。可用质量盲审、固定 exposure 的 slice ablation、多个 checkpoint 的 learnability 曲线和 parser/error 标签区分，而不能仅凭当前 loss 决策。
 
-## 相关知识展开
+## 机制与相关知识
 
 ### 1. Domain 是决策变量，不是自然真理
 
@@ -194,13 +194,13 @@ checks:
   packing does not erase domain attribution
 ```
 
-## 与 Pretraining Data 主线的关系
+## 它怎样影响 pretraining data 工作
 
 关系类型：mixture target `implemented-by` sampler；observed exposure 与模型结果是需要 ablation 验证的 `empirically-associated-with`。
 
 Mixture 是数据 curation 与优化过程的接口。过滤/去重决定 $N_k$ 和样本构成，mixture 决定 $E_k$；metrics/validation 再观察每个 $q_k$ 的能力与风险结果。任何数据集比较若不控制 exposure，就可能把“数据更好”与“看得更多”混在一起。
 
-## 目标掌握程度
+## 读完后应该掌握什么
 
 - 能从 unique tokens、总预算和 $q$ 计算每域 exposure 倍数。
 - 能推导温度采样并解释不同参数化。
@@ -215,13 +215,13 @@ Mixture 是数据 curation 与优化过程的接口。过滤/去重决定 $N_k$ 
 - 每个 batch 强制固定比例，忽略这可能改变随机性和 batch correlation。
 - 动态选择只算模型 step，不算 scoring pipeline 的额外 compute/wall-clock。
 
-## 自测问题
+## 用这些问题检查自己
 
 1. 两个 domain 的文档均数相同，但平均长度差 10 倍。按 document 50/50 采样会得到怎样的 token share？如何修复？
 2. 某小域 validation loss 持续下降，但 downstream 指标先升后降。列出至少三个数据/评测机制并设计区分实验。
 3. proxy mixture 在 280M 模型有效，迁移到 8B 前你会检查哪些不变量和失败模式？
 
-## 参考入口
+## 来源与建议阅读位置
 
 - [Xie et al., 2023, DoReMi](https://arxiv.org/abs/2305.10429) — 重点读 domain excess loss、group DRO/proxy model 与最终权重如何用于大模型数据重采样。
 - [Gao et al., 2020, The Pile](https://arxiv.org/abs/2101.00027) — 用 component weights 练习从数据规模推 exposure，并观察开放混合语料的 domain taxonomy。

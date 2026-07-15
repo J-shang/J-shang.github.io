@@ -5,32 +5,32 @@ topic: "pretraining-data"
 section: "international-cases"
 slug: "meta-llama-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 121
 readtime: 26
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/international/meta-llama.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/international/meta-llama.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:98a44a17c2506c9b64253b86285e5f6d62beeebb5dd9c1f7d511def3ecc225c0"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/international/meta-llama.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:71960259f48c6363b81475304e350ee63b5429aac2da8dcf2ce8c605306f6b54"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 研究锚点：Llama 2、Llama 3/3.1、Llama 3.2、Llama 4 Scout/Maverick。
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+> 主要模型/资料：Llama 2、Llama 3/3.1、Llama 3.2、Llama 4 Scout/Maverick。
 
-## 定位与 motivating problem
+## 这篇案例要回答什么
 
 Llama 位于 OLMo 与闭源 API 模型之间：Meta 发布权重、模型卡和较详细技术报告，但没有发布可逐文档追踪的 pretraining corpus、训练顺序、完整配置和训练日志。它适合检验：在 D2–D3 资料下，哪些 data mechanism 可以研究，哪些仍停留在发布方报告。
 
 家族演化的核心不是 token 数从 2T 增到 15.6T/22T/40T，而是数据对象同时发生了变化：英语为主的公开网络文本，变为带明确 code/math/multilingual 配比的文本，再变为 text/image/video early-fusion mixture 和单独 mid-training。不同代际的 tokens 因 tokenizer、模态和阶段不同，不能只按总量排名。
 
-## 代际与阶段表
+## 各代模型和 training stage
 
 | 代际 | 阶段 | 已披露数据与规模 | cutoff / context | 披露 |
 |---|---|---|---|---|
@@ -46,7 +46,7 @@ Llama 位于 OLMo 与闭源 API 模型之间：Meta 发布权重、模型卡和�
 
 `D3` 主要来自权重、模型卡、论文和部分 eval artifacts；没有训练 corpus/manifest/order/logs，因此达不到本项目的 `D4`。
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 项 | 本笔记的处理 |
 |---|---|
@@ -58,7 +58,7 @@ Llama 位于 OLMo 与闭源 API 模型之间：Meta 发布权重、模型卡和�
 | cutoff | 采用模型卡/source snapshot 的绝对日期，不采用模型自述 |
 | 省略效应 | 长上下文、annealing 和 capability 变化同时受架构、LR、data mix、checkpoint averaging 与 post-training 影响 |
 
-## 统一数据字段表
+## 厂商公开了哪些 data fields
 
 | 字段 | Llama 2 | Llama 3/3.1 | Llama 4 | 置信 |
 |---|---|---|---|---|
@@ -132,7 +132,7 @@ Llama 3 的 8% multilingual 是 text-token mix；语言识别覆盖 176 language
 
 Llama 4 early fusion 联合训练 text/image/video。模型卡的 22T/40T 称为 multimodal tokens，但没有披露 image/video token 的定义、分母与 mixture；因此不能与 Llama 3 的 15.6T text tokens 做严格倍数比较。
 
-## 表面冲突与区分性检查
+## 看似矛盾的说法怎样区分
 
 ### Llama 2 是 2.0T 还是 1.8T？
 
@@ -154,7 +154,7 @@ Llama 4 early fusion 联合训练 text/image/video。模型卡的 22T/40T 称为
 - 两者可兼容，但不能由 405B 数字推断所有 8B/70B checkpoint 的精确 exposure。
 - 处理：405B 用 15.6T，家族其他模型保留 `15T+/unknown exact`。`supported`。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - `[未知 | open]` Llama 3/4 的完整 source list、逐 source rights、dataset manifest 和训练顺序。
 - `[未知 | open]` 公开 token 数是否等于 non-padding loss tokens；packing/mask 只在 Llama 3 部分披露。
@@ -163,7 +163,7 @@ Llama 4 early fusion 联合训练 text/image/video。模型卡的 22T/40T 称为
 - `[未知 | open]` Llama 4 mid-training 的 long-context tokens、长度 curriculum 和真实/合成比例。
 - `[未知 | open]` Behemoth teacher distillation 在 Scout/Maverick 的具体训练阶段、target 与 token budget。
 
-## 可迁移经验与不可外推
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -180,7 +180,7 @@ Llama 4 early fusion 联合训练 text/image/video。模型卡的 22T/40T 称为
 - 开放权重与社区许可不等价于公开训练数据或可复现训练顺序。
 - 不能从 Llama 4 benchmark 提升反推 image/video 或 code/math mixture。
 
-## 掌握标准与推理型自测
+## 读完后应该能回答的问题
 
 掌握本案例后应能：
 
@@ -191,7 +191,7 @@ Llama 4 early fusion 联合训练 text/image/video。模型卡的 22T/40T 称为
 
 自测：如果某候选 math corpus 在 8B/40B-token annealing probe 上显著改善 MATH，但 405B 无提升，你会检查 exposure、contamination、baseline competence、optimizer 和 eval 的哪些差异？
 
-## 一手来源
+## 来源与建议阅读位置
 
 - [Llama 2 official model card](https://github.com/meta-llama/llama-models/blob/main/models/llama2/MODEL_CARD.md)：为什么读：固定 2T、2022-09 cutoff、不含 Meta user data 与阶段边界；重点读 Training Data。
 - [The Llama 3 Herd of Models, arXiv:2407.21783v3](https://arxiv.org/abs/2407.21783)：为什么读：本家族最完整的数据机制来源；重点读 §3.1、§3.2.1、§3.4、§4.3.4、§5.1。

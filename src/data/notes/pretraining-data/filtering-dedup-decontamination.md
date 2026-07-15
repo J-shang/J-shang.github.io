@@ -5,36 +5,36 @@ topic: "pretraining-data"
 section: "curation"
 slug: "filtering-dedup-decontamination"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 order: 30
 readtime: 19
 source:
   repository: "J-shang/pt-data-learning"
   path: "knowledge-map/02-curation/filtering-dedup-decontamination.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/48b6c6907a65afc718659f922895f835335be1d3/knowledge-map/02-curation/filtering-dedup-decontamination.md"
-  revision: "48b6c6907a65afc718659f922895f835335be1d3"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:9c2dc77b209b5c7d1b2fe04d2c3e0f877416314616b3c09881ec1d63f2946e44"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/knowledge-map/02-curation/filtering-dedup-decontamination.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:284afc3cddef5e6439af647d2262b8f81f5efe18e2daf85ac9712d5c803a9657"
   manifest: "pretraining-data"
   managed: true
 ---
 > 层级：02 Curation
 > 状态：`core`
 > 初始资料核查截止：2026-07-14
-> 主要 reasoning path：`method-family trace`
-> 证据姿态：集合/概率关系在理想假设下为 `verified`；删除策略对能力、隐私和记忆的效应通常为 setting-specific `supported`
+<!-- maintenance: reasoning-path=`method-family trace` -->
+> 证据说明：集合/概率关系在理想假设下为 `verified`；删除策略对能力、隐私和记忆的效应通常为 setting-specific `supported`
 
-## 一句话定位
+## 这篇笔记帮助你回答什么
 
 Filtering、deduplication 和 decontamination 都会删除或降权数据，但它们分别优化代理质量、训练集内部冗余、训练—评测独立性；混为一个“清洗率”会同时破坏能力、多样性和评测可信度。
 
-## Motivating Problem
+## 为什么需要这个概念
 
 数据管线常把所有删除都汇总成“清洗率”，但删除乱码、合并训练集内部副本、移除 benchmark 泄漏解决的是不同问题，错误代价也不同。需要一个共同比较框架，能指出每类方法改变什么对象、依据什么关系、保存什么状态、如何验证以及在哪里误删。
 
-本笔记采用 method-family trace：先固定比较轴，再看 exact、near、substring、semantic 和 decontamination 的操作差异，不用名称或删除率代替机制。
+下面先固定比较对象，再看 exact、near、substring、semantic 和 decontamination 的操作差异，不用名称或删除率代替机制。
 
-## Minimal Motivating Example
+## 先看一个最小例子
 
 考虑三类记录：A/B 文本完全相同；C 与 A 共享模板但正文不同；长文档 D 完整包含一道短 benchmark 题。Exact dedup 应合并 A/B，near-dedup 需要判断 C 是否只是模板重复，decontamination 则应检查 D 对评测独立性的影响。一个统一阈值无法正确表达三种决策。
 
@@ -52,7 +52,7 @@ $$
 
 三个阈值的语义、相似函数、比较单位和错误代价不同，不能共享一个模糊的“重复/低质”标签。
 
-## Assumptions and Validity
+## 这些结论依赖哪些前提
 
 | 关系或结论 | 类型与条件 | 置信状态 |
 |---|---|---|
@@ -68,7 +68,7 @@ $$
 
 “更激进过滤提高数据质量”与“更激进过滤损失多样性”并非自动兼容。二者首先在目标对象上分叉：前者通常观察固定短训练预算下的平均 benchmark，后者关注 unique coverage、长 token horizon 或少数域。区分性检查是同时固定 sampled/loss tokens，比较短/长训练 horizon、per-domain validation、unique exposure 与 rejected-slice 表现；若 operating point 不同，就不能把结果当直接矛盾或普遍结论。
 
-## 相关知识展开
+## 机制与相关知识
 
 ### 1. Quality filtering：代理目标与选择偏差
 
@@ -196,13 +196,13 @@ $$
 - removal map 是否能支持版权/隐私删除向下游 shard 传播；
 - 被删除文档是否仍通过缓存、旧 manifest 或 sampler 泄漏。
 
-## 与 Pretraining Data 主线的关系
+## 它怎样影响 pretraining data 工作
 
 关系类型：三者都是 lifecycle 中的 `implementation stages`；它们与能力、记忆和风险结果是有条件的 `empirically-associated-with`，不是指标等价关系。
 
 这三类操作决定 unique data 的构成，也决定 validation 是否可信。它们必须同时连接到 token accounting（删了多少、剩余数据会暴露几次）、mixture（哪些群体被过度删除/重采样）和实验（在等 compute 下验证收益）。
 
-## 目标掌握程度
+## 读完后应该掌握什么
 
 - 能沿“对象—操作—状态—实现—失败模式”比较 exact/MinHash/substr/decontam。
 - 能推导并解释 Jaccard、LSH 候选概率和 n-gram containment。
@@ -217,17 +217,17 @@ $$
 - 只匹配 benchmark 最终文本，不追踪上游网页、答案和常见变体。
 - 以删除率越高为越好，忽略 false positive 和长尾 coverage。
 
-## 自测问题
+## 用这些问题检查自己
 
 1. 为什么长训练文档包含完整短题时，Jaccard 可能漏检而 containment 能检出？请构造集合例子。
 2. global dedup 删除了 40% unique tokens，但总训练 token 不变。什么情况下 memorization 风险反而可能集中到剩余小域？
 3. 过滤器使总体 proxy loss 下降，但低资源语言 loss 上升。你如何判断这是预期 trade-off、分类器偏差还是 tokenizer/采样计数错误？
 4. 若在同一相似函数和阈值下 $R(A,B)\ge\gamma$、$R(B,C)\ge\gamma$，但 $R(A,C)<\gamma$，connected-component 与 greedy dedup 会分别做什么？哪种更适合保留多样性？
 
-## 参考入口
+## 来源与建议阅读位置
 
 - [Lee et al., 2021, Deduplicating Training Data Makes Language Models Better](https://arxiv.org/abs/2107.06499) — 先读方法与 validation overlap 分析，理解 exact substring/near duplication 如何影响记忆与评测。
-- [Kandpal et al., 2022, Deduplicating Training Data Mitigates Privacy Risks in Language Models](https://arxiv.org/abs/2202.06539) — 关注训练序列重复次数与可提取/记忆风险的经验关系。
+- [Kandpal et al., 2022, Deduplicating Training Data Mitigates Privacy Risks in Language Models](https://arxiv.org/abs/2202.06539) — 关注训练 sequence 重复次数与可提取/记忆风险的经验关系。
 - [Brown et al., 2020, Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165) — 读 contamination 方法与 clean subset 分析，注意其检测规则和结论边界。
 - [Penedo et al., 2024, The FineWeb Datasets](https://arxiv.org/abs/2406.17557) — 对照实际 web curation ablation，观察过滤和去重策略如何通过小模型训练比较。
 - [DataTrove official repository](https://github.com/huggingface/datatrove) — 阅读 exact、MinHash、sentence/substr dedup 示例；检查 pipeline state、summary statistics 与跨 task 执行。

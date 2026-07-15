@@ -5,7 +5,7 @@ topic: "pretraining-data"
 section: "guide"
 slug: "pretraining-data-system-guide"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 featured: true
 order: 0
@@ -13,10 +13,10 @@ readtime: 24
 source:
   repository: "J-shang/pt-data-learning"
   path: "README.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/README.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:4ce44ce3e80fe49ca4588a30af13cd372b33a38dd4d135e229e0cea65132c6ec"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/README.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:25281eebb4b15d7daa512fe63d6b69f63ab6e627ce51cd4c78c4eecac3b4363d"
   manifest: "pretraining-data"
   managed: true
 ---
@@ -33,13 +33,13 @@ source:
   -> 数据源/许可/时间边界
   -> 抽取与标准化
   -> 质量过滤、去重、隐私与安全处理
-  -> tokenizer 与 token 预算核算
+  -> tokenizer 与 token accounting
   -> domain mixture、采样与排序
   -> train/validation 冻结与去污染
   -> 小规模 proxy / ablation
   -> 正式训练中的分域指标与异常诊断
   -> downstream evaluation 与误差归因
-  -> 反哺下一版数据配方
+  -> 反哺下一版 data recipe
 ```
 
 最重要的五个区分：
@@ -58,13 +58,13 @@ source:
 - validation 是否独立、冻结、可比较、没有被训练数据或调参过程污染？
 - 如何用小模型/proxy 实验降低大训练前的数据决策风险？
 
-### 本项目如何推理
+### 遇到不同问题时，本项目会怎样分析
 
-不同问题使用不同的主要 reasoning path，避免把所有主题都写成“定义 + 名词列表”：
+不同问题使用不同的分析方式，避免把所有主题都写成“定义 + 名词列表”。下表中的英文名称是供维护者保持结构一致的标签，不是阅读前置知识：
 
-| 学习任务 | 主要 reasoning path | 核心检查 |
+| 学习任务 | 分析方式（供维护） | 核心检查 |
 |---|---|---|
-| Token 核算 | Constraint-driven derivation | 从 batch/mask 约束推导计数，并用人工 fixture 回算 |
+| Token accounting | Constraint-driven derivation | 从 batch/mask 约束推导计数，并用人工 fixture 回算 |
 | 数据生命周期 | Implementation-trace | 固定 build/version，追踪 input → state → output 与 lineage |
 | Filtering/dedup/decontam | Method-family trace | 统一比较对象、操作、状态、实现和失败模式 |
 | Mixture 与采样 | Unified-framework | 用目标 exposure 分布 $q$ 映射各种 sampler，并标出近似边界 |
@@ -82,7 +82,7 @@ source:
 - 文档/段落/句子级质量信号、规则过滤、模型过滤与拒绝分析。
 - exact、MinHash/LSH、substring 等去重方法及其系统代价。
 - benchmark decontamination、时间切分与泄漏诊断。
-- tokenizer fertility、序列 packing、token accounting 和有效训练 token。
+- tokenizer fertility、sequence packing、token accounting 和有效训练 token。
 - 静态/动态 domain mixture、温度采样、上/下采样与 curriculum。
 - 数据管线指标、训练时分域 loss、梯度/优化信号与异常监控。
 - validation 集构造、micro/macro 汇总、置信区间、proxy 训练与 ablation。
@@ -103,7 +103,7 @@ source:
 
 | 层级 | 关键问题 | 当前学习产出 |
 |---|---|---|
-| 00 度量基础 | “一个 token/样本/epoch”到底指什么？ | 能做 token 与有效训练量核算 |
+| 00 度量基础 | “一个 token/样本/epoch”到底指什么？ | 能计算 token 与有效训练量，并说明统计口径 |
 | 01 数据生命周期 | 数据如何从 source 变成可训练 sequence？ | 能画出带 lineage 的 pipeline |
 | 02 筛选与风险 | 如何过滤、去重、去污染且知道副作用？ | 能设计 stage metrics 与拒绝审计 |
 | 03 配比与采样 | 每个 domain 被看到多少次、以什么顺序看到？ | 能推导曝光量和实现 sampler |
@@ -123,7 +123,7 @@ source:
 输出：一张 token accounting 表和两条 invariant。
 检查：能解释为什么“训练了 1T tokens”不足以复现实验。
 
-入口：[Token 核算与数据单位](/topics/pretraining-data/token-accounting/)
+入口：[Token Accounting：怎样统一数据规模和训练用量？](/topics/pretraining-data/token-accounting/)
 
 ### 阶段 B：理解端到端数据生命周期
 
@@ -163,7 +163,7 @@ source:
 
 ### 阶段 F：用 validation 和实验闭环
 
-输入：候选数据配方、固定模型/compute 和冻结评测协议。
+输入：候选 data recipe、固定模型/compute 和冻结评测协议。
 学习：in-distribution held-out、per-domain validation、downstream eval、contamination audit、paired ablation。
 输出：一份 validation contract 与第一个小规模实验报告。
 检查：能把“结果更好”拆成差异、置信度、成本、受益域、受损域和可能机制。
@@ -176,7 +176,7 @@ source:
 
 ### 4.1 训练目标
 
-对 token 序列 $x_{1:T}$，causal LM 的平均 negative log-likelihood（NLL）为：
+对 token sequence $x_{1:T}$，causal LM 的平均 negative log-likelihood（NLL）为：
 
 $$
 L = -\frac{1}{M}\sum_{t=1}^{T} m_t\log p_\theta(x_t\mid x_{<t}),
@@ -211,7 +211,7 @@ $$
 
 完整的分层阅读队列见 [sources/README.md](https://github.com/J-shang/pt-data-learning/blob/main/sources/README.md)。第一轮建议：
 
-1. **数据公开与可复现基线**：FineWeb、Dolma、DataComp-LM。
+1. **数据公开与可复现 baseline**：FineWeb、Dolma、DataComp-LM。
 2. **去重机制与影响**：Lee et al., *Deduplicating Training Data Makes Language Models Better*。
 3. **数据配比**：DoReMi；先理解 group/domain weight 与 proxy model，再看动态采样前沿。
 4. **token/compute 边界**：Chinchilla；把它当受实验设定约束的 scaling 结果，不当永恒配方。
@@ -262,6 +262,8 @@ $$
 7. 跑一个 paired proxy experiment，把结果回填到知识地图。
 
 ## 9. 术语表
+
+本节回答“术语在本项目中如何定义”；正文中优先使用中文还是英文、哪些表达需要避免，见 [全局中英文术语与写作偏好](https://github.com/J-shang/pt-data-learning/blob/main/terminology-style-guide.md)。
 
 | 术语 | 本项目中的精确定义 |
 |---|---|

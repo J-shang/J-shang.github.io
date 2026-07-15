@@ -5,36 +5,36 @@ topic: "pretraining-data"
 section: "validation"
 slug: "validation-design"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 order: 60
 readtime: 18
 source:
   repository: "J-shang/pt-data-learning"
   path: "knowledge-map/05-validation/validation-design.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/48b6c6907a65afc718659f922895f835335be1d3/knowledge-map/05-validation/validation-design.md"
-  revision: "48b6c6907a65afc718659f922895f835335be1d3"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:3597f4a014341f633c980c88d4614b8866248c94bcdeac8e93ff5d9df98d1983"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/knowledge-map/05-validation/validation-design.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:8d98db7f42ba4bd9f0f32c8e250c2ab872309491a44a27cc680c1c1311a2a0ce"
   manifest: "pretraining-data"
   managed: true
 ---
 > 层级：05 Validation
 > 状态：`core`
 > 初始资料核查截止：2026-07-14
-> 主要 reasoning path：`constraint-driven derivation`
-> 证据姿态：聚合/配对统计的代数关系为 `verified`；独立性、污染影响和 checkpoint 决策的结论受 split/eval 假设约束
+<!-- maintenance: reasoning-path=`constraint-driven derivation` -->
+> 证据说明：聚合/配对统计的代数关系为 `verified`；独立性、污染影响和 checkpoint 决策的结论受 split/eval 假设约束
 
-## 一句话定位
+## 这篇笔记帮助你回答什么
 
 Validation 是一份在看结果前冻结的测量合同：它既要对训练分布敏感，又要对目标能力和泄漏风险敏感，并允许把变化归因到具体 domain、数据版本和训练阶段。
 
-## Motivating Problem
+## 为什么需要这个概念
 
 如果 validation 与训练共享文档/duplicate cluster，或同一 benchmark 被反复用于挑 filter、mixture、checkpoint，那么分数虽然可计算，却不再支持“对未见数据泛化”的解释。一个可用方案必须同时满足：抽样单元尽可能独立、不同 run 的测量协议可比、指标与决策目标对齐、污染和选择次数可审计。
 
 本笔记从这些约束推出 split unit、三层 suite、聚合、checkpoint 和 contamination contract；不是从现有 benchmark 名单倒推流程。
 
-## Minimal Motivating Example
+## 先看一个最小例子
 
 一本书被切成 1000 个 chunks 后随机做 99/1 train/validation split。即使没有完全相同 chunk，章节、角色和长片段仍可能跨集合；validation loss 偏低不能区分真正泛化与近重复记忆。把 split unit 提升到作品/duplicate cluster 能减少该路径，但仍需 cross-split audit。
 
@@ -48,7 +48,7 @@ Validation 是一份在看结果前冻结的测量合同：它既要对训练分
 
 三层不能相互替代；一个 validation contract 必须冻结版本、抽样单元、时间边界、去污染、tokenizer、mask、指标、聚合、checkpoint 和决策规则。
 
-## Assumptions and Validity
+## 这些结论依赖哪些前提
 
 | 关系或结论 | 类型与条件 | 置信状态 |
 |---|---|---|
@@ -64,7 +64,7 @@ Validation 是一份在看结果前冻结的测量合同：它既要对训练分
 
 污染后 clean subset 分数下降并不自动证明原分数被污染抬高：移除的样本可能系统性更容易、更短或来自特定 domain。两种解释首先在 subset selection 上分叉。区分检查包括按长度/source/difficulty 匹配的 clean/flagged 对照、污染强度梯度、时间切分和预先冻结的去污染规则；若无法匹配，应把影响保留为 `open`，只陈述检测到 overlap。
 
-## 相关知识展开
+## 机制与相关知识
 
 ### 1. Split unit 决定独立性
 
@@ -193,13 +193,13 @@ comparison: paired_items_and_three_seeds_when_affordable
 
 矩阵只生成待验证假设；最终归因需要样本审计或受控 ablation。
 
-## 与 Pretraining Data 主线的关系
+## 它怎样影响 pretraining data 工作
 
 关系类型：冻结 validation contract `prerequisite-for` 可解释的数据 ablation；具体 suite 是该合同的 `implementation relation`，不是唯一实现。
 
 Validation 是数据系统的反馈面。它把 curation/mixture 的变化映射到可复现结果，并阻止团队用一个受污染或被反复调优的 benchmark 自我确认。没有冻结 contract，数据迭代很难积累知识。
 
-## 目标掌握程度
+## 读完后应该掌握什么
 
 - 能选择正确 split unit 并验证 cross-split independence。
 - 能设计三层 validation suites，报告 per-domain/micro/macro 与不确定性。
@@ -214,14 +214,14 @@ Validation 是数据系统的反馈面。它把 curation/mixture 的变化映射
 - benchmark 分数上升就归因于数据质量，忽略 contamination、prompt 或 checkpoint。
 - 只报告相对提升，不报告绝对差、方差、样本量与 guardrail 退化。
 
-## 自测问题
+## 用这些问题检查自己
 
 1. code corpus 若按函数随机 split，会有哪些泄漏路径？请设计 repo-level split 与 cross-split audit。
 2. 新 mixture 的 train-mix weighted loss 改善，但固定 diagnostic macro loss 退化。什么时候仍可能接受该方案？需要哪些 guardrail？
 3. 你用 benchmark 选择了 30 个过滤阈值。即使 benchmark 文本未进入训练，为什么 test 解释已改变？如何重建可信评测？
 4. clean subset 分数下降能否直接证明污染抬高原分数？还要考虑哪些 selection effects？
 
-## 参考入口
+## 来源与建议阅读位置
 
 - [Brown et al., 2020, GPT-3](https://arxiv.org/abs/2005.14165) — 阅读 contamination detection 与 clean benchmark 分析，练习区分检测上界和实际影响。
 - [Lee et al., 2021, Deduplicating Training Data Makes Language Models Better](https://arxiv.org/abs/2107.06499) — 关注 train–validation overlap 对评测准确性的影响。

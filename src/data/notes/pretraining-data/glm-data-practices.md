@@ -5,26 +5,26 @@ topic: "pretraining-data"
 section: "china-cases"
 slug: "glm-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 105
 readtime: 31
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/china/glm.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/china/glm.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:09630a0b2924c6ab35953bddf5ceaa392409d343cf2cc6035c7407945792fb9f"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/china/glm.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:a7f4e25bfd0237b4a262fdddd6087f201a9aab4d75ad5ae7f9c046e8c0bf4796"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 研究锚点：GLM-4.5、GLM-5；GLM-5.1/5.2 只记录官方模型卡可确认的增量。
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+> 主要模型/资料：GLM-4.5、GLM-5；GLM-5.1/5.2 只记录官方模型卡可确认的增量。
 
-## 定位与 motivating problem
+## 这篇案例要回答什么
 
 GLM-4.5 与 GLM-5 是少数把 base pretraining、code/reasoning mid-training、long-context adaptation、SFT、reasoning RL 和 agent RL 串成完整链路的公开报告。它们适合回答：
 
@@ -35,7 +35,7 @@ GLM-4.5 与 GLM-5 是少数把 base pretraining、code/reasoning mid-training、
 
 本笔记把 GLM-4.5 的 `15T + 7T + 500B + 500B + 100B` 与 GLM-5 的 `27T + 1T + 500B + 50B` 保留为报告中的阶段口径。前者算术和为 23.1T、后者为 28.55T，而报告标题分别使用 23T、28.5T；差额按 rounding discrepancy 记录，不擅自删改某一阶段。
 
-## 代际与阶段表
+## 各代模型和 training stage
 
 | 模型 | 阶段 | 已披露 sampled exposure | 数据与 context | 披露 |
 |---|---|---:|---|---|
@@ -54,7 +54,7 @@ GLM-4.5 与 GLM-5 是少数把 base pretraining、code/reasoning mid-training、
 | GLM-5 | `A1` SFT | 数量 `unknown` | general、reasoning、coding/agent；202,752 context；per-turn thinking control | `D2/D3` |
 | GLM-5 | `A2/A3` RL/distillation | >10K real-world agent environments；prompt/trajectory/token 数 `unknown` | SWE、terminal、search、slides；async rollout；on-policy cross-stage distillation | `D2/D3` |
 
-两代 headline 的核算关系是：
+两代 headline 数字的关系是：
 
 $$
 15+7+0.5+0.5+0.1=23.1\text{T}\approx23\text{T}
@@ -66,7 +66,7 @@ $$
 
 变量单位是报告声明的 sampled tokens；不是 unique corpus tokens，也不是 attention/loss mask 后的 effective tokens。0.1T 和 0.05T 的表面差额与报告使用一位小数/整数 headline 相容，但没有 step log，故关系标记为 `[推导结论 | supported]`，不是 exact identity。
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 项 | 本笔记的处理 |
 |---|---|
@@ -79,7 +79,7 @@ $$
 | lineage | GLM-5.1/5.2 的官方卡引用 GLM-5 报告，但未披露完整训练数据 diff；不默认完全同配方 |
 | 省略效应 | 两代同时改变参数、MoE/attention、optimizer、context、数据、SFT/RL 与基础设施 |
 
-## 统一数据字段表
+## 厂商公开了哪些 data fields
 
 | 字段 | GLM-4.5 | GLM-5 | 置信 |
 |---|---|---|---|
@@ -219,7 +219,7 @@ $$
 T_{context}=T_{supervised}+T_{masked}+T_{environment}+T_{padding}
 $$
 
-只报 sequence length 会隐藏真正产生梯度的比例。
+只报 seqlen 会隐藏真正产生梯度的比例。
 
 GLM-5 的异步 agent RL 覆盖超过 10K real-world SWE、terminal、search environments。TITO gateway 保留 rollout 的 exact token IDs 与 metadata，避免把文本重新 tokenize 后产生 off-policy mismatch；再配合 model-version gap 过滤 stale samples、排除 environment collapse、处理 group padding/drop，并用 DP-aware routing。
 
@@ -232,7 +232,7 @@ GLM-5 的异步 agent RL 覆盖超过 10K real-world SWE、terminal、search env
 
 on-policy cross-stage distillation 继续把前阶段 policy 产生的 trajectories 交给更强阶段信号，而不是固定离线 teacher answer。provenance 至少需要 model version、rollout token IDs、prompt/environment snapshot、tool responses、reward/judge version、mask 与 acceptance reason。
 
-## Validation、ablation 与区分性检查
+## 如何验证这些结论，并检查 contamination
 
 | 公开结论 | 首个混淆 | 有辨识力的检查 |
 |---|---|---|
@@ -245,7 +245,7 @@ on-policy cross-stage distillation 继续把前阶段 policy 产生的 trajector
 
 已公开 benchmark 能验证 checkpoint 行为，但不能反推出训练数据的独立因果。特别是 GLM-4.5/5 的参数规模、attention、MoE、optimizer 与 post-training 都变化，跨代总分只能标 `empirical association`。
 
-## 表面冲突与处理
+## 看似矛盾的说法怎样区分
 
 1. **23T vs 23.1T**：分项算术为 23.1T，headline 23T；按 rounding 保留，`supported`。
 2. **28.5T vs 28.55T**：同理为一位小数舍入；但 DSA 22.84B 是否另计仍为 `open`。
@@ -254,7 +254,7 @@ on-policy cross-stage distillation 继续把前阶段 policy 产生的 trajector
 5. **“real-world environment” vs rights**：真实 repository/terminal/search 来源不自动建立许可、隐私、cutoff 或 benchmark isolation。
 6. **GLM-5.1/5.2 lineage**：官方模型卡显示它们继续强化长程 agentic engineering，但没有可闭合的数据 recipe diff；所有新增 source/token 字段为 `unknown`。
 
-## 可迁移结论与不可外推部分
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -272,7 +272,7 @@ on-policy cross-stage distillation 继续把前阶段 policy 产生的 trajector
 - 不把 source 类别列表理解为 rights、cutoff、language mix 或 contamination 已披露。
 - 不假设 GLM-5.1/5.2 沿用 GLM-5 的全部数据，亦不根据模型能力反推新增语料。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - 完整 URL/repository/document manifest、snapshot date、cutoff、许可证、opt-out 与删除记录；
 - tokenizer revision、unique/sample/loss token 对账、packing/padding/mask 统计；
@@ -282,7 +282,7 @@ on-policy cross-stage distillation 继续把前阶段 policy 产生的 trajector
 - >10K environments 的固定 snapshot、成功构建分母、task count、rollout count 与 tool-call distribution；
 - GLM-5 DSA adaptation 是否包含在 28.5T；GLM-5.1/5.2 的训练数据增量。
 
-## 掌握标准与推理型自测
+## 读完后应该能回答的问题
 
 完成本笔记后，应能：
 
@@ -299,7 +299,7 @@ on-policy cross-stage distillation 继续把前阶段 policy 产生的 trajector
 3. 如何区分 SemDedup 的收益来自“去重复”还是来自它无意改变了 topic/quality mixture？
 4. 为什么 `23.1T≈23T` 可以是合理近似，而把 DSA 22.84B 自动加到 28.55T 却不成立？
 
-## 原始来源与阅读位置
+## 来源与建议阅读位置
 
 - [GLM-4.5: Agentic, Reasoning, and Coding (arXiv)](https://arxiv.org/abs/2508.06471)：主锚点；读 pre-training data、mid-training、expert training、RL data 与 agent infrastructure。
 - [GLM-4.5 official repository](https://github.com/zai-org/GLM-4.5)：核对权重、推理实现、许可证与报告版本；不等同于训练数据发布。
@@ -308,7 +308,7 @@ on-policy cross-stage distillation 继续把前阶段 policy 产生的 trajector
 - [GLM-5.1 official model card](https://huggingface.co/zai-org/GLM-5.1)：只用于确认该 checkpoint 的官方定位与 GLM-5 报告 lineage；未用它补写未披露数据。
 - [GLM-5.2 official model card](https://huggingface.co/zai-org/GLM-5.2)：用于核对最新家族入口；训练数据增量仍记 `unknown`。
 
-## 与主线的关系
+## 这篇案例与主线知识的关系
 
 ```text
 token-accounting --audits--> 23T/28.5T stage arithmetic

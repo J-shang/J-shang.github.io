@@ -5,27 +5,27 @@ topic: "pretraining-data"
 section: "international-cases"
 slug: "google-gemini-gemma-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 123
 readtime: 31
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/international/google-gemini-gemma.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/international/google-gemini-gemma.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:a9417ce4ba4926a2dfb5c78429549ee28bfb1f9467480283cb60f9a2a63cacae"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/international/google-gemini-gemma.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:47b1a0a7df25cb719135759a0054ef1d4cd55eb36ced70c4a6d6e93113b14f35"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 辅助视角：`implementation-trace`，仅用于 Gemma、PaLI/WebLI 与 JEST 的公开实现关系
-> 研究锚点：Gemini 1.5、2.5、3 Pro/3.1 Pro；Gemma 1→4；PaLI/WebLI；JEST
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+<!-- maintenance: secondary-view=`implementation-trace`，仅用于 Gemma、PaLI/WebLI 与 JEST 的公开实现关系 -->
+> 主要模型/资料：Gemini 1.5、2.5、3 Pro/3.1 Pro；Gemma 1→4；PaLI/WebLI；JEST
 
-## 定位
+## 这篇案例研究什么
 
 Google 的公开材料不能被当成一条披露强度恒定的模型谱系。至少要拆成三层：
 
@@ -43,7 +43,7 @@ WebLI-curated reference --used-by--> JEST experiments
 WebLI/JEST --analogy-not-lineage--> Gemini production recipe
 ```
 
-## Motivating problem：同一组织的论文不能自动拼成一份生产配方
+## 核心问题：同一组织的论文不能自动拼成一份生产配方
 
 如果只按“Google 发布”聚合材料，会产生三种常见错误：
 
@@ -53,7 +53,7 @@ WebLI/JEST --analogy-not-lineage--> Gemini production recipe
 
 本篇要回答的不是“Google 用了哪些数据”的单一问题，而是：**每一条公开事实究竟属于哪个模型、哪个训练阶段、哪个数据对象和哪一类证据。**
 
-## 代际与训练阶段表
+## 各代模型和 training stage
 
 | 家族/代际 | 阶段 | 公开数据事实 | token/context 口径 | 披露等级 | 结论状态 |
 |---|---|---|---|---|---|
@@ -67,7 +67,7 @@ WebLI/JEST --analogy-not-lineage--> Gemini production recipe
 | PaLI/WebLI | multimodal pretraining research | 10B images、12B alt-texts、109 languages、29B image-OCR pairs；top 10% 约1B image-text examples；最终 8-task mixture 1.6B examples | example/pair 统计，不是 language-model token；PaLI 一轮遍历 1.6B mixture | `D2` | construction/counts `verified`；Gemini lineage `open` |
 | JEST/Flexi-JEST | online data selection research | learner/reference joint loss 从大 super-batch 选 sub-batch；reference 由小规模 curated WebLI 引导 | 最高约13× fewer iterations、9.9× fewer FLOPs 均为论文 tested setup 的 empirical association | `D2/D3` | local result `verified`；跨任务/生产迁移 `open` |
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 维度 | 本篇约束 |
 |---|---|
@@ -75,11 +75,11 @@ WebLI/JEST --analogy-not-lineage--> Gemini production recipe
 | 统计单位 | language-model token、image-text pair、image、OCR pair、training example、context token 分开 |
 | 阶段 | `P0`、context extension、distillation、SFT、RM/RL、inference thinking budget 分开 |
 | “开放” | Gemma 的权重和部分代码开放；训练 corpus、manifest、顺序和完整生成 provenance 未开放 |
-| context | 支持/测试长度、实际训练 sequence length、长上下文 token exposure 是三个字段 |
+| context | 支持/测试长度、实际训练 seqlen、长上下文 token exposure 是三个字段 |
 | cutoff | 只记录报告明确给出的 knowledge/data cutoff；不能由模型回答估计 |
 | 省略效应 | 架构、tokenizer、teacher、filter、mixture、context schedule 与 post-training 同时变化 |
 
-## 统一数据字段
+## 厂商公开了哪些 data fields
 
 | 字段 | Gemini | Gemma 1–3 | Gemma 4 | WebLI/JEST |
 |---|---|---|---|---|
@@ -114,7 +114,7 @@ retrieval/NLL behavior in named evaluations
 10M training sequences or 10M-token production guarantee
 ```
 
-`[未知 | open]` 训练长序列来自真实长文档、repository concat、packing 还是合成长依赖，公开报告没有给出可复现 mixture、阶段 token 或 sequence-length histogram。
+`[未知 | open]` 训练长 sequence 来自真实长文档、repository concat、packing 还是合成长依赖，公开报告没有给出可复现 mixture、阶段 token 或 seqlen histogram。
 
 ### Gemini 2.5：cutoff 与 post-training data 类型更清楚
 
@@ -263,7 +263,7 @@ score super-batch with learner and curated-data reference
 | Gemma token ladder是否解释能力增益 | token 与 teacher/architecture/mixture 联合变化 | 固定架构/teacher/tokenizer/order 的 local budget ablation |
 | 去污染是否充分 | exact/image near-dedup vs semantic/text leakage | modality-specific exact/near/semantic audit + post-cutoff benchmark |
 
-## 可迁移经验与不可外推部分
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -280,7 +280,7 @@ score super-batch with learner and curated-data reference
 - `[未知 | open]` Gemma 4 的 token ladder、teacher、context-extension exposure 与 decontamination threshold；
 - `[待验证假设 | plausible]` JEST 类在线选择可提高语言模型 pretraining 效率；当前主要证据是 multimodal contrastive setup，不能无条件迁移到 autoregressive LM。
 
-## 掌握标准
+## 读完后应该掌握什么
 
 读完后应能：
 
@@ -290,7 +290,7 @@ score super-batch with learner and curated-data reference
 4. 说明 WebLI top 10% 和 benchmark near-dedup各自优化什么、漏掉什么；
 5. 在不知道 Gemini mixture 时保留 `unknown`，而不是用 Gemma/WebLI补齐。
 
-## 推理型自测
+## 用这些问题检查自己
 
 1. Gemma 3 27B 训练14T，Gemini 2.5支持1M context。能否据此推断 Gemini 2.5训练量大于14T？为什么？
 2. JEST 在8项任务 macro平均提升，但某低资源语言下降。应该新增哪些 selection 与 validation 分母？
@@ -324,19 +324,19 @@ score super-batch with learner and curated-data reference
    - 为什么读：确认最新开放权重的source/cutoff/filter字段及quantitative recipe缺口。
    - 建议位置：Model Data、Data Preprocessing。
 9. [PaLI / WebLI paper](https://arxiv.org/abs/2209.06794)
-   - 为什么读：学习多语言图文数据从原始pair、alignment filter到benchmark near-dedup的可核算流程。
+   - 为什么读：学习多语言图文数据从原始 pair、alignment filter 到 benchmark near-dedup 的可检查统计流程。
    - 建议位置：§3.2、Appendix A.2、Appendix G datasheet。
 10. [JEST paper](https://arxiv.org/abs/2406.17711)
     - 为什么读：学习batch-conditional selection、reference provenance与compute accounting。
     - 建议位置：§3 Methods、§4 Experiments、Algorithm 1、Appendix A.4。
 
-## 与主线的关系
+## 这篇案例与主线知识的关系
 
 ```text
 token accounting --prerequisite-for--> Gemma token ladder interpretation
 multimodal pair accounting --prerequisite-for--> WebLI audit
 reference provenance --prerequisite-for--> JEST selection interpretation
-sequence-length histogram --prerequisite-for--> long-context data attribution
+seqlen histogram --prerequisite-for--> long-context data attribution
 evaluation decontamination --does-not-imply--> production-corpus reproducibility
 open weights --does-not-imply--> open training data
 ```

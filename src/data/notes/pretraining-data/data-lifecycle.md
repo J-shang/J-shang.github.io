@@ -5,36 +5,36 @@ topic: "pretraining-data"
 section: "pipeline"
 slug: "data-lifecycle"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 order: 20
 readtime: 16
 source:
   repository: "J-shang/pt-data-learning"
   path: "knowledge-map/01-pipeline/data-lifecycle.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/48b6c6907a65afc718659f922895f835335be1d3/knowledge-map/01-pipeline/data-lifecycle.md"
-  revision: "48b6c6907a65afc718659f922895f835335be1d3"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:d533079c5c6e66f9e21b8b7d2c8a75ef769095599fb1383abb3ccc13a2085f6f"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/knowledge-map/01-pipeline/data-lifecycle.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:1003b89a87521d6e1c95f4ca51272ab0e88ede0710fde96232323c167fac230b"
   manifest: "pretraining-data"
   managed: true
 ---
 > 层级：01 Pipeline
 > 状态：`core`
 > 初始资料核查截止：2026-07-14
-> 主要 reasoning path：`implementation-trace`
-> 证据姿态：lineage/schema 约束是项目设计合同；具体 stage 顺序的收益属于 setting-specific `supported` 或 `plausible`
+<!-- maintenance: reasoning-path=`implementation-trace` -->
+> 证据说明：lineage/schema 约束是项目设计合同；具体 stage 顺序的收益属于 setting-specific `supported` 或 `plausible`
 
-## 一句话定位
+## 这篇笔记帮助你回答什么
 
 预训练数据生命周期是从目标能力和合法来源开始，到可追踪的训练 sequence、冻结 validation 和训练反馈结束的一条有版本数据流，而不是一串彼此独立的清洗脚本。
 
-## Motivating Problem
+## 为什么需要这个概念
 
 只保留最终训练 shard 时，一旦模型指标退化，就无法判断变化来自 source snapshot、解析器、filter、dedup、sampler 还是 tokenizer。成功的数据系统必须满足：任意输出都能追溯输入与变换；任意版本差异都能缩小到具体 stage；删除或修复能传播到下游资产。
 
 本笔记沿真实实现路径理解生命周期：固定一次 build 的 source、code、config 和 executor，再追踪每个 record 的状态变化。
 
-## Minimal Motivating Example
+## 先看一个最小例子
 
 两个 pipeline 最终都保留 900/1000 个文档。A 有 100 个 HTML 解析失败，B 解析全部成功但质量过滤删除 100 个。输出数量相同，原因、修复方式、内容分布与治理含义完全不同；若日志都只记作 `filtered=100`，后续无法区分。
 
@@ -49,7 +49,7 @@ $$
 
 这一 tuple 的具体实现可以不同，但必须能回答“它从哪来、经历了什么、为何留下/删除”。
 
-## Assumptions and Validity
+## 这些结论依赖哪些前提
 
 | 关系或结论 | 类型与条件 | 置信状态 |
 |---|---|---|
@@ -60,7 +60,7 @@ $$
 
 本文把 pipeline 顺序当作可配置实现，不主张存在跨语料普适的唯一顺序。比如“先 exact dedup 再昂贵过滤”能降低计算是可推导的成本关系，但是否改善最终模型取决于 normalization、canonical selection、数据分布与训练预算。
 
-## 相关知识展开
+## 机制与相关知识
 
 ### 1. 从目标反推数据，而不是从手头文件正推
 
@@ -173,13 +173,13 @@ $$
 
 这些反馈形成下一版配方的假设，但不能直接当因果证据。比如代码 benchmark 提升可能来自代码占比，也可能来自 tokenizer、训练步数或 checkpoint 选择；需要 paired ablation。
 
-## 与 Pretraining Data 主线的关系
+## 它怎样影响 pretraining data 工作
 
 关系类型：`implemented-by` versioned pipeline stages；`prerequisite-for` source/stage-level diagnosis。
 
 生命周期是本项目的总骨架。过滤、去重、mixture、metrics、validation 都是图上的节点或反馈边。掌握它之后，学习新论文时不再只问“用了什么过滤器”，而会问输入快照、顺序、统计、版本、反事实和训练反馈是否完整。
 
-## 目标掌握程度
+## 读完后应该掌握什么
 
 - 能为一个公开数据集画出 stage DAG，标出每个输入/输出和 lineage 字段。
 - 能设计 stage-level doc/token yield 与 sliced distribution 监控。
@@ -194,13 +194,13 @@ $$
 - 在 tokenize/packing 后才尝试恢复 source/domain 元数据。
 - pipeline 可重跑就等同可重现；外部服务、随机性和 mutable inputs 仍可改变结果。
 
-## 自测问题
+## 用这些问题检查自己
 
 1. 若先随机切 train/validation 再全局 near-dedup，与先 dedup 再切分相比，各有什么泄漏和分布风险？
 2. 某版本总 token yield 不变，但低资源语言的 yield 下降一半、英语上升。全局指标为什么失效？你需要哪些 slice？
 3. 一个 URL 被多次 crawl、内容逐渐更新。如何设计 ID 和删除请求传播，使 provenance 与 dedup 都成立？
 
-## 参考入口
+## 来源与建议阅读位置
 
 - [Penedo et al., 2024, The FineWeb Datasets](https://arxiv.org/abs/2406.17557) — 适合观察大规模 web pipeline 的设计选择、ablation 与公开构建思路。
 - [Soldaini et al., 2024, Dolma](https://arxiv.org/abs/2402.00159) — 适合学习开放 corpus 的组成、版本说明、pipeline 文档和中间状态分析。

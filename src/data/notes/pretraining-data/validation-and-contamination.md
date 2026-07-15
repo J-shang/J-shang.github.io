@@ -5,26 +5,26 @@ topic: "pretraining-data"
 section: "cross-cutting"
 slug: "validation-and-contamination"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 84
 readtime: 15
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/validation-and-contamination.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/validation-and-contamination.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:b4a10c6e145635bced1d418aaa6b8fada37bd313ce58cd4ce90553e5345a87ed"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/validation-and-contamination.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:5eaf815147a0c92429971cb02f38a37357a144f205f550d1f078cc9808dc3d9d"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`unified-framework`
-> 案例锚点：AI2 OLMo/Dolma、Apple AFM、Meta Llama、Anthropic Claude、Google Gemini/Gemma、NVIDIA Nemotron、Qwen、OpenAI
+<!-- maintenance: reasoning-path=`unified-framework` -->
+> 主要参考案例：AI2 OLMo/Dolma、Apple AFM、Meta Llama、Anthropic Claude、Google Gemini/Gemma、NVIDIA Nemotron、Qwen、OpenAI
 
-## Motivating problem
+## 这篇专题要回答什么
 
 训练集没有benchmark题面，并不保证评测独立：题目可能有近似/翻译/衍生版本，或研究者反复用同一benchmark选择filter、mixture和checkpoint。后者没有内容重叠，却仍会使最终报告过拟合评测决策。
 
@@ -87,7 +87,7 @@ $$
 
 clean subset更小，需给CI，不能只比较点估计。
 
-## 案例恢复
+## 厂商公开资料实际告诉了我们什么
 
 | 案例 | validation/污染锚点 | 优点 | 边界 |
 |---|---|---|---|
@@ -100,7 +100,7 @@ clean subset更小，需给CI，不能只比较点估计。
 | [Qwen](/topics/pretraining-data/qwen-data-practices/) | clean-subset contamination、threshold proxy | 显式分clean结果 | 完整生产overlap manifest不足 |
 | [OpenAI](/topics/pretraining-data/openai-data-practices/) | GPT-3 contamination与后续system-card高层边界 | 历史定量锚点 | 最新训练数据/协议收缩 |
 
-## 框架的信息损失
+## 统一比较会丢掉哪些重要差异
 
 - Apple给pretraining removal规则，Anthropic canary监测事件；两者不是同一防线。
 - Nemotron用benchmark校准quality bucket，既是validation优势也是decision exposure。
@@ -187,7 +187,7 @@ LLM-as-judge可能：
 
 数据ablation必须固定model、tokenizer、token budget、optimizer、compute和eval。否则只能写recipe association。
 
-## 表面冲突与区分性检查
+## 看似矛盾的说法怎样区分
 
 ### exact overlap低 vs semantic leakage高
 
@@ -238,7 +238,7 @@ judge_and_prompt: ...
 - 不把internal set名称当可审计合同；
 - 不用最新judge覆盖历史结果而不记录版本。
 
-## 掌握标准与自测
+## 读完后应该能回答的问题
 
 读者应能：
 
@@ -251,7 +251,7 @@ judge_and_prompt: ...
 
 推理题：1000条eval中120条n-gram命中、其中80条semantic也命中；另有60条仅semantic命中。若按任一matcher移除，clean subset多大？为什么仍不能说它在ancestor与decision层clean？
 
-## 来源与阅读路径
+## 来源与建议阅读位置
 
 1. [OLMo/Dolma](/topics/pretraining-data/ai2-olmo-dolma-data-practices/)：开放data/config/order/logs/eval控制。
 2. [Apple AFM](/topics/pretraining-data/apple-foundation-models-data-practices/)：读811 benchmarks规则、stage eval与2025继承边界。

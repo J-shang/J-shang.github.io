@@ -5,27 +5,27 @@ topic: "pretraining-data"
 section: "china-cases"
 slug: "tencent-hunyuan-hy-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 108
 readtime: 26
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/china/tencent-hunyuan-hy.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/china/tencent-hunyuan-hy.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:fe3ec2e48792e1cc980ec36612a4f850647f4217db92b20dc074dbc9ef4ae10c"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/china/tencent-hunyuan-hy.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:814211df4dd08693f6c1bfbd2b30347cd3e4e1a2968003f2e86d3cfbdc3d6f23"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 辅助视角：`implementation-trace`，用于 TurboS/A13B 数据管线与 HunyuanOCR 多模态阶段
-> 研究锚点：初代混元、Hunyuan-Large、Hunyuan-TurboS、Hunyuan-A13B、HunyuanOCR、Hy3-preview
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+<!-- maintenance: secondary-view=`implementation-trace`，用于 TurboS/A13B 数据管线与 HunyuanOCR 多模态阶段 -->
+> 主要模型/资料：初代混元、Hunyuan-Large、Hunyuan-TurboS、Hunyuan-A13B、HunyuanOCR、Hy3-preview
 
-## 定位
+## 这篇案例研究什么
 
 腾讯混元的公开谱系提供了三种不同强度的证据：
 
@@ -35,7 +35,7 @@ source:
 
 开放的是权重、推理/微调代码和报告；没有开放原始corpus、source manifest、训练顺序、完整token mask或数据权利清单。因此多数代际是`D2/D3`，不是`D4`。
 
-## Motivating problem：同一个“trained tokens”可能漏掉后续阶段
+## 核心问题：同一个“trained tokens”可能漏掉后续阶段
 
 如果只抄模型摘要，会得到7T、16T、20T、454B四个数，但至少有三种统计结构：
 
@@ -46,7 +46,7 @@ source:
 
 因此 headline corpus、sampled stage exposure、pair count 与 loss tokens必须分列。
 
-## 代际与训练阶段表
+## 各代模型和 training stage
 
 | 模型 | 阶段 | 已披露数据与规模 | mixture / context | 披露 | 状态 |
 |---|---|---|---|---|---|
@@ -65,7 +65,7 @@ source:
 | HunyuanOCR | `A2` | open/synthetic OCR tasks；prompt/rollout数未知 | task-specific rewards、pass-rate与reward-variance filtering | `D2/D3` | mechanism `verified`；accounting `open` |
 | Hy3-preview | `P*/A*` | base/instruct weights；训练数据token/source/mix未披露 | 295B/21B active；256K；reasoning/code/agent | `D1/D3` | model/artifacts `verified`；recipe `open` |
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 维度 | 本篇约束 |
 |---|---|
@@ -79,7 +79,7 @@ source:
 | cutoff | 通用pretraining source cutoff未公开；benchmark和发布日不替代cutoff |
 | 省略效应 | 架构、active参数、tokenizer、mixture、context、LR和post-training跨代同时变化 |
 
-## 统一数据字段
+## 厂商公开了哪些 data fields
 
 | 字段 | Large | TurboS / A13B | HunyuanOCR | Hy3 |
 |---|---|---|---|---|
@@ -199,7 +199,7 @@ agent SFT engine包含user、planner、tool、agent、checker五个角色，工�
 
 `[综合判断 | supported]` “20,000 formats”是format transformations，不是20,000 independent tasks；需要保留base task→format variant→trajectory→reward lineage。
 
-## HunyuanOCR：pair与token双重核算的多模态锚点
+## HunyuanOCR：为什么 pair 数和 token 数必须分开统计
 
 ### 200M pairs、130+ languages与九类场景
 
@@ -230,9 +230,9 @@ RL按task设计spotting/edit-distance+IoU等reward，依据output diversity、re
 
 `[未知 | open]` 当前README没有给pretraining token、source、rights、cutoff、mixture、dedup、anneal/context exposure或RL task/trajectory规模。训练代码用于下游fine-tuning，不是原始pretraining reproduction package。
 
-`[综合判断 | supported]` 最新模型可以在artifact字段为`D3`、在data recipe字段仍为`D1`；不能继承A13B的20T、TurboS的16.35T或Hunyuan-Large的21.4% synthetic。
+`[综合判断 | supported]` 最新模型可以在artifact字段为`D3`、在 data recipe 字段仍为`D1`；不能继承A13B的20T、TurboS的16.35T或Hunyuan-Large的21.4% synthetic。
 
-## Validation、污染与区分性检查
+## 如何验证这些结论，并检查 contamination
 
 | 问题 | 首个可能差异 | 区分性检查 |
 |---|---|---|
@@ -245,7 +245,7 @@ RL按task设计spotting/edit-distance+IoU等reward，依据output diversity、re
 
 公开材料给出大量release benchmark、long-context与部分ablation，但没有同时闭合validation source、时间边界、split unit、tokenizer、per-domain sample/token、decision exposure与semantic contamination。PenguinScrolls等内部集能补场景覆盖，不能替代可审计manifest。
 
-## 可迁移经验与不可外推部分
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -263,7 +263,7 @@ RL按task设计spotting/edit-distance+IoU等reward，依据output diversity、re
 - `[待验证假设 | plausible]` TurboS的semantic dedup与mixture model对low-resource languages无系统性损失；
 - `[待验证假设 | plausible]` HunyuanOCR的proprietary synthesis可覆盖真实部署中的复杂缺陷组合。
 
-## 掌握标准
+## 读完后应该掌握什么
 
 读完后应能：
 
@@ -273,7 +273,7 @@ RL按task设计spotting/edit-distance+IoU等reward，依据output diversity、re
 4. 把A13B的150K RL prompts、20K format combinations、rollouts与loss tokens分开；
 5. 解释Hy3开放base权重和fine-tuning代码为何仍不能复现pretraining数据。
 
-## 推理型自测
+## 用这些问题检查自己
 
 1. 若TurboS摘要只写16T，comparison matrix是否应写16T还是16.35T？怎样同时保留来源事实与推导？
 2. Hunyuan-Large含21.4% synthetic且表现更强。为什么这不构成synthetic share的因果最优点？
@@ -307,10 +307,10 @@ RL按task设计spotting/edit-distance+IoU等reward，依据output diversity、re
    - 为什么读：核对权重、推理代码和后续开放benchmark边界。
    - 建议位置：README、model download、technical report、benchmarks。
 9. [Hy3-preview repository](https://github.com/Tencent-Hunyuan/Hy3-preview)
-   - 为什么读：固定最新base/instruct开放资产及quantitative data recipe缺口。
+   - 为什么读：固定最新base/instruct开放资产及quantitative data recipe 缺口。
    - 建议位置：Model Introduction、Training、License、base benchmark。
 
-## 与主线的关系
+## 这篇案例与主线知识的关系
 
 ```text
 stage accounting --prerequisite-for--> 16T vs 16.35T interpretation

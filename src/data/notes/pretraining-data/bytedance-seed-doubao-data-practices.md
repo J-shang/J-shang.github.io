@@ -5,27 +5,27 @@ topic: "pretraining-data"
 section: "china-cases"
 slug: "bytedance-seed-doubao-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 107
 readtime: 27
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/china/bytedance-seed-doubao.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/china/bytedance-seed-doubao.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:1a5d01fdb935b389817432ecab673b576d180529dd89cdffb538cfb63048659e"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/china/bytedance-seed-doubao.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:709374eccbf173efa4512c59964f161519b617fca0609f7213bcf538fabb0103"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 辅助视角：`implementation-trace`，用于 Seed-Coder 的 model-centric pipeline
-> 研究锚点：Seed1.5-VL、Seed1.5-Thinking、Seed-Coder、Seed-OSS-36B、Seed1.8/2.0 与豆包产品数据政策
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+<!-- maintenance: secondary-view=`implementation-trace`，用于 Seed-Coder 的 model-centric pipeline -->
+> 主要模型/资料：Seed1.5-VL、Seed1.5-Thinking、Seed-Coder、Seed-OSS-36B、Seed1.8/2.0 与豆包产品数据政策
 
-## 定位
+## 这篇案例研究什么
 
 ByteDance 的公开材料包含两类不能互相补齐的证据：
 
@@ -41,7 +41,7 @@ Doubao eligible user data --may-contribute-to--> future model improvement
 policy eligibility --does-not-imply--> inclusion in a named checkpoint
 ```
 
-## Motivating problem：同一品牌下至少有四套统计单位
+## 核心问题：同一品牌下至少有四套统计单位
 
 本案例最容易产生四种错误：
 
@@ -52,7 +52,7 @@ policy eligibility --does-not-imply--> inclusion in a named checkpoint
 
 本篇用阶段、数据对象、统计单位和证据边界逐项拆开这些问题。
 
-## 代际与训练阶段表
+## 各代模型和 training stage
 
 | 模型/产品 | 阶段 | 已披露数据与规模 | context / mixture | 披露 | 状态 |
 |---|---|---|---|---|---|
@@ -68,7 +68,7 @@ policy eligibility --does-not-imply--> inclusion in a named checkpoint
 | Seed1.8 / Seed2.0 | multimodal/agent `P*/A*` | search、code、GUI、real-world agent评测；定量训练配方未披露 | serving/context与training exposure不可互换 | `D1` | model scope `verified`；recipe `open` |
 | 豆包产品 | policy/consent | 登录用户可按数据类型关闭未来模型改进使用；未登录、未成年人模式内容不用于该目的 | 不是训练阶段或checkpoint manifest | policy `D1` | current policy `verified`；checkpoint inclusion `open` |
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 维度 | 本篇处理 |
 |---|---|
@@ -79,9 +79,9 @@ policy eligibility --does-not-imply--> inclusion in a named checkpoint
 | synthetic | pretraining instruction、web rewrite、SFT response、RL rollout与verifier-generated feedback分开 |
 | consent | 当前政策只说明未来可用性；不倒推历史数据、checkpoint、比例或合法依据 |
 | cutoff | 各训练 corpus 的统一时间边界未完整披露；benchmark日期不能替代 source cutoff |
-| 省略效应 | 模型、架构、tokenizer、context、mixture、学习率、filter和post-training常同时变化 |
+| 省略效应 | 模型、架构、tokenizer、context、mixture、learning rate、filter和post-training常同时变化 |
 
-## 统一数据字段
+## 厂商公开了哪些 data fields
 
 | 字段 | Seed1.5-VL | Seed-Coder | Seed-OSS / Seed1.8/2.0 | 豆包政策 |
 |---|---|---|---|---|
@@ -109,13 +109,13 @@ T_{\text{VLM,stage}}
 =3.256\text{T}.
 $$
 
-这里 $T_{\text{VLM,stage}}$ 的单位是报告表中的 sampled source tokens；假设三段互不重叠地计入训练日程。摘要所说的“3T high-quality source tokens”可能指主要 corpus、Stage 1预算或舍入后的配方规模，报告没有明确给出两种口径的 exact identity。
+这里 $T_{\text{VLM,stage}}$ 的单位是报告表中的 sampled source tokens；假设三段互不重叠地计入 training schedule。摘要所说的“3T high-quality source tokens”可能指主要 corpus、Stage 1预算或舍入后的配方规模，报告没有明确给出两种口径的 exact identity。
 
 `[推导结论 | supported]` 因此应同时保留 headline 3T 与阶段和3.256T，并将关系标为 `open`；不能擅自把256B解释为unique增量，也不能再把语言骨干历史tokens无条件相加。
 
 ### 三阶段 curriculum
 
-`[来源事实 | verified]` Stage 0只训练MLP adapter；Stage 1训练全模型，主要包含caption、interleaved image-text、grounding和OCR，并保留约5% text-only data以维持语言能力。Stage 2加入video、coding、3D等高层能力，同时把sequence length从32,768扩到131,072。
+`[来源事实 | verified]` Stage 0只训练MLP adapter；Stage 1训练全模型，主要包含caption、interleaved image-text、grounding和OCR，并保留约5% text-only data以维持语言能力。Stage 2加入video、coding、3D等高层能力，同时把 seqlen 从32,768扩到131,072。
 
 ```text
 16B adapter alignment
@@ -143,7 +143,7 @@ $$
 
 ## Seed-Coder：model-centric pipeline 的实现锚点
 
-### 六万亿 token 的阶段核算
+### 6T tokens 怎样分到不同阶段
 
 设regular pretraining与continued pretraining的sampled exposure分别为：
 
@@ -203,7 +203,7 @@ Common Crawl pages
 Base-woSyn --add synthetic instruction data under family recipe--> Base
 ```
 
-但仍需核对两者是否严格固定总token、order、学习率、seed和除synthetic外的mixture。官方benchmark表中synthetic版本并非每项都更好，因此结果只支持“在该配方与指标集合中的任务依赖效应”，不能外推为synthetic instruction data普遍有益。
+但仍需核对两者是否严格固定总token、order、learning rate、seed和除synthetic外的mixture。官方benchmark表中synthetic版本并非每项都更好，因此结果只支持“在该配方与指标集合中的任务依赖效应”，不能外推为synthetic instruction data普遍有益。
 
 `[未知 | open]` synthetic teacher、prompt family、acceptance、source-to-generation lineage、占比和loss-token accounting未随权重完整发布。
 
@@ -234,26 +234,26 @@ content created under product terms
 
 `[综合判断 | supported]` current opt-out policy不能证明历史checkpoint未使用某类内容，也不能证明所有eligible内容会被训练。产品search/tool outputs还可能含第三方内容，其rights与训练适格性需要另行审计。
 
-## Validation、污染与区分性检查
+## 如何验证这些结论，并检查 contamination
 
 | 问题 | 首个可能差异 | 区分性检查 |
 |---|---|---|
 | 3T与3.256T为何不同 | corpus headline vs stage exposure | 发布stage manifest、repeat ratio与每阶段loss tokens |
 | rare knowledge提升是否来自覆盖 | concept cap vs quality/repetition | 固定12B、固定filter，正交改变cap与sampling replacement |
-| long context收益来自序列结构还是更多tokens | dependency order vs random concat | 同repo/snapshot/token budget比较topological、random、document-shuffle |
+| long context收益来自 sequence 结构还是更多tokens | dependency order vs random concat | 同repo/snapshot/token budget比较topological、random、document-shuffle |
 | synthetic instruction是否有效 | synthetic presence vs总budget/order | Base/woSyn固定seed、steps、LR、总token并做per-domain paired eval |
 | code verifier是否泄漏benchmark | source cutoff/near-duplicate vs执行正确 | repository/statement/solution三级exact+semantic audit，报告clean subset |
 | 产品数据是否进入checkpoint | policy eligibility vs data lineage | consent/version/snapshot/transform/checkpoint manifest |
 
 公开报告提供了大量release benchmark与部分data ablation，但完整pretraining validation contract仍缺：冻结版本、时间边界、split unit、每域token、tokenizer、decision exposure和跨模态污染范围不能同时闭合。
 
-## 可迁移经验与不可外推部分
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
 - `[综合判断 | supported]` 多模态curriculum要同时记录可训练参数、modality mix、context和stage exposure；只报总token会隐藏主要处理。
 - `[综合判断 | supported]` high-recall cheap filter与high-precision model scorer应分别校准，Seed-Coder给出了recall/precision/candidate-rate的可操作锚点。
-- `[综合判断 | supported]` repository long context需要保存dependency/concat provenance；sequence length本身不证明长依赖质量。
+- `[综合判断 | supported]` repository long context需要保存dependency/concat provenance；seqlen 本身不证明长依赖质量。
 - `[综合判断 | supported]` 带/不带某类数据的开放checkpoint pair比跨模型benchmark更适合归因，但仍需固定总budget、order和seed。
 - `[综合判断 | supported]` consumer consent、training eligibility、selected pool和checkpoint inclusion必须是四个字段。
 
@@ -265,17 +265,17 @@ content created under product terms
 - `[待验证假设 | plausible]` Seed-Coder的model-centric pipeline可无损迁移到低资源语言；scorer与sandbox覆盖可能造成系统盲区；
 - `[待验证假设 | plausible]` Seed1.5-VL的rare-concept cap在更大预算和不同概念taxonomy下仍维持收益。
 
-## 掌握标准
+## 读完后应该掌握什么
 
 读完后应能：
 
 1. 解释3T source headline、3.256T阶段和与语言骨干历史训练为何不能合成一个精确token数；
-2. 写出Seed-Coder 5T regular + 1T continued的阶段核算，并列出code/commit/web三条管线；
+2. 写出 Seed-Coder 5T regular + 1T continued 分别属于哪个阶段，并列出 code/commit/web 三条管线；
 3. 说明Seed-OSS Base/woSyn能支持什么归因、还缺哪些控制；
 4. 把数十万RL problems、rollouts、tool calls与loss tokens分开；
 5. 解释豆包当前policy为何不能证明某个checkpoint的数据组成。
 
-## 推理型自测
+## 用这些问题检查自己
 
 1. Seed1.5-VL Stage 2的240B同时增加video并扩context。若long-video指标提升，最小的正交ablation是什么？
 2. Seed-Coder classifier达到99% recall/45% precision。为什么不能据此推断最终1.2T web corpus有45%“高质量页面”？
@@ -291,7 +291,7 @@ content created under product terms
    - 为什么读：区分verifiable/non-verifiable RL data、动态采样、LongCoT与streaming rollout。
    - 建议位置：§3 SFT、§4 RL data/reward、streaming rollout部分。
 3. [Seed-Coder paper](https://arxiv.org/abs/2506.03524)
-   - 为什么读：复核6T阶段核算、code/commit/web pipeline、long-context construction和post-training数据。
+   - 为什么读：复核 6T tokens 的阶段划分、code/commit/web pipeline、long-context construction 和 post-training data。
    - 建议位置：§2 Pre-training Data、§3 Training、§4 Post-training、Appendix pipeline details。
 4. [Seed-Coder repository](https://github.com/ByteDance-Seed/Seed-Coder)
    - 为什么读：核对开放权重、模型版本、license与可运行artifact边界。
@@ -318,7 +318,7 @@ content created under product terms
     - 为什么读：核对研究模型、开放模型与产品endpoint的命名关系，避免把品牌名当成同一checkpoint。
     - 建议位置：Seed1.5、Seed1.8、Seed-OSS与Seed-Coder条目。
 
-## 与主线的关系
+## 这篇案例与主线知识的关系
 
 ```text
 token accounting --prerequisite-for--> 3T vs 3.256T interpretation

@@ -5,32 +5,32 @@ topic: "pretraining-data"
 section: "china-cases"
 slug: "qwen-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 101
 readtime: 33
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/china/qwen.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/china/qwen.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:0e3318d24e0f24d8d26ff1f93e59e75aaa291d9470d29f8867f0c7d1263bbc15"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/china/qwen.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:71bd4ffec65bb1edadb2ad7d3e126bbe7dc337041a850d7cd51b0e25bff30ac4"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 研究锚点：Qwen、Qwen2、Qwen2.5、Qwen2.5-Coder/Math、Qwen3、Qwen3-Coder。
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+> 主要模型/资料：Qwen、Qwen2、Qwen2.5、Qwen2.5-Coder/Math、Qwen3、Qwen3-Coder。
 
-## 定位与 motivating problem
+## 这篇案例要回答什么
 
 Qwen 家族公开了权重、技术报告、部分训练与评测代码，并在若干代际中披露了可操作的数据实验。它尤其适合回答三个问题：质量阈值与 token 规模发生冲突时怎样决策；general model 与 code/math specialist 的 continued pretraining 如何拆分；用模型做过滤、PDF extraction、synthetic generation 和 strong-to-weak distillation 时，数据 provenance 如何表示。
 
 本案例不把 3T、7T、18T、36T、5.5T 与 7.5T 排成单一增长曲线。前四个主要描述 general-base 代际，后两个分别属于 code specialist；Qwen3 的 36T 又包含 general、reasoning 和 long-context 三阶段。不同 tokenizer revision、checkpoint 与训练目标下，token 数只能在来源声明的范围内比较。
 
-## 代际与阶段表
+## 各代模型和 training stage
 
 | 代际 | 阶段 | 已披露数据与规模 | 关键机制 / context | 披露 |
 |---|---|---|---|---|
@@ -53,9 +53,9 @@ Qwen 家族公开了权重、技术报告、部分训练与评测代码，并在
 | Qwen3-Coder | `P1/P3` | 7.5T，70% code | Qwen2.5-Coder clean/rewrite；native 256K、YaRN 1M；repo/PR dynamic data | `D1/D3` |
 | Qwen3-Coder | `A2/A3` | execution-driven code RL + long-horizon agent RL；trajectory 数 `unknown` | 20,000 parallel environments 是系统并发，不是 dataset size | `D1/D3` |
 
-Qwen3.5/3.6 等 hosted product aliases 在本轮没有可映射到固定 base-training report 的同等资料，因此不把 API 名称回填为 Qwen3 的数据配方。开放权重与 eval/finetune code 支持 `D3`，但 corpus、manifest、processing code、order 与 logs 未达到 `D4`。
+Qwen3.5/3.6 等 hosted product aliases 在本轮没有可映射到固定 base-training report 的同等资料，因此不把 API 名称回填为 Qwen3 的 data recipe。开放权重与 eval/finetune code 支持 `D3`，但 corpus、manifest、processing code、order 与 logs 未达到 `D4`。
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 项 | 本笔记的处理 |
 |---|---|
@@ -67,7 +67,7 @@ Qwen3.5/3.6 等 hosted product aliases 在本轮没有可映射到固定 base-tr
 | cutoff | general model 的全面 data cutoff 多数 `unknown`；Qwen2.5-Coder public repositories 明确为 2024-02 前创建 |
 | 省略效应 | 代际变化同时包含 architecture、optimizer/LR、data scale/mix、tokenizer、context 与 post-training |
 
-## 统一数据字段表
+## 厂商公开了哪些 data fields
 
 | 字段 | Qwen / Qwen2 | Qwen2.5 / specialists | Qwen3 / Qwen3-Coder | 置信 |
 |---|---|---|---|---|
@@ -119,7 +119,7 @@ $$
 q_{length}=0.4q_{current\ max}+0.6q_{shorter}
 $$
 
-该比例按 sequence length bucket，不是 source/domain mixture，也不表示 40% loss tokens 必然来自真实长文档。推理时通过 YARN/DCA 扩到 1M，与训练最大 256K 需要分开记录。
+该比例按 seqlen bucket，不是 source/domain mixture，也不表示 40% loss tokens 必然来自真实长文档。推理时通过 YARN/DCA 扩到 1M，与训练最大 256K 需要分开记录。
 
 ## Qwen2.5-Coder：continued pretraining 的可操作范例
 
@@ -243,7 +243,7 @@ $$
 - `[未知 | open]` Qwen3 synthetic/PDF data 的 source leakage、OCR/refinement error 和 teacher memorization audit。
 - `[未知 | open]` 36T/7.5T 代际的统一 benchmark decontamination protocol与 clean-subset 结果。
 
-## 表面冲突与区分性检查
+## 看似矛盾的说法怎样区分
 
 ### Qwen2 是 7T 还是 12T？
 
@@ -272,7 +272,7 @@ $$
 - 区分性检查：在同一 benchmark/source fixture 上测 precision/recall、common-pattern false positive 与 near-copy false negative。
 - 处理：逐模型保留规则，不统一成“n-gram decontam”。`verified/open`。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - `[未知 | open]` 各 general 代完整 source list、source-level rights、raw/processed scale、dataset manifest 与统一 cutoff。
 - `[未知 | open]` 3T/7T/18T/36T/5.5T/7.5T 的 unique、sampled、non-padding 与 loss-token contract。
@@ -283,13 +283,13 @@ $$
 - `[未知 | open]` synthetic pretraining 的 prompts、teacher revisions、rejection rate、diversity/duplication 与 contamination audit。
 - `[未知 | open]` hosted Qwen3.5/3.6 aliases 与公开 Qwen3/Qwen3-Coder checkpoints 的精确训练 lineage。
 
-## 可迁移经验与不可外推
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
 - `[综合判断 | supported]` 放宽质量阈值前应以固定 sampled budget 做 proxy，并把 retained scale 与收益共同记录。
 - `[综合判断 | supported]` code specialist 的 general/math data 不是“杂质”；mixture ablation 应同时检查 code、math 与 general retention。
-- `[综合判断 | supported]` long-context 配方应报告 sequence-length histogram，而不只写最大 context。
+- `[综合判断 | supported]` long-context 配方应报告 seqlen histogram，而不只写最大 context。
 - `[综合判断 | supported]` model-mediated curation 要区分 extractor、refiner、filter、generator、judge 与 teacher 六种角色。
 - `[综合判断 | supported]` contamination audit 应同时报告 matcher contract、flagged rate、clean-subset delta 与人工 precision sample。
 - `[综合判断 | supported]` strong-to-weak distillation 需要分别记录 off-policy teacher responses 与 on-policy student trajectories。
@@ -303,19 +303,19 @@ $$
 - Qwen3 的 teacher-generated trillions 不能仅凭 benchmark 提升证明无 diversity collapse、错误放大或版权风险。
 - 8B 上 on-policy distillation 优于 direct RL 的结果不能直接外推到 flagship models 或其他 reward/teacher setting。
 
-## 掌握标准与推理型自测
+## 读完后应该能回答的问题
 
 掌握本案例后应能：
 
 1. 解释 Qwen2 7T/12T 与 Qwen2.5-Coder 5.2T/300B 的模型和阶段边界。
-2. 区分 source/domain mixture、instance-level quality labels 与 sequence-length mixture。
+2. 区分 source/domain mixture、instance-level quality labels 与 seqlen mixture。
 3. 恢复 Qwen3 的 PDF extraction、synthetic generation、三阶段 pretraining 与两阶段 distillation provenance。
 4. 说明为什么 clean-subset score delta 比单独的 “contamination percentage” 更有信息。
 5. 为 model-based multilingual filtering 设计按语言的 calibration、retention 与 downstream validation。
 
 自测：如果一个 Qwen3-style proxy 建议把 educational-value top bucket 上采样 4×，但低资源语言的 retention 降低 35%，你会怎样构造 micro/macro/per-language validation、固定 token budget ablation 和 target-scale transfer check？
 
-## 一手来源
+## 来源与建议阅读位置
 
 - [Qwen Technical Report, arXiv:2309.16609v1](https://arxiv.org/abs/2309.16609)：为什么读：固定初代 source、exact/fuzzy dedup、filter/upsampling、13-gram 与 tokenizer；重点读 §2.1–2.5。
 - [Qwen2 Technical Report, arXiv:2407.10671](https://arxiv.org/abs/2407.10671)：为什么读：固定 7T vs 12T 负结果、MoE +4.5T、约 30 languages、long-context finishing 与 clean-subset contamination；重点读 §3、§5.2.6。

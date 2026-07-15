@@ -5,27 +5,27 @@ topic: "pretraining-data"
 section: "methodology"
 slug: "data-disclosure-scorecard"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 71
 readtime: 22
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/disclosure-scorecard.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/disclosure-scorecard.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:42c7abc60ad1b86ff8881e507efa1f752cb71965af2f8686a51c4d984b1256c7"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/disclosure-scorecard.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:4abaaf75e6465dafd348f58185a888cba94945420076ae7f67fb7ea489c5160b"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`unified-framework`
+<!-- maintenance: reasoning-path=`unified-framework` -->
 > 统计主键：`model generation × training stage × artifact version`
 > 开放控制：AI2 OLMo/Dolma、Apple OpenELM
 
-## Motivating problem
+## 这篇专题要回答什么
 
 把厂商压成一个“透明度8/10”会隐藏证据形状：Mistral可能权重/配置开放但训练数据未知；Apple可能不给权重，却给阶段token和去污染规则；NVIDIA可能发布大量data/pipeline资产，但生产模型仍含private slices。
 
@@ -180,7 +180,7 @@ next_trigger: new report/card/data revision
 
 新代际追加新行，不覆盖历史。若网页更新，保存绝对日期和变更内容；API rolling model无法映射checkpoint时，identity降级或标`rolling/unknown`。
 
-## 表面冲突与区分性检查
+## 看似矛盾的说法怎样区分
 
 ### D3 artifacts vs D0 data
 
@@ -222,7 +222,7 @@ next_trigger: new report/card/data revision
 - 不用第三方推测把D0补成D1/D2；
 - 不对ordinal cells做平均/排名。
 
-## 掌握标准与自测
+## 读完后应该能回答的问题
 
 读者应能：
 
@@ -235,7 +235,7 @@ next_trigger: new report/card/data revision
 
 推理题：模型A在artifacts/pipeline/accounting为D3/D0/D0，模型B为D0/D2/D2。哪个更适合运行本地权重？哪个更适合研究token/mixture？为什么不能说谁“总体更透明”？
 
-## 来源与阅读路径
+## 来源与建议阅读位置
 
 1. [统一方法](/topics/pretraining-data/industry-data-methodology/)：等级定义、字段contract和更新规则的规范来源。
 2. [Comparison matrix](/topics/pretraining-data/industry-data-comparison-matrix/)：查看每一行的事实摘要；本卡只评证据形状。

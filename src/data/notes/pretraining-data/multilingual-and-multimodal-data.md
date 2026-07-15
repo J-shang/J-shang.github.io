@@ -5,32 +5,32 @@ topic: "pretraining-data"
 section: "cross-cutting"
 slug: "multilingual-and-multimodal-data"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 83
 readtime: 16
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/multilingual-and-multimodal-data.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/multilingual-and-multimodal-data.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:bf98c679e5be6f64a2bfa307a35b3ac2a32ecd3c7ebf261f37e9e8c25c46f4e7"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/multilingual-and-multimodal-data.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:7f0d192fabe17b364afc5a03c674eccc1fff10fa3fa3314934270934e3892638"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`unified-framework`
-> 案例锚点：Apple AFM、Google Gemini/Gemma、Meta Llama、ByteDance Seed、Tencent Hunyuan、Xiaomi MiMo、Mistral；开放控制：AI2 OLMo/Dolma、Apple OpenELM
+<!-- maintenance: reasoning-path=`unified-framework` -->
+> 主要参考案例：Apple AFM、Google Gemini/Gemma、Meta Llama、ByteDance Seed、Tencent Hunyuan、Xiaomi MiMo、Mistral；开放控制：AI2 OLMo/Dolma、Apple OpenELM
 
-## Motivating problem
+## 这篇专题要回答什么
 
 “训练了12T multilingual/multimodal tokens”可能同时包含text tokens、image embeddings、video frames或audio codes。不同tokenizer下，同一句低资源语言又可能消耗不同token数。若没有单位与分母，language/modality mixture无法比较。
 
 最小例子：中文tokenizer改进30%后，同样1TB中文文本产生更少tokens。固定1T-token训练可能覆盖更多字符，却也可能被sampler重新配平。token比例既不是byte比例，也不是document比例。
 
-## 两层核算
+## 需要分别统计哪些单位
 
 ### 语言fertility
 
@@ -54,7 +54,7 @@ $$
 
 但只有在position定义相容时才可相加。必须另报原始单位：unique images、pairs、interleaved docs、frames/seconds、audio hours和text bytes。
 
-## 统一字段
+## 比较不同厂商时要记录什么
 
 | 维度 | 语言 | 图像/视频/音频 |
 |---|---|---|
@@ -67,7 +67,7 @@ $$
 | rights | locale/source license | image/personality/face/music/voice与derivative rights |
 | validation | per-language loss/macro | per-modality/task/resolution/locale |
 
-## 案例恢复
+## 厂商公开资料实际告诉了我们什么
 
 | 案例 | 披露锚点 | 可知 | 不能推出 |
 |---|---|---|---|
@@ -78,9 +78,9 @@ $$
 | [HunyuanOCR](/topics/pretraining-data/tencent-hunyuan-hy-data-practices/) | >200M pairs、130+ languages、454B四阶段 | pair/stage/task accounting | image/loss accounting与group contamination |
 | [MiMo-VL](/topics/pretraining-data/mimo-data-practices/) | vision-language stages、固定budget实验 | injection timing/ratio、stage boundaries | image/text token等价、完整rights |
 | [Mistral NeMo/Pixtral](/topics/pretraining-data/mistral-ai-data-practices/) | Tekken>100 languages；interleaved image-text、16×16 patches | tokenizer compression、sequence shape | NeMo language mix、Pixtral pair数量 |
-| [OLMo/OpenELM控制](/topics/pretraining-data/ai2-olmo-dolma-data-practices/) | named/versioned text data与tokenizer/config | text source→token exposure审计基线 | 不代表multimodal生产pipeline |
+| [OLMo/OpenELM控制](/topics/pretraining-data/ai2-olmo-dolma-data-practices/) | named/versioned text data与tokenizer/config | text source→token exposure审计 baseline | 不代表multimodal生产pipeline |
 
-## 框架的信息损失
+## 统一比较会丢掉哪些重要差异
 
 - Apple给训练mixture percentages，Hunyuan给pairs与stage tokens，不能用同一列直接排名；
 - Mistral给tokenizer compression但不给model language mix；
@@ -135,7 +135,7 @@ source image/url/license
   -> sampled sequence + image embeddings
 ```
 
-Apple的>10B crawl pairs、>5B captions、175M interleaved docs/>550M images、>6B vision pairs可能重叠，必须靠lineage而非加法核算。
+Apple 的 >10B crawl pairs、>5B captions、175M interleaved docs/>550M images、>6B vision pairs 可能重叠，必须根据 lineage 判断重叠关系，不能直接相加。
 
 对$W\times H$图像和patch $P$：
 
@@ -190,7 +190,7 @@ seen-script vs unseen/code-switched
 
 同时报告micro与macro。翻译eval需标machine translation、native refinement与translationese；image eval按source image group去污染。
 
-## 表面冲突与区分性检查
+## 看似矛盾的说法怎样区分
 
 ### 更低fertility=更好语言能力
 
@@ -220,7 +220,7 @@ seen-script vs unseen/code-switched
 - 不把WebLI等研究dataset自动映射到生产模型；
 - 不把公开可访问当许可充分。
 
-## 最小manifest
+## 最少需要保存哪些 manifest 信息
 
 ```yaml
 source_group: ...
@@ -237,7 +237,7 @@ dedup_cluster: ...
 eval_overlap: ...
 ```
 
-## 掌握标准与自测
+## 读完后应该能回答的问题
 
 读者应能：
 
@@ -250,11 +250,11 @@ eval_overlap: ...
 
 推理题：同一100M images各有2个alt-text和3个synthetic captions，训练每个pair平均采样1.5次。分别给出unique images、pair records和sampled pair exposures；还缺什么才能算model/loss tokens？
 
-## 来源与阅读路径
+## 来源与建议阅读位置
 
 1. [Apple AFM](/topics/pretraining-data/apple-foundation-models-data-practices/)：读tokenizer、multilingual curriculum、image lineage与multimodal mix。
 2. [Google Gemini/Gemma](/topics/pretraining-data/google-gemini-gemma-data-practices/)与[Meta Llama](/topics/pretraining-data/meta-llama-data-practices/)：比较closed taxonomy、open-weight token ladder和multimodal口径。
-3. [ByteDance Seed](/topics/pretraining-data/bytedance-seed-doubao-data-practices/)、[Tencent Hunyuan](/topics/pretraining-data/tencent-hunyuan-hy-data-practices/)、[Xiaomi MiMo](/topics/pretraining-data/mimo-data-practices/)：读stage/pair/token/task核算。
+3. [ByteDance Seed](/topics/pretraining-data/bytedance-seed-doubao-data-practices/)、[Tencent Hunyuan](/topics/pretraining-data/tencent-hunyuan-hy-data-practices/)、[Xiaomi MiMo](/topics/pretraining-data/mimo-data-practices/)：读 stage、pair、token 和 task 的分列统计方法。
 4. [Mistral](/topics/pretraining-data/mistral-ai-data-practices/)：用Tekken和Pixtral学习“tokenizer/sequence evidence不等于model mixture”。
 5. [OLMo/Dolma](/topics/pretraining-data/ai2-olmo-dolma-data-practices/)与[OpenELM](/topics/pretraining-data/apple-foundation-models-data-practices/)：开放text控制。
 6. [Data metrics](/topics/pretraining-data/data-metrics/)：统一分母、coverage和失败模式。

@@ -5,32 +5,32 @@ topic: "pretraining-data"
 section: "open-controls"
 slug: "ai2-olmo-dolma-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 90
 readtime: 23
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/open-controls/ai2-olmo-dolma.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/open-controls/ai2-olmo-dolma.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:63334b20c7c72a077dc045ac1fdbebfcfc193d0ddb7a4994a9597b7fdae81233"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/open-controls/ai2-olmo-dolma.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:3de9aace2755c9176e0eec79763cf3ac8d1fe3f443adcde233e60fcb809d39e0"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`implementation-trace`
-> 研究锚点：Dolma v1.6、OLMo 1、OLMo 2 1B/7B/13B 的两阶段训练资产。
+<!-- maintenance: reasoning-path=`implementation-trace` -->
+> 主要模型/资料：Dolma v1.6、OLMo 1、OLMo 2 1B/7B/13B 的两阶段训练资产。
 
-## 定位与 motivating problem
+## 这篇案例要回答什么
 
-OLMo/Dolma 在本项目中的角色不是“最佳数据配方”，而是开放控制组：当语料、处理工具、配置、随机种子、训练日志和中间 checkpoint 都能访问时，数据研究能从“厂商说做了什么”推进到“哪个输入通过哪个版本的实现影响了哪个训练阶段”。
+OLMo/Dolma 在本项目中的角色不是“最佳 data recipe”，而是开放控制组：当语料、处理工具、配置、随机种子、训练日志和中间 checkpoint 都能访问时，数据研究能从“厂商说做了什么”推进到“哪个输入通过哪个版本的实现影响了哪个训练阶段”。
 
 需要避免另一种误区：开放不等于无偏、无版权风险或跨规模有效。Dolma 的英文主导、source 可再分发性和 1B proxy ablation 本身构成明确边界。
 
-## 代际与阶段表
+## 各代模型和 training stage
 
 | 模型/资产 | 阶段 | 官方披露 | 数据量语义 | 披露等级 |
 |---|---|---|---|---|
@@ -44,7 +44,7 @@ OLMo/Dolma 在本项目中的角色不是“最佳数据配方”，而是开放
 
 `三模型权重平均 --analogy-to--> 单模型连续训练 150B` 只能作为直觉类比，不是 exact identity。
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 项 | 本笔记的处理 |
 |---|---|
@@ -54,9 +54,9 @@ OLMo/Dolma 在本项目中的角色不是“最佳数据配方”，而是开放
 | 阶段 | OLMo 2 的 base `P0` 与 high-quality finishing `P2` 分行 |
 | 分布 | Dolma corpus 构成不等于 OLMo sampler 的实际 exposure；精确 exposure 需结合 mix/config/order |
 | 版本 | Dolma 论文为 v1.6 manuscript；数据卡另有 v1.5/v1.7；不能混写 |
-| 省略效应 | OLMo 2 `P2` 同时涉及 data order、学习率/训练设置与权重平均，不能把最终差异只归因于高质量数据 |
+| 省略效应 | OLMo 2 `P2` 同时涉及 data order、learning rate/训练设置与权重平均，不能把最终差异只归因于高质量数据 |
 
-## 数据字段表
+## 厂商公开了哪些 data fields
 
 | 字段 | 已核验事实 | 边界/未知 | 置信 |
 |---|---|---|---|
@@ -120,7 +120,7 @@ OLMo 1 发布 500+ 中间 checkpoint（约每 1,000 steps）、完整训练 metr
 
 缺少任一主键都可能把不同 data order、阶段或代码版本的指标错接。
 
-## 表面冲突与区分性检查
+## 看似矛盾的说法怎样区分
 
 ### “Dolma 是 3T”与“OLMo 用 2T/2.46T/2.05T”
 
@@ -134,14 +134,14 @@ OLMo 1 发布 500+ 中间 checkpoint（约每 1,000 steps）、完整训练 metr
 - 区分性检查：追踪最终 checkpoint 是连续训练还是 ingredient 权重平均。
 - 结论：最终 souped model 的每个 ingredient 各看过 50B；不能称最终模型连续看过 150B。`verified`。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - `[未知 | open]` OLMo 2 各版本的精确 non-padding `loss_tokens`，需要配置级 accounting。
 - `[未知 | open]` 本轮尚未逐文件复核 `OLMo-mix-1124` 与 `Dolmino-mix-1124` 每个 source 的 tokenizer-token exposure。
 - `[未知 | open]` 不同 seed/order 与 weight soup 的独立效应；需要 ingredient-level paired evaluation。
 - `[未知 | open]` Dolma/OLMo 的数据选择结论对更大模型、多语言和多模态的迁移程度。
 
-## 可迁移经验与不可外推
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -156,7 +156,7 @@ OLMo 1 发布 500+ 中间 checkpoint（约每 1,000 steps）、完整训练 metr
 - OLMo 的开放程度不等价于训练数据没有偏差、污染、隐私或时效问题。
 - OLMo 2 finishing 的提升不能只归因于“高质量数据”，除非控制 LR、order、checkpoint averaging 和 eval。
 
-## 掌握标准与推理型自测
+## 读完后应该能回答的问题
 
 掌握本案例后应能：
 
@@ -167,7 +167,7 @@ OLMo 1 发布 500+ 中间 checkpoint（约每 1,000 steps）、完整训练 metr
 
 自测：如果两个 OLMo 2 7B ingredient 在 50B finishing 后分域 loss 不同，你至少还需要检查哪些配置、数据顺序统计和 checkpoint 指标，才能把差异归因于 order 而不是运行漂移？
 
-## 一手来源
+## 来源与建议阅读位置
 
 - [Dolma paper, arXiv:2402.00159v2](https://arxiv.org/abs/2402.00159)：为什么读：给出 v1.6 的 source 规模、设计目标、pipeline、ablation 和限制；重点读表 1、§3–§9、Limitations 与 datasheet。
 - [Dolma official dataset card](https://huggingface.co/datasets/allenai/dolma)：为什么读：固定 v1.5/v1.6/v1.7 的发布关系、下载入口与 ODC-BY/原 source 条款；重点读 Versions 与 Licensing Information。

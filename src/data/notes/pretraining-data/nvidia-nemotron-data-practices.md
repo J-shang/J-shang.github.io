@@ -5,27 +5,27 @@ topic: "pretraining-data"
 section: "international-cases"
 slug: "nvidia-nemotron-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 127
 readtime: 29
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/international/nvidia-nemotron.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/international/nvidia-nemotron.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:63dbdc5cf2f39e215bd01d5d98b96f4bbf8a0535cb9963a2bedce6b6a90ec97e"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/international/nvidia-nemotron.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:a8f693c2bb852b55b0bb54e2f8a0ebd8758253fc9b85f7f6ad7ce28a52b7f677"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`implementation-trace`
-> 辅助视角：`method-family/historical trace`，用于 Nemotron-4 → Nemotron 3 Super/Ultra
-> 研究锚点：Nemotron-CC、Nemotron Pre-Training Dataset v2/v2.1、Nemotron-4 340B、Nemotron 3 Super/Ultra
+<!-- maintenance: reasoning-path=`implementation-trace` -->
+<!-- maintenance: secondary-view=`method-family/historical trace`，用于 Nemotron-4 → Nemotron 3 Super/Ultra -->
+> 主要模型/资料：Nemotron-CC、Nemotron Pre-Training Dataset v2/v2.1、Nemotron-4 340B、Nemotron 3 Super/Ultra
 
-## 定位
+## 这篇案例研究什么
 
 NVIDIA 的数据实践可沿一条较完整链路研究：
 
@@ -41,7 +41,7 @@ Common Crawl WARC
 
 它的重要性不只在 token 多：Nemotron-CC公开了从raw crawl到质量桶和synthetic derivative的provenance；Nemotron 3报告又给出phase mixture、long-context exposure与post-training factories。不过最新model cards同时列出private third-party/NVIDIA data，因此“open training data”仍不等于完整production corpus全量可下载。
 
-## Motivating problem：被 filter 丢弃的网页只能删除吗
+## 核心问题：被 filter 丢弃的网页只能删除吗
 
 传统pipeline通常在quality threshold处二选一：保留噪声或丢掉coverage。Nemotron-CC尝试第三条路径：
 
@@ -53,7 +53,7 @@ low-quality original -> Wikipedia-style rewrite to reduce noise
 
 这增加的是derived surface/token exposure，不增加独立source evidence。source document、prompt、teacher、output与filter必须形成lineage，否则重写后的2T看起来会像2T新知识。
 
-## 代际与训练阶段表
+## 各代模型和 training stage
 
 | 模型/数据 | 阶段 | 已披露数据与规模 | context/recipe | 披露 | 状态 |
 |---|---|---|---|---|---|
@@ -70,7 +70,7 @@ low-quality original -> Wikipedia-style rewrite to reduce noise
 | Nemotron 3 Ultra | `A1` | Stage1 204,800 packed samples@294,912；Stage2 19,200@515K；多类agent/safety data | two-stage SFT、MTP auxiliary loss | `D3` | nominal positions/tasks `verified`；loss masks/overall mix partial |
 | Nemotron 3 Ultra | `A2/A3` | multi-environment RLVR + >10 specialized teachers MOPD；1024 prompts/batch、1 rollout、max192K | token-level distillation/masking | `D3` | framework/selected data `verified`；total rollout/loss `open` |
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 维度 | 本篇约束 |
 |---|---|
@@ -84,7 +84,7 @@ low-quality original -> Wikipedia-style rewrite to reduce noise
 | cutoff | Ultra pretraining 2025-09、post-training 2026-05；早期Nemotron-CC以snapshot id记录 |
 | 省略效应 | phase mixture、LR anneal、precision、architecture、checkpoint merge与data同时变化 |
 
-## 统一数据字段
+## 厂商公开了哪些 data fields
 
 | 字段 | Nemotron-CC/data releases | Nemotron-4 / Nemotron 3 models |
 |---|---|---|
@@ -267,7 +267,7 @@ Ultra发布base/post/quantized weights、many datasets、Megatron/NeMo recipes�
 
 开放复现还需将每个private slice的token share、data contract、validation影响和是否可替代写入manifest。
 
-## Validation、污染与区分性检查
+## 如何验证这些结论，并检查 contamination
 
 | 问题 | 首个可能差异 | 区分性检查 |
 |---|---|---|
@@ -280,14 +280,14 @@ Ultra发布base/post/quantized weights、many datasets、Megatron/NeMo recipes�
 | benchmark-seeded synthetic是否污染 | test exact match vs train-format transfer | held-out source family、semantic/procedural overlap、time-split benchmark |
 | open recipe能否重建Ultra | private slice与released slice差异 | full manifest token closure、private replacement ablation、checkpoint hash/log |
 
-## 可迁移经验与不可外推部分
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
 - `[综合判断 | supported]` quality classifier应通过downstream proxy校准，但quality label必须携带proxy model、horizon、task mix与版本。
 - `[综合判断 | supported]` synthetic rewrite的统计单位是source-derived tokens，应保存source→teacher→prompt→output lineage。
-- `[综合判断 | supported]` dataset token、unique real、sampled exposure、nominal positions与loss tokens需要五列核算。
-- `[综合判断 | supported]` long-context recipe必须同时报告data-category mix与sequence-length schedule；两者不是同一分布。
+- `[综合判断 | supported]` dataset tokens、unique real tokens、sampled exposure、nominal positions 与 loss tokens 需要分成五列统计。
+- `[综合判断 | supported]` long-context recipe必须同时报告data-category mix与 seqlen schedule；两者不是同一分布。
 - `[综合判断 | supported]` dataset license需要provenance graph，尤其当多teacher license可能传递义务。
 - `[综合判断 | supported]` 开放程度应逐artifact评估；大量open assets与少量private slices可以同时存在。
 
@@ -299,17 +299,17 @@ Ultra发布base/post/quantized weights、many datasets、Megatron/NeMo recipes�
 - `[未知 | open]` Ultra private third-party/NVIDIA data的token share与可替代性；
 - `[待验证假设 | plausible]` 50B/8B质量桶排序对550B-A55B、20T horizon仍保持单调。
 
-## 掌握标准
+## 读完后应该掌握什么
 
 读完后应能：
 
 1. 复原Nemotron-CC的4.4T real +1.9T synthetic，并解释synthetic为何不是新source；
 2. 说明20 quality buckets怎样经50B anneal变成5 levels；
 3. 区分Nemotron-CC v1、v2 broader bundle与v2.1 additive refresh；
-4. 核算Ultra的20T+33B和约70.29B SFT nominal positions；
+4. 分别计算 Ultra 的 20T+33B 和约 70.29B SFT nominal positions，并说明它们为何不能直接相加；
 5. 解释Nemotron 3为何接近D4但不能无条件称完整production data可复现。
 
-## 推理型自测
+## 用这些问题检查自己
 
 1. 一个rewrite保持topic但修改关键数字，应在哪些自动/人工指标上被拒绝？
 2. 质量桶在MMLU上排序稳定、在低资源语言上反转，如何重做label taxonomy？
@@ -350,14 +350,14 @@ Ultra发布base/post/quantized weights、many datasets、Megatron/NeMo recipes�
     - 为什么读：复核Ultra benchmark container/config与可重放evaluation边界。
     - 建议位置：Nemotron examples、task configs、container versions。
 
-## 与主线的关系
+## 这篇案例与主线知识的关系
 
 ```text
 WARC snapshot --processed-by--> extraction/filter/dedup version
 quality classifier score --calibrated-by--> 50B downstream probe
 source document --parent-of--> synthetic rewrite/QA/distill
 dataset unique tokens --sampled-into--> model phase exposure
-sequence-length schedule --orthogonal-to--> data-category mixture
+seqlen schedule --orthogonal-to--> data-category mixture
 released assets --partially-reconstruct--> production training run
 teacher/source licenses --propagate-through--> synthetic data provenance graph
 ```

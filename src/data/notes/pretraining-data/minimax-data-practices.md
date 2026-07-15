@@ -5,28 +5,28 @@ topic: "pretraining-data"
 section: "china-cases"
 slug: "minimax-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 103
 readtime: 37
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/china/minimax.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/china/minimax.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:c28afe5c6337b6bf359ebf9de2142b384ec829e2348ac1b5e2d7823acb3adbda"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/china/minimax.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:76123360107a1de4009870bd5ab784a1857746bd466ff860adb76fa0c6f2cc17"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 研究锚点：MiniMax-Text-01、MiniMax-VL-01、MiniMax-M1、MiniMax-M2/M2.5/M2.7、MiniMax-M3。
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+> 主要模型/资料：MiniMax-Text-01、MiniMax-VL-01、MiniMax-M1、MiniMax-M2/M2.5/M2.7、MiniMax-M3。
 
-## 定位与 motivating problem
+## 这篇案例要回答什么
 
-MiniMax-01 的报告公开了少见的 data-experiment protocol：用 1B activated / 8B total 的 MoE、40B tokens、sample-level metric distribution、seed variance、minimal detectable effect（MDE）和 power analysis 筛数据配方。它还给出 quality reward labeler、nested document format、重复次数实验、358B 长上下文 curriculum，以及 512B multimodal training 的逐阶段 token 数。M1/M2 又把数据问题推进到 natural QA、可验证 reasoning、GitHub environment、agent trajectories、artifact-aligned reward 与 online reward-bias monitoring。
+MiniMax-01 的报告公开了少见的 data-experiment protocol：用 1B activated / 8B total 的 MoE、40B tokens、sample-level metric distribution、seed variance、minimal detectable effect（MDE）和 power analysis 筛 data recipe。它还给出 quality reward labeler、nested document format、重复次数实验、358B 长上下文 curriculum，以及 512B multimodal training 的逐阶段 token 数。M1/M2 又把数据问题推进到 natural QA、可验证 reasoning、GitHub environment、agent trajectories、artifact-aligned reward 与 online reward-bias monitoring。
 
 因此本案例围绕四个问题：
 
@@ -37,7 +37,7 @@ MiniMax-01 的报告公开了少见的 data-experiment protocol：用 1B activat
 
 MiniMax-M3 截至核查日只公开 native multimodal from first step、1M context 与 sparse-attention 研究锚点，没有与 MiniMax-01/M2 同等的 corpus report；本笔记只记 `D1/D3`，不从模型能力反推配方。
 
-## 代际与阶段表
+## 各代模型和 training stage
 
 | 模型 | 阶段 | 已披露规模 | 数据 / context 机制 | 披露 |
 |---|---|---:|---|---|
@@ -77,7 +77,7 @@ $$
 
 二者是不同阶段，且均不等于 unique corpus 或 loss tokens。
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 项 | 本笔记的处理 |
 |---|---|
@@ -91,7 +91,7 @@ $$
 | lineage | M1 明确 continued from Text-01；M2/M3 是否继承具体 Text-01 data/checkpoint 未按默认假设填充 |
 | 省略效应 | architecture、MoE routing、attention、optimizer、precision、data 与 alignment 同时变化 |
 
-## 统一数据字段表
+## 厂商公开了哪些 data fields
 
 | 字段 | Text-01 / VL-01 | M1 | M2 / M3 | 置信 |
 |---|---|---|---|---|
@@ -302,7 +302,7 @@ M3 model card称 text/image/video 从first step混合训练，约428B total/23B 
 
 MSA论文用109B MoE、3T-token native multimodal proxy比较GQA与MSA，并报告下游近似持平。这个3T是architecture research model的budget，不是M3的training token count。M3只能作为“Text-01先text后VL adaptation”到“native mixed-modality”的方法变化记录，不能量化数据变化。
 
-## Validation、ablation 与区分性检查
+## 如何验证这些结论，并检查 contamination
 
 ### 有辨识力的公开锚点
 
@@ -330,7 +330,7 @@ MSA论文用109B MoE、3T-token native multimodal proxy比较GQA与MSA，并报�
 
 仍缺 pretraining validation corpus的source、time cutoff、split/dedup unit、freeze date、每域tokens、micro/macro loss、decision thresholds、checkpoint rule；data-experiment benchmark contamination与multiple comparisons也未完全披露。公开weight/eval code不能替代training-data manifest。
 
-## 表面冲突与边界
+## 看似矛盾的说法怎样区分
 
 ### 11.4T 与完整 Text-01 exposure
 
@@ -356,7 +356,7 @@ M1观察的是long-output RL中的重复/同质pattern和stability；Text-01观�
 
 M2的19.9T+9.3T不应回填给M3。M3是不同architecture/native multimodal model，官方没有声明完整inheritance。
 
-## 可迁移与不可外推
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -375,7 +375,7 @@ M2的19.9T+9.3T不应回填给M3。M3是不同architecture/native multimodal mod
 - `[未知 | open]` M2代际benchmark提升不能仅归因于新增data pipeline；Forge、checkpoint、scaffold与eval时间也变化。
 - `[未知 | open]` M3的3T proxy architecture experiment不是M3训练规模。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - 完整source manifest、language/domain/modality比例、rights/consent、cutoff；
 - unique/sample/non-padding/loss tokens、tokenizer revisions、packing/loss masks；
@@ -388,7 +388,7 @@ M2的19.9T+9.3T不应回填给M3。M3是不同architecture/native multimodal mod
 - M2 verifier false positive/negative、artifact retention、scheduler-consumed distribution；
 - M3训练tokens、modality mix与M2/VL-01 lineage。
 
-## 掌握标准与推理型自测
+## 读完后应该能回答的问题
 
 完成后应能：
 
@@ -408,7 +408,7 @@ M2的19.9T+9.3T不应回填给M3。M3是不同architecture/native multimodal mod
 - agent task的test suite由同一teacher生成并验证，怎样发现共同盲点？
 - greedy scheduler使short tasks提前消费，应该重排队列、importance weight还是分bucket更新？各自改变了什么estimand？
 
-## 来源与阅读顺序
+## 来源与建议阅读位置
 
 1. [MiniMax-01: Scaling Foundation Models with Lightning Attention](https://arxiv.org/abs/2501.08313)：先读§4.1 data quality/format/mixture与statistical experiment，§4.2的11.4T segments/358B long curriculum，再读§6的VL data/stages。
 2. [MiniMax-01官方仓库](https://github.com/MiniMax-AI/MiniMax-01)：固定Text/VL weights、model cards、MR-NIAH/eval与inference assets；不是corpus release。

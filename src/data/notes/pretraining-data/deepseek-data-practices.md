@@ -5,32 +5,32 @@ topic: "pretraining-data"
 section: "china-cases"
 slug: "deepseek-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 100
 readtime: 34
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/china/deepseek.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/china/deepseek.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:0e76e02a6f104346d827b5328879c8da8601381a0ee8ad01f8c022073de8f036"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/china/deepseek.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:871768aeca6bb8d10b1a615008908d6d95e50090e41226009b1f537226fe5de5"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family/historical trace`
-> 研究锚点：DeepSeek LLM、DeepSeek-V2/V3、DeepSeek-R1、DeepSeek-V3.1/V3.2、DeepSeek-V4 Preview。
+<!-- maintenance: reasoning-path=`method-family/historical trace` -->
+> 主要模型/资料：DeepSeek LLM、DeepSeek-V2/V3、DeepSeek-R1、DeepSeek-V3.1/V3.2、DeepSeek-V4 Preview。
 
-## 定位与 motivating problem
+## 这篇案例要回答什么
 
 DeepSeek 的公开材料适合研究两个常被混写的问题。第一，数据工程从早期的全局去重、过滤、remixing，怎样演化为 math/code/multilingual/long-document/agentic data 的分阶段配方；第二，同一个 base checkpoint 之后的 context extension、continued pretraining、reasoning RL、rejection sampling、distillation 分别使用什么数据单位。
 
 本案例不能被概括成“2T → 8.1T → 14.8T → 33T”。这些数字属于不同模型、tokenizer 和阶段；R1 的 804,745 条监督样本、V3.2 的 85,000 个 agent prompts 和 V4 的 32T/33T pretraining tokens 更不是同一统计量。最有价值的公开信息是这些数字之间的边界，以及少数可检查的 data mechanism 与 ablation。
 
-## 代际与阶段表
+## 各代模型和 training stage
 
 | 代际 | 阶段 | 已披露数据与规模 | 数据机制 / context | 披露 |
 |---|---|---|---|---|
@@ -52,7 +52,7 @@ DeepSeek 的公开材料适合研究两个常被混写的问题。第一，数�
 
 公开权重、报告和部分 inference/eval code 支持 `D3`；但 corpus、manifest、处理代码、训练顺序、完整日志和 source-level rights 未发布，因此数据管线本身不达到 `D4`。
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 项 | 本笔记的处理 |
 |---|---|
@@ -65,7 +65,7 @@ DeepSeek 的公开材料适合研究两个常被混写的问题。第一，数�
 | 近似 | V2 context-extension 的 18.9B 由 `steps × sequences × sequence_length` 计算，只是最大 sequence slots，不等于有效 loss tokens |
 | 省略效应 | 代际提升同时受 MoE/attention、optimizer、precision、compute、tokenizer、data mix 与 post-training 影响 |
 
-## 统一数据字段表
+## 厂商公开了哪些 data fields
 
 | 字段 | LLM / V2 | V3 / R1 / V3.1–3.2 | V4 | 置信 |
 |---|---|---|---|---|
@@ -129,7 +129,7 @@ N_{slots}=1000\times576\times32768
 \approx 18.87\times10^9\text{ token slots}
 $$
 
-变量是 sampled sequence slots；padding、document boundary、mask 与 token dropping 是否进入 loss 未完全说明，因此 `loss_tokens` 仍为 `unknown`。而“训练 32K、评测到 128K”又表明 context capability 与训练 sequence length 不是同义字段。
+变量是 sampled sequence slots；padding、document boundary、mask 与 token dropping 是否进入 loss 未完全说明，因此 `loss_tokens` 仍为 `unknown`。而“训练 32K、评测到 128K”又表明 context capability 与训练 seqlen 不是同义字段。
 
 ### V3、V3.1、V3.2 不能简单相加成一个 corpus size
 
@@ -260,7 +260,7 @@ base model
 - `[未知 | open]` V4 的 “refined data quality” 与 architecture/Muon/scale 对提升的独立贡献。
 - `[未知 | open]` R1/V3.2 的 rollout 总量、失败轨迹保留策略、reward false positive 与 benchmark leakage audit。
 
-## 表面冲突与区分性检查
+## 看似矛盾的说法怎样区分
 
 ### V3 14.8T、V3.1 +840B、V3.2 945.8B 是不是 16.586T？
 
@@ -288,7 +288,7 @@ base model
 - 区分性检查：固定 raw pool 与 validation，仅替换可复现的 filter/remix，并多 seed 重拟合。
 - 处理：保留为 `empirical association | supported`，不把 $a$ 当通用质量分数。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - `[未知 | open]` 各代完整 source list、source-level rights、raw/processed document 数、data cutoff 与 manifest。
 - `[未知 | open]` 2T/8.1T/14.8T/32T/33T 分别对应 unique、sampled、non-padding/loss tokens 的精确 contract。
@@ -299,7 +299,7 @@ base model
 - `[未知 | open]` R1、V3.2、V4 的 prompt source、rollout tokens、rejected trajectories、reward error 与 verifier audit。
 - `[未知 | open]` V4 1M-context pretraining 的长度直方图、真实/拼接比例与每长度 validation sample count。
 
-## 可迁移经验与不可外推
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 ### 可迁移
 
@@ -319,7 +319,7 @@ base model
 - V3.2 合成任务可自动验证，不证明它们无 source/right 问题、无 reward hacking 或代表真实用户分布。
 - V4 的 1M context 与 32T/33T 不能证明 1M 长文档有高占比，也不能从 benchmark 反推 agentic mid-training mixture。
 
-## 掌握标准与推理型自测
+## 读完后应该能回答的问题
 
 掌握本案例后应能：
 
@@ -331,7 +331,7 @@ base model
 
 自测：如果一个新 filter 使 91-dump removal rate 从 89.8% 升到 94%，同时 1B proxy 的 validation loss 下降，你还需要哪些 per-domain retention、contamination、memorization、target-scale 与多 seed 检查，才能决定是否用于 33T run？
 
-## 一手来源
+## 来源与建议阅读位置
 
 - [DeepSeek LLM: Scaling Open-Source Language Models with Longtermism, arXiv:2401.02954v1](https://arxiv.org/abs/2401.02954)：为什么读：这是 global dedup、filter/remix、100M-token validation 和 data-dependent scaling 的主要来源；重点读 §2.1、§3.2–3.3、§4–5.3。
 - [DeepSeek-V2 technical report, arXiv:2405.04434](https://arxiv.org/abs/2405.04434)：为什么读：固定 8.1T、中英 token 相对量、恢复误删、contentious-content filtering 与 4K→128K 阶段；重点读 §3.1 与 Appendix E。

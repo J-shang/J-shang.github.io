@@ -5,27 +5,27 @@ topic: "pretraining-data"
 section: "international-cases"
 slug: "mistral-ai-data-practices"
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-15
 cutoff: 2026-07-14
 order: 128
 readtime: 25
 source:
   repository: "J-shang/pt-data-learning"
   path: "industry-data-practices/international/mistral-ai.md"
-  url: "https://github.com/J-shang/pt-data-learning/blob/dc18f7fad9acbef375773418a5e05cc614f7a2d4/industry-data-practices/international/mistral-ai.md"
-  revision: "dc18f7fad9acbef375773418a5e05cc614f7a2d4"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:55071a178e7c923c36ca6371acf40f325b33c333cee0abddbb3093e80048c271"
+  url: "https://github.com/J-shang/pt-data-learning/blob/67a4f4c4f8a4c5793a56d3050c61a7ca54971678/industry-data-practices/international/mistral-ai.md"
+  revision: "67a4f4c4f8a4c5793a56d3050c61a7ca54971678"
+  syncedAt: "2026-07-15"
+  contentHash: "sha256:53e7dd8aaa94e10704369a4cf5f9a4555d00af3fa09692fbad25e7820ef08253"
   manifest: "pretraining-data"
   managed: true
 ---
 > 状态：`draft`
 > 核查截止：**2026-07-14**
-> 主要 reasoning path：`method-family trace`
-> 辅助视角：`implementation-trace`，用于 tokenizer、context 与后训练阶段
-> 研究锚点：Mistral 7B、Mixtral 8x7B、Mistral NeMo、Pixtral 12B、Mistral Large 2/3、Mistral Small/Ministral、Forge
+<!-- maintenance: reasoning-path=`method-family trace` -->
+<!-- maintenance: secondary-view=`implementation-trace`，用于 tokenizer、context 与后训练阶段 -->
+> 主要模型/资料：Mistral 7B、Mixtral 8x7B、Mistral NeMo、Pixtral 12B、Mistral Large 2/3、Mistral Small/Ministral、Forge
 
-## 定位
+## 这篇案例研究什么
 
 Mistral 是研究“开放模型不等于开放训练数据”的清晰反例。组织发布了多代 base/instruct 权重、架构报告和推理代码；但截至 2026-07-14，帮助中心明确表示不披露训练数据集，也将训练逻辑和生产资源列为 proprietary assets。
 
@@ -44,7 +44,7 @@ product data-use eligibility
 
 这条边界本身就是可复用结论：权重可下载提高了行为与实现可检查性，但无法补回 source、rights、cutoff、dedup、sample order 和 validation split。
 
-## Motivating problem：能运行权重，能否审计训练数据
+## 核心问题：能运行权重，能否审计训练数据
 
 最小例子是 Mistral 7B 与 Mixtral 8x7B。两者都有 Apache 2.0 权重和技术论文；Mixtral 论文还说明用 multilingual data 预训练、32K context，并给出 SFT→DPO 的后训练顺序。但论文没有给 P0 source manifest、token 总量、语言比例、cutoff、过滤或去污染合同。
 
@@ -58,7 +58,7 @@ $$
 
 前者允许固定 checkpoint 做 inference、finetuning 和部分 mechanistic checks；后者要求至少能追踪 source snapshot、处理版本、mixture、sampled exposure 和 benchmark overlap。
 
-## 代际与训练阶段表
+## 各代模型和 training stage
 
 | 模型/代际 | 阶段 | 数据披露 | context / post-training | 权重/许可 | 状态 |
 |---|---|---|---|---|---|
@@ -71,10 +71,10 @@ $$
 | Mistral Large 2 | `P0/A1` | “very large proportion of code”“large proportion of multilingual data”，无分母/比例/token | 123B、128K；80+ code languages、dozens natural languages | instruct weights，Mistral Research License | qualitative mix `verified`；accounting `open` |
 | Mistral Small 3.1 | `P0/A1/A3` | 无corpus/token/phase披露 | 24B级、128K、多语言/视觉/function calling | base/instruct Apache 2.0 | assets/capability `verified`；data `open` |
 | Mistral Large 3 v25.12 | `P0/A1/A3` | 无公开source/token/mixture/cutoff | 675B total/41B active MoE、multimodal、256K | base/instruct open weights，Apache 2.0 | architecture/assets `verified`；data `open` |
-| Ministral 3 v25.12 | `P0/A1/A2/A3` | 3B/8B/14B Base/Instruct/Reasoning；未披露语料账本 | 视觉、edge family；context依固定card | open weights | variants `verified`；stage data `open` |
+| Ministral 3 v25.12 | `P0/A1/A2/A3` | 3B/8B/14B Base/Instruct/Reasoning；未披露可追踪的语料统计 | 视觉、edge family；context依固定card | open weights | variants `verified`；stage data `open` |
 | Forge | customer lifecycle | internal docs、code、structured data、operational records | pretraining/post-training/RL、synthetic generation、eval monitoring | 企业产品，非base corpus release | control-plane claims `verified`；每个客户实现 `open` |
 
-## Assumption ledger
+## 阅读这些结论前先确认的前提
 
 | 维度 | 本篇约束 |
 |---|---|
@@ -82,13 +82,13 @@ $$
 | 统计单位 | context length、tokenizer compression、parameter count和training tokens分开；Mistral多数代际training tokens未知 |
 | “multilingual” | 表示官方声明或benchmark覆盖；除非给token分母，不转换成language mixture |
 | “code proportion” | Large 2的“very large proportion”无数值分母，记作qualitative，不估算 |
-| long context | 8K/32K/128K/256K是能力/配置，不证明多少长序列进入P0/P3 |
-| multimodal | interleaved image-text说明objective/sequence形态，不说明图像独立数、pair数或loss positions |
-| post-training | Mistral 7B、Mixtral有局部阶段说明；NeMo/Small/Large的“alignment”不自动映射为同一数据配方 |
+| long context | 8K/32K/128K/256K是能力/配置，不证明多少长 sequence 进入P0/P3 |
+| multimodal | interleaved image-text说明objective/sequence 形态，不说明图像独立数、pair数或loss positions |
+| post-training | Mistral 7B、Mixtral有局部阶段说明；NeMo/Small/Large的“alignment”不自动映射为同一 data recipe |
 | product policy | 2026-06-05用户数据政策是当日按产品/plan的eligibility；不能证明历史checkpoint实际包含哪些会话 |
 | 省略效应 | architecture、tokenizer、context、quantization awareness、compute与data同时变化，跨代benchmark不能作data ablation |
 
-## 统一数据字段
+## 厂商公开了哪些 data fields
 
 | 字段 | 已知 | 未知/边界 |
 |---|---|---|
@@ -109,7 +109,7 @@ $$
 
 `[来源事实 | verified]` Instruct部分只说明模型在Hugging Face repository公开的instruction datasets上fine-tune，未使用proprietary data或training tricks。它没有列出dataset revision、样本数、packing、顺序或拒绝规则。
 
-因此可审计账本最多写成：
+因此目前最多只能整理出下面这组可审计字段：
 
 ```text
 Mistral-7B-v0.1 base
@@ -163,7 +163,7 @@ $$
 
 ## Pixtral：interleaved objective 是可检查 operational anchor
 
-Pixtral 12B由从头训练的400M vision encoder和基于NeMo的12B decoder组成。图像按16×16 patches转为tokens，行间加入`[IMG BREAK]`、末尾加入`[IMG END]`；decoder在interleaved image-text序列上预测下一个text token。
+Pixtral 12B由从头训练的400M vision encoder和基于NeMo的12B decoder组成。图像按16×16 patches转为tokens，行间加入`[IMG BREAK]`、末尾加入`[IMG END]`；decoder在interleaved image-textsequence 上预测下一个text token。
 
 对宽高为 $W,H$ 的图像，若不考虑缩放/边界padding，patch token的近似数量为：
 
@@ -176,9 +176,9 @@ $$
 
 这解释“native resolution会消耗不同数量tokens”，但不回答训练集中有多少图像、document screenshots、OCR pairs或纯文本replay。
 
-`[未知 | open]` 需要图像独立数、pair/sequence数、模态sampling weight、caption/OCR provenance、图像dedup、text-image leakage和按模态loss mask，才能与其他多模态模型比较。
+`[未知 | open]` 需要图像独立数、pair/sequence 数、模态sampling weight、caption/OCR provenance、图像dedup、text-image leakage和按模态loss mask，才能与其他多模态模型比较。
 
-## Large/Small/Ministral：能力标签逐渐丰富，数据账本仍未闭合
+## Large/Small/Ministral：能力标签逐渐丰富，训练数据字段仍不完整
 
 ### Large 2 的定性 mixture
 
@@ -269,8 +269,8 @@ eval dataset + exact revision
 ### 表面冲突 2：128K/256K context vs long-context training data
 
 - capability claim：模型能接受长输入。
-- data claim：训练时长序列的token比例、长度分布和P3 recipe。
-- 区分检查：需要sequence-length histogram、long/source mixture、positions进入loss的比例及context-extension ablation。
+- data claim：训练时长 sequence 的token比例、长度分布和P3 recipe。
+- 区分检查：需要 seqlen histogram、long/source mixture、positions进入loss的比例及context-extension ablation。
 - 结论：前者不能推出后者，后者保持`open`。
 
 ### 表面冲突 3：multilingual capability vs multilingual mixture
@@ -280,18 +280,18 @@ eval dataset + exact revision
 - 区分检查：固定bytes corpus报告tokenization fertility，再给training language histogram和per-language held-out loss。
 - 结论：现有证据支持capability，不支持定量mixture。
 
-## 明确未知项
+## 目前仍不知道什么
 
 - 各代P0 raw/processed/unique/sample/loss token；
 - source manifest、snapshot、licensed/partnership/user/synthetic比例与rights；
 - knowledge/data cutoff及删除请求如何传播到后续dataset版本；
 - parser、quality filter、language ID、dedup与benchmark decontamination；
-- P0→P2/P3阶段切换、长序列长度分布、replay与sample order；
+- P0→P2/P3阶段切换、长 seqlen 分布、replay与sample order；
 - 除局部论文外的SFT、preference、RL、reasoning和agent trajectory规模；
 - multimodal image/audio/document来源、独立数、pair数、dedup和模态loss accounting；
 - production train/validation split、per-domain loss、ablation和训练日志。
 
-## 可迁移经验与不可外推
+## 哪些经验可以借鉴，哪些不能直接照搬
 
 可迁移：
 
@@ -310,7 +310,7 @@ eval dataset + exact revision
 - 不把2026用户政策外推到历史checkpoint或所有产品；
 - 不把Forge能力当Mistral base-model pipeline事实。
 
-## 与主线关系
+## 这篇案例与主线知识的关系
 
 ```text
 artifact taxonomy --prerequisite-for--> disclosure scoring
@@ -321,7 +321,7 @@ manifest + overlap audit --prerequisite-for--> contamination-aware validation
 Mistral case --counterexample-to--> open weights imply open data
 ```
 
-## 掌握标准
+## 读完后应该掌握什么
 
 读者应能：
 
@@ -333,12 +333,12 @@ Mistral case --counterexample-to--> open weights imply open data
 6. 用eligibility/selection/membership三层解释用户数据政策；
 7. 设计能区分context capability与long exposure的检查。
 
-## 推理型自测
+## 用这些问题检查自己
 
 1. 两个模型都训练“1T tokens”，其中一个tokenizer对中文压缩率高30%。需要哪些额外量才能比较中文文本exposure？
 2. 论文用The Pile画expert routing图，为什么不能把The Pile填进训练source列？
 3. Large 2支持80+代码语言，能否推出code占P0的80%以上？第一个缺失分母是什么？
-4. Pixtral支持128K和多图输入，如何验证训练时真的见过多图长序列而非主要靠泛化？
+4. Pixtral支持128K和多图输入，如何验证训练时真的见过多图长 sequence 而非主要靠泛化？
 5. Vibe Free会话默认eligible，为什么仍不能断言某条会话进入Large 3？
 6. 若未来发布“15T training tokens”，至少要问哪四个accounting问题，才能与其他厂商比较？
 
