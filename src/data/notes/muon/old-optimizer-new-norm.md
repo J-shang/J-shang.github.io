@@ -6,22 +6,22 @@ section: "papers"
 slug: "old-optimizer-new-norm"
 legacyPaths: ["/notes/old-optimizer-new-norm/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 65
 source:
   repository: "J-shang/Muon"
   path: "论文精读/04-Old-Optimizer-New-Norm.md"
-  url: "https://github.com/J-shang/Muon/blob/ae2b5f9e6ee06b411aef2220e361c75988a7d753/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/04-Old-Optimizer-New-Norm.md"
-  revision: "ae2b5f9e6ee06b411aef2220e361c75988a7d753"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:ca44d6cb7182fd9717eeec6345969a8035a7af558090e52a6e9c8c2b478b3542"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/04-Old-Optimizer-New-Norm.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:5337cdbb428d6b0244bbeb4504c83cf4335e259abf42b8a6a684ce3597fdf5e7"
   manifest: "muon"
   managed: true
 ---
-> source: [arXiv:2409.20325](https://arxiv.org/abs/2409.20325)
-> source class: 理论预印本
-> confidence: 范数最陡下降推导 `verified`；对完整实用 optimizer 的覆盖需逐项检查
+> 原文：[arXiv:2409.20325](https://arxiv.org/abs/2409.20325)，核验版本 v2（2024-12-06）
+> 来源类型：理论预印本
+> 阅读提醒：范数最陡下降推导可复核；它只解释部分更新方向，不等于覆盖完整训练配方。
 
 ## 它解决什么问题
 
@@ -83,9 +83,9 @@ $$
 
 ## 知识关系
 
-- `explains` → exact-polar Muon 的方向。
-- `prerequisite-for` → Modular Duality 与 spectral-constraint 分析。
-- `does-not-imply` → 实际有限步 NS 等于精确 trust-region oracle。
+- **直接解释**：exact-polar Muon 的方向。
+- **后续延伸**：Modular Duality 与 spectral-constraint 分析建立在类似几何语言上。
+- **不能推出**：实际有限步 NS 等于精确 trust-region oracle。
 
 ## 精读后的任务
 
@@ -99,31 +99,31 @@ $$
 
 **掌握标准**：能独立重建约束问题、对偶范数和 polar 最优解，不依赖 optimizer 名称记忆。
 
-## 二次审计：补漏、分歧与原文核查
+## 补充阅读：遗漏、分歧与出处
 
-### A. 还值得学习的点
+### 还值得注意什么
 
 1. **论文的单位不是单个矩阵，而是 layer list**：Story I 用 max-of-max norm 重解释 sign descent；Story II 的 Shampoo 结论是“跨层 max spectral norm”下的 steepest descent。逐层 polar 只是解这个组合问题的一部分。
 2. **Adam 故事明确关掉 EMA**：论文将无 EMA Adam 化为 sign descent；完整 Adam 的一、二阶历史没有被该静态 norm 问题覆盖。
-3. **sharp operator 与固定-radius LMO 要区分**：steepest step 的尺度通常含 dual norm；实践 Muon 常只取 scale-invariant polar/LMO，再用外部 LR/shape factor定尺度。
+3. **sharp operator 与固定-radius LMO 要区分**：steepest step 的尺度通常含 dual norm；实践 Muon 常只取 scale-invariant polar/LMO，再用外部 LR/shape factor 定尺度。
 4. **Appendix A 是数值方法入口**：论文列出 SVD、inverse roots 与 Newton–Schulz 等获得 semi-orthogonal direction 的策略，影响后来 Muon 的实现路线。
 
-### B. 与其他论文或学者观点的冲突检查
+### 与其他论文哪里不同
 
-| 对照观点 | 第一处分歧 | 判断 | 判别检查 |
+| 对照来源或观点 | 分歧从哪里开始 | 如何理解 | 怎样验证 |
 |---|---|---|---|
 | Scion：实践 Muon 省略 sharp operator 中的 $\|g\|_*$，更像 spectral-ball LMO | update 是否乘 dual-norm magnitude | **重要公式差异**；方向相同，尺度不同 | 为 polar direction 加/不加 $\|g\|_*$，比较 scale invariance |
-| 谱约束论文：momentum 与 decoupled decay 不受单步 steepest view自然覆盖 | 静态一步问题 vs 完整动态递推 | **后续扩展，不是直接反驳** | 固定 pointwise direction，加入 momentum/decay 后比较 Lyapunov/constraint |
-| Practical Efficiency 称 Muon second-order | 本文把无累积 Shampoo/Muon方向写成 first-order norm geometry | **taxonomy 冲突** | 先规定“二阶”是否要求 curvature state |
+| 谱约束论文：momentum 与 decoupled decay 不受单步 steepest view 自然覆盖 | 静态一步问题 vs 完整动态递推 | **后续扩展，不是直接反驳** | 固定 pointwise direction，加入 momentum/decay 后比较 Lyapunov/constraint |
+| Practical Efficiency 称 Muon second-order | 本文把无累积 Shampoo/Muon 方向写成 first-order norm geometry | **分类口径冲突** | 先规定“二阶”是否要求 curvature state |
 | SOAP 保留 Shampoo history | 本文为得到 polar 明确关闭 accumulation | **special-case 边界** | accumulator on/off |
 
-### C. 本笔记知识核查表
+### 本文内容从哪里来
 
-| 本笔记学习项 | 原文位置 | 核查结论 |
+| 本文讲到的内容 | 原文位置 | 来源说明 |
 |---|---|---|
-| norm-constrained steepest descent 与 dual norm 的统一语言 | Story I–III | `论文明确` |
-| accumulation-free Shampoo 产生 semi-orthogonal update | Story II, Eqs. 15–16 | `论文明确` |
-| spectral norm ball 的单矩阵最优方向为 $-UV^\top$ | Story II 的 SVD 推导 | `论文明确/可复核` |
-| 本笔记写的单矩阵 trust region | 论文更强地使用跨层 max norm | `正确 special case`；已补充层级边界 |
-| “解释 exact-polar Muon” | 论文版本围绕 Shampoo/duality，不负责完整 Muon recipe | `跨论文综合`，只覆盖方向，不覆盖 momentum/NS/scale/decay |
-| $\ell_2$、$\ell_\infty$、spectral 三个球的练习 | 教学扩展 | `仓库练习`，不是论文实验 |
+| norm-constrained steepest descent 与 dual norm 的统一语言 | Story I–III | 论文明确 |
+| accumulation-free Shampoo 产生 semi-orthogonal update | Story II, Eqs. 15–16 | 论文明确 |
+| spectral norm ball 的单矩阵最优方向为 $-UV^\top$ | Story II 的 SVD 推导 | 论文明确/可复核 |
+| 本笔记写的单矩阵 trust region | 论文更强地使用跨层 max norm | 正确的特殊情形；已补充层级边界 |
+| “解释 exact-polar Muon” | 论文版本围绕 Shampoo/duality，不负责完整 Muon recipe | 跨论文比较，只覆盖方向，不覆盖 momentum/NS/scale/decay |
+| $\ell_2$、$\ell_\infty$、spectral 三个球的练习 | 教学扩展 | 本文练习，不是论文实验 |

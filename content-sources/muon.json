@@ -21,7 +21,7 @@
       "baseUrl": "https://github.com/NVIDIA/Megatron-LM/blob/0823c731ed7d793aef047b6a64f2dbbf32bf6e2c/"
     },
     {
-      "sourceIncludes": "muP.md",
+      "sourceIncludes": "必备知识地图/",
       "prefix": "../../Megatron-LM/",
       "baseUrl": "https://github.com/NVIDIA/Megatron-LM/blob/0823c731ed7d793aef047b6a64f2dbbf32bf6e2c/"
     }
@@ -68,7 +68,8 @@
     { "source": "论文精读/13-Convergence-with-Newton-Schulz.md", "slug": "muon-convergence-newton-schulz", "title": "Muon 与 Newton–Schulz 的收敛", "description": "直接分析实际有限步 Newton–Schulz Muon，而不是用精确 SVD 替代实现。", "section": "papers", "order": 74, "date": "2026-07-14", "cutoff": "2026-07-14" },
     { "source": "论文精读/14-Muon2.md", "slug": "muon2", "title": "Muon²", "description": "研究 polar 之前的二阶统计如何改善有限步 Newton–Schulz 的输入谱。", "section": "papers", "order": 75, "date": "2026-07-14", "cutoff": "2026-07-14" },
     { "source": "论文精读/15-DMuon.md", "slug": "dmuon", "title": "DMuon", "description": "理解保持完整矩阵语义时，分布式 Muon 如何把额外开销压到接近 AdamW。", "section": "papers", "order": 76, "date": "2026-07-14", "cutoff": "2026-07-14" },
-    { "source": "notes/论文与证据索引.md", "slug": "muon-evidence-index", "title": "Muon 论文与证据索引", "description": "用来源类别、结论置信度和 claim ledger 管理 Muon 主线结论与证据缺口。", "section": "research-practice", "order": 80, "date": "2026-07-14", "cutoff": "2026-07-14" },
+    { "source": "notes/术语与阅读约定.md", "slug": "muon-reading-conventions", "title": "Muon 术语与阅读约定", "description": "统一常用术语，并区分论文明确、作者报告、本文推导、跨论文比较与仍待验证的解释。", "section": "research-practice", "order": 79, "date": "2026-07-16" },
+    { "source": "notes/论文与证据索引.md", "slug": "muon-evidence-index", "title": "Muon 论文与证据索引", "description": "对照来源、结论范围和仍待验证的问题，梳理 Muon 主线判断。", "section": "research-practice", "order": 80, "date": "2026-07-14", "cutoff": "2026-07-14" },
     { "source": "notes/实现与代码走读.md", "slug": "muon-code-reading", "title": "Muon 实现与代码走读", "description": "沿输入、shape、state、branch、output 与 test 把论文公式落到真实训练代码。", "section": "research-practice", "order": 81, "date": "2026-07-14", "cutoff": "2026-07-14" },
     { "source": "notes/前沿变体与开放问题.md", "slug": "muon-frontiers", "title": "Muon 前沿变体与开放问题", "description": "按训练统计与 polar 实现两个主轴比较前沿变体，并给出可证伪的研究问题。", "section": "research-practice", "order": 82, "date": "2026-07-14", "cutoff": "2026-07-14" },
     { "source": "experiments/README.md", "slug": "muon-experiment-roadmap", "title": "Muon 实验路线与记录规范", "description": "把数学、数值、训练与分布式理解转化为可复现、可证伪的实验产物。", "section": "research-practice", "order": 83, "date": "2026-07-14", "cutoff": "2026-07-14" }

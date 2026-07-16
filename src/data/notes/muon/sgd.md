@@ -6,34 +6,32 @@ section: "optimization"
 slug: "sgd"
 legacyPaths: ["/notes/sgd/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 1
 readtime: 8
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/优化基础/SGD.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/SGD.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:8530ecf5377c3f9ae017e8f6244f24391ac621d4da6eb8d1ac8f06d739a307ad"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/SGD.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:adee85a63a21b15ab403451190808ff36074d336587770f1e4778629c0d61b73"
   manifest: "muon"
   managed: true
 ---
-> 层次：优化基础
-
-## 一句话定位
+## 先记住什么
 
 SGD（stochastic gradient descent）是深度学习优化器的基准动作：用一个小批量估计全数据梯度，然后沿负梯度方向更新参数。
 
 ## 核心定义
 
-给定参数 $\theta_t$、学习率 $\eta_t$ 和 mini-batch 损失梯度 $g_t=\nabla_\theta L_{\mathcal{B}_t}(\theta_t)$，最基本的 SGD 更新为
+给定参数 $\theta_t$、learning rate $\eta_t$ 和 mini-batch 损失梯度 $g_t=\nabla_\theta L_{\mathcal{B}_t}(\theta_t)$，最基本的 SGD 更新为
 
 $$
 \theta_{t+1}=\theta_t-\eta_t g_t.
 $$
 
-“stochastic” 指 $g_t$ 是抽样估计，不是完整数据集的精确梯度。SGD 的噪声不是纯坏事：它能降低每步成本，也可能帮助模型离开尖锐或不稳定区域。但噪声大小会随 batch size、数据分布和训练阶段改变，因此学习率 schedule 与 batch size 通常要一起理解。
+“stochastic” 指 $g_t$ 是抽样估计，不是完整数据集的精确梯度。SGD 的噪声不是纯坏事：它能降低每步成本，也可能帮助模型离开尖锐或不稳定区域。但噪声大小会随 batch size、数据分布和训练阶段改变，因此 learning rate schedule 与 batch size 通常要一起理解。
 
 ## 相关知识展开
 
@@ -65,9 +63,9 @@ $$
 
 但“无偏”不等于“每一步都很准”。batch 越小，梯度噪声越大；batch 越大，单步方向越稳定，但单位 token 提供的新信息可能递减。
 
-### 2. 学习率不是装饰项，而是离散动力学的一部分
+### 2. learning rate 不是装饰项，而是离散动力学的一部分
 
-SGD 的连续直觉是沿负梯度下降，但真实训练是离散更新。学习率 $\eta$ 决定每次跨多远：
+SGD 的连续直觉是沿负梯度下降，但真实训练是离散更新。learning rate $\eta$ 决定每次跨多远：
 
 $$
 \Delta\theta_t=-\eta_t g_t.
@@ -99,7 +97,7 @@ $$
 
 ### 4. SGD 噪声为什么有时有益？
 
-mini-batch 噪声会让每一步不完全沿最陡方向走。坏处是收敛曲线更抖，可能需要更多 step；好处是它有时能帮助训练避免陷入某些尖锐或脆弱区域。这个说法不应神秘化：噪声的实际效果取决于模型、数据、batch、学习率和训练阶段。
+mini-batch 噪声会让每一步不完全沿最陡方向走。坏处是收敛曲线更抖，可能需要更多 step；好处是它有时能帮助训练避免陷入某些尖锐或脆弱区域。这个说法不应神秘化：噪声的实际效果取决于模型、数据、batch、learning rate 和训练阶段。
 
 在 LLM 预训练中，batch 通常很大，硬件利用率也很重要。因此不能简单套用“小 batch 噪声帮助泛化”的图像。比较 Muon、AdamW 和 SGD 时，更合理的做法是同时记录 loss-vs-token、loss-vs-FLOP 和 wall-clock。
 
@@ -125,7 +123,7 @@ Muon 可以从“SGD + momentum + 矩阵正交化”这条线理解。SGD 直接
 - 能手写基本 SGD 更新式，并说明 mini-batch 梯度为什么有噪声。
 - 能区分 loss gradient、实际 update、learning rate schedule 三件事。
 - 能解释 batch size 增大时，梯度噪声、吞吐和泛化之间可能出现的取舍。
-- 能把 SGD 当作比较基线，而不是把所有训练差异都归因于“优化器名字不同”。
+- 能把 SGD 当作比较 baseline，而不是把所有训练差异都归因于“优化器名字不同”。
 
 ## 常见误区
 
@@ -135,12 +133,12 @@ Muon 可以从“SGD + momentum + 矩阵正交化”这条线理解。SGD 直接
 
 ## 自测问题
 
-1. 如果学习率翻倍，SGD 的更新方向和更新长度分别发生什么变化？
+1. 如果 learning rate 翻倍，SGD 的更新方向和更新长度分别发生什么变化？
 2. mini-batch 梯度估计无偏，是否意味着每一步都接近完整梯度？
-3. 为什么比较 Muon 和 SGD/AdamW 时必须记录 batch size 与学习率 schedule？
+3. 为什么比较 Muon 和 SGD/AdamW 时必须记录 batch size 与 learning rate schedule？
 
 ## 参考入口
 
-- Bottou, Curtis & Nocedal, *Optimization Methods for Large-Scale Machine Learning* —— SGD 的统计/优化假设、步长和收敛分析入口。
-- Goodfellow, Bengio & Courville, *Deep Learning* 第 8 章 —— 用统一深度学习记号复习 minibatch、noise 和 optimization practice。
-- Keller Jordan, *Muon: An optimizer for hidden layers in neural networks* —— 对照“SGD momentum 后增加矩阵谱变换”的最小差异。
+- [Bottou, Curtis & Nocedal, *Optimization Methods for Large-Scale Machine Learning*](https://doi.org/10.1137/16M1080173) —— SGD 的统计/优化假设、步长和收敛分析入口。
+- [Goodfellow, Bengio & Courville, *Deep Learning* 第 8 章](https://www.deeplearningbook.org/contents/optimization.html) —— 用统一深度学习记号复习 minibatch、noise 和 optimization practice。
+- [Keller Jordan, *Muon: An optimizer for hidden layers in neural networks*](https://kellerjordan.github.io/posts/muon/) —— 对照“SGD momentum 后增加矩阵谱变换”的最小差异。

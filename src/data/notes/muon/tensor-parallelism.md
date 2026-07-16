@@ -6,22 +6,20 @@ section: "engineering"
 slug: "tensor-parallelism"
 legacyPaths: ["/notes/tensor-parallelism/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 33
 readtime: 8
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/深度学习工程/张量并行.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/%E5%BC%A0%E9%87%8F%E5%B9%B6%E8%A1%8C.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:a508a47e722fcae688a1211304f63c91ea9788c5179afdfbd2522c97bec4a5e7"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/%E5%BC%A0%E9%87%8F%E5%B9%B6%E8%A1%8C.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:45bbaae8111c8ec49ba029b8e8378c58b94f7147b0c1aac61fbb532d85cb53d0"
   manifest: "muon"
   managed: true
 ---
-> 层次：深度学习工程
-
-## 一句话定位
+## 先记住什么
 
 张量并行把单个大矩阵或算子切到多张卡上计算，是大模型训练中处理超大线性层的核心并行方式。
 
@@ -117,6 +115,6 @@ Muon 要对二维线性权重的更新矩阵做正交化，而张量并行改变
 
 ## 参考入口
 
-- Megatron-LM / Megatron-Core 张量并行文档 —— 建立 column/row parallel 的 global/local shape 与 collective 时序。
-- Megatron-Core emerging optimizers 中的 TensorParallelMuon —— 逐分支核对 `duplicated`、`distributed`、`blockwise` 和 QKV split。
-- Liu et al., *Muon is Scalable for LLM Training* 的 distributed Muon 设计 —— 对照论文中的通信/状态目标与实际框架实现，不默认二者版本等价。
+- [Megatron-LM 论文](https://arxiv.org/abs/1909.08053) 与本地 Megatron-Core 代码 —— 建立 column/row parallel 的 global/local shape 与 collective 时序。
+- [本地 `TensorParallelMuon`](https://github.com/NVIDIA/Megatron-LM/blob/0823c731ed7d793aef047b6a64f2dbbf32bf6e2c/megatron/core/optimizer/emerging_optimizers.py) —— 逐分支核对 `duplicated`、`distributed`、`blockwise` 和 QKV split。
+- [Liu et al., *Muon is Scalable for LLM Training*](https://arxiv.org/abs/2502.16982) —— 对照论文中的通信与状态目标和实际框架实现，不默认二者版本等价。

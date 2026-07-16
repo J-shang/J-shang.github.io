@@ -6,7 +6,7 @@ section: "guide"
 slug: "muon-system-guide"
 legacyPaths: ["/notes/muon-system-guide/"]
 date: 2026-07-06
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-01
 featured: true
 order: 0
@@ -14,16 +14,16 @@ readtime: 30
 source:
   repository: "J-shang/Muon"
   path: "MUON_LEARNING_GUIDE.md"
-  url: "https://github.com/J-shang/Muon/blob/65164a375bd729b71f0e89b03642c67c50e624b3/MUON_LEARNING_GUIDE.md"
-  revision: "65164a375bd729b71f0e89b03642c67c50e624b3"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:9d5b5a21c498d2f23a41aca388332002a6b9f3218d5b5b634ae30d515c6b41d1"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/MUON_LEARNING_GUIDE.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:9eaa6144bceabbf84bc14706bc2d11da8f1378031ac518a3e4f6257b8f9fb018"
   manifest: "muon"
   managed: true
 ---
 > 范围：深度学习优化器 **Muon（MomentUm Orthogonalized by Newton–Schulz）**，不是粒子物理中的 μ 子。
-> 信息截点：**2026-07-14**。
-> 学习对象：算法几何、有限精度实现、参数路由、分布式系统和公平实验；不把未经复现的前沿变体当作稳定配方。
+> 资料范围截至 **2026-07-14**；核心来源版本复核于 **2026-07-16**。
+> 内容覆盖算法几何、有限精度实现、参数路由、分布式系统和公平实验；未经复现的前沿结果不会被写成稳定配方。
 
 ## 0. 一页结论
 
@@ -48,7 +48,7 @@ $$
 
 这个变换保留左右奇异向量，并把非零奇异值压到 1。它可以被严格地理解为谱范数单位球上线性化目标的最陡下降方向；也可与去掉历史统计的 Shampoo 建立代数联系。后者是带条件的特例/框架解释，不表示两者训练动力学等价。
 
-截至信息截点，最稳妥的判断是：
+目前最稳妥的判断是：
 
 - 大模型 **从头预训练** 是证据最强的应用范围；“约 2×”只是在特定 compute-optimal scaling-law 设置中的论文报告。
 - update scaling、weight decay、参数路由、NS 精度与分布式矩阵语义都属于算法合同，不是无关紧要的工程细节。
@@ -56,18 +56,20 @@ $$
 - Muon 的持久状态通常比 AdamW 少，但 NS 临时 buffer、通信和 scalar AdamW 组仍要计入峰值内存与 wall-clock。
 - AdamW 预训练 checkpoint 切换 Muon 做全量微调存在 optimizer mismatch 风险；SFT、RL、LoRA 和 continuation 必须分开验证。
 
-当前最重要的学习产出不是背诵方法名，而是能够：推导方向、实现数值对照、追踪真实代码的 shape/state flow，并设计同时报告 token/FLOP/time/memory 的公平实验。
+当前最重要的学习产出不是背诵方法名，而是能够：推导方向、实现数值对照、追踪真实代码的 shape 与状态流，并设计同时报告 token、FLOP、time 和 memory 的公平实验。
 
-## 1. 证据和关系语言
+## 1. 怎样判断一句结论靠不靠谱
 
-本项目把两件事分开记录：
+阅读本文时，先分清“来源是什么”和“这句话能说到什么范围”。一篇论文可以是一手来源，但论文中的大规模收益仍然只是作者在特定模型、数据、硬件和调参预算下的报告。
 
-- **来源类别**：定理/教材、官方代码或文档、大规模技术报告、多尺度论文、早期预印本、博客、仓库内实验。
-- **结论置信度**：`verified`、`supported`、`plausible`、`open`。
+本文使用四种直接可读的来源说明：
 
-一手预印本仍然是预印本；“作者报告”不自动成为跨架构事实。数学与知识地图关系使用以下强度：exact identity、special case、approximation、generalization、implementation、analogy、empirical association。
+- **论文明确**：原文直接给出定义、定理、算法或限制；
+- **作者报告**：原文给出实验结果，但结论只覆盖该实验范围；
+- **本文推导**：可由公式、代码或数值例子复核，但不是作者原话；
+- **跨论文比较 / 仍待验证**：需要连接多个来源，或现有证据还不能裁决。
 
-完整的 claim ledger、阅读入口和证据缺口见 [论文与证据索引](/topics/muon/muon-evidence-index/)。
+跨论文结论与来源对照、阅读入口和证据缺口见 [论文与证据索引](/topics/muon/muon-evidence-index/)。术语取舍见 [术语与阅读约定](/topics/muon/muon-reading-conventions/)。
 
 ## 2. 必备知识地图
 
@@ -79,7 +81,7 @@ $$
 | 深度学习工程 | mixed precision、state、ZeRO/FSDP、TP、Megatron | 画出 global/local shape、state、通信和参数路由 |
 | LLM 实验方法 | scaling law、critical batch、muP、公平比较 | 写出带调参预算和失败判据的 AdamW/Muon 实验卡 |
 
-逐篇笔记、阅读顺序、通过检查和 typed relations 见 [必备知识地图](/topics/muon/)。
+逐篇笔记、阅读顺序、通过检查和关键关系见 [必备知识地图](/topics/muon/)。
 
 ## 3. 核心算法合同
 
@@ -141,7 +143,7 @@ $$
 =\frac{1}{\sqrt{\max(m,n)}}.
 $$
 
-这说明统一学习率下，不同 shape 的原始 polar update 尺度天然不同。常见 recipe 会使用 spectral/original scale、unit-RMS 或 match-RMS 约定；它们不是同一公式的不同名字。完整更新可概括为
+这说明统一 learning rate 下，不同 shape 的原始 polar update 尺度天然不同。常见 recipe 会使用 spectral/original scale、unit-RMS 或 match-RMS 约定；它们不是同一公式的不同名字。完整更新可概括为
 
 $$
 W_{t+1}=(1-\eta\lambda)W_t-\eta\,s(m,n)\,O_t.
@@ -226,10 +228,11 @@ $$
 
 ## 6. 专题索引
 
-- [必备知识地图](/topics/muon/)：概念笔记、typed relations、学习产出。
+- [必备知识地图](/topics/muon/)：概念笔记、关键关系、学习产出。
 - [Muon 论文精读](/topics/muon/muon-paper-reading-guide/)：按历史谱系、规模化实证、理论/数值与系统四层组织的一手来源；核心来源一篇一文件。
-- [论文与证据索引](/topics/muon/muon-evidence-index/)：来源类别、置信度、claim ledger、阅读路径。
-- [实现与代码走读](/topics/muon/muon-code-reading/)：固定版本、shape/state flow、实现不变量和测试。
+- [论文与证据索引](/topics/muon/muon-evidence-index/)：跨论文结论、来源边界和阅读路径。
+- [术语与阅读约定](/topics/muon/muon-reading-conventions/)：统一高频术语和来源说明，避免维护语言进入正文。
+- [实现与代码走读](/topics/muon/muon-code-reading/)：固定版本、shape 与状态流、实现不变量和测试。
 - [Megatron-LM Muon 实现解析](/topics/muon/megatron-muon-implementation/)：本地 submodule 的逐函数走读。
 - [前沿变体与开放问题](/topics/muon/muon-frontiers/)：机制族、争议的第一处分歧和判别实验。
 - [实验路线与记录规范](/topics/muon/muon-experiment-roadmap/)：可复现实验卡、指标和完成定义。
@@ -259,11 +262,6 @@ $$
 - **critical batch size**：给定模型、数据、训练阶段和 optimizer 下，继续增大 batch 的边际优化收益开始明显下降的区域，不是普适常数。
 - **optimizer mismatch**：训练阶段切换 optimizer 几何/隐式偏置后，已有表示与新 update 不匹配的风险。
 
-## 9. 维护与下一步
+## 9. 从哪里开始
 
-- 顶层指南只保留稳定结论、核心合同、路线图和链接；大段论文、实现、实验或前沿内容进入专题文件。
-- 时间敏感来源按绝对日期更新。先更新专题的 claim ledger，再决定是否提升顶层结论。
-- 新知识地图边必须标 relation type 和条件；新概念笔记必须包含可核查锚点与推理型自测。
-- 默认不提交 checkpoint、数据集、下载论文、缓存或完整训练输出。
-
-推荐下一步：先完成实验 0 的小型数值脚本和测试，再进入任何训练 A/B。它成本最低，却能最快暴露 transpose、shape、dtype、scale 和“近似等于精确”的理解错误。
+第一次阅读建议按“优化基础 → 线性代数 → Newton–Schulz → 真实实现 → 公平实验”推进。若已经熟悉优化器，可直接先读 [Muon 原始设计说明](/topics/muon/muon-original-design/) 和 [Newton–Schulz 迭代](/topics/muon/newton-schulz/)，再完成实验 0 的小型数值对照。这个实验成本最低，却能最快暴露 transpose、shape、dtype、scale 和“近似等于精确”的理解错误。

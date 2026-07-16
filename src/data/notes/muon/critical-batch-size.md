@@ -6,24 +6,22 @@ section: "experiments"
 slug: "critical-batch-size"
 legacyPaths: ["/notes/critical-batch-size/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 41
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/LLM 实验方法/critical batch size.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/critical%20batch%20size.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:3c289453bbf022ef72920aa44b4d5a2136bb4d098368a3fc32b62e168e15df31"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/critical%20batch%20size.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:1818c93cfc31dd284f8a1f84551bd5f8033ca5f9e1357888a04e4a107911f783"
   manifest: "muon"
   managed: true
 ---
-> 层次：LLM 实验方法
-> 信息截点：2026-07-14
-> 主推理路径：现象到机制——先把“大 batch 收益递减”写成可测曲线，再比较梯度噪声、调参和系统吞吐解释。
+> 资料范围截至：2026-07-14
 
-## 一句话定位
+## 先记住什么
 
 critical batch size 描述 batch 增大到某个范围后，继续加 batch 的效率收益开始明显递减。
 
@@ -39,7 +37,7 @@ $$
 
 ## 核心定义
 
-小 batch 区间里，增大 batch 往往能近似线性提高硬件吞吐，并允许相应调大学习率或减少更新噪声。但超过某个临界范围后，每个 token 提供的边际优化信息下降，训练可能需要更多 token 或更复杂调参才能达到同样 loss。这个临界点与模型规模、数据、训练阶段、优化器和学习率 schedule 都相关。
+小 batch 区间里，增大 batch 往往能近似线性提高硬件吞吐，并允许相应调大 learning rate 或减少更新噪声。但超过某个临界范围后，每个 token 提供的边际优化信息下降，训练可能需要更多 token 或更复杂调参才能达到同样 loss。这个临界点与模型规模、数据、训练阶段、优化器和 learning rate schedule 都相关。
 
 ## 假设与适用范围
 
@@ -68,7 +66,7 @@ $$
 B_\text{global}=B_\text{micro}\times \text{DP size}\times \text{accumulation steps}.
 $$
 
-序列长度固定时，也可换算成 tokens per update。
+sequence length 固定时，也可换算成 tokens per update。
 
 ### 3. 为什么会有临界 batch？
 
@@ -86,7 +84,7 @@ $$
 
 ### 4. linear scaling rule 不是万能规则
 
-经典经验是 batch 放大 $k$ 倍，学习率也放大 $k$ 倍，至少在某些范围内有效。但 LLM 预训练里，还要考虑 warmup、AdamW/Muon 动力学、梯度裁剪、序列长度和数据顺序。超过临界 batch 后，简单线性放大学习率往往不再可靠。
+经典经验是 batch 放大 $k$ 倍，learning rate 也放大 $k$ 倍，至少在某些范围内有效。但 LLM 预训练里，还要考虑 warmup、AdamW/Muon 动力学、梯度裁剪、sequence length 和数据顺序。超过临界 batch 后，简单线性放大 learning rate 往往不再可靠。
 
 ### 5. Muon 为什么可能影响 critical batch？
 
@@ -96,7 +94,7 @@ Muon 改变了矩阵更新方向，把 momentum 的奇异值谱压平。若这�
 
 ### 6. 怎么设计 batch 扫描？
 
-一个最小但有用的扫描可以固定模型、数据、token budget，比较 AdamW 小/中/大 batch 与 Muon 小/中/大 batch，并让各自重新调学习率和 warmup，同时记录吞吐、NS/optimizer step 时间、最终 loss。
+一个最小但有用的扫描可以固定模型、数据、token budget，比较 AdamW 小/中/大 batch 与 Muon 小/中/大 batch，并让各自重新调 learning rate 和 warmup，同时记录吞吐、NS/optimizer step 时间、最终 loss。
 
 如果只把 AdamW 的最佳 batch 直接套给 Muon，或只把 Muon 的最佳 batch 直接套给 AdamW，都不公平。
 

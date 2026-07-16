@@ -6,22 +6,21 @@ section: "research-practice"
 slug: "muon-code-reading"
 legacyPaths: ["/notes/muon-code-reading/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 81
 source:
   repository: "J-shang/Muon"
   path: "notes/实现与代码走读.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/notes/%E5%AE%9E%E7%8E%B0%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%B5%B0%E8%AF%BB.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:bef1c809008bf44e982790b4a4b5dd0768b52ebb0c7466cf1bd6f07bc2f16438"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/notes/%E5%AE%9E%E7%8E%B0%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%B5%B0%E8%AF%BB.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:0bc5ef122e4029f7e90ae3cb53563d3af17697c76fbfdfb82bd6b45a8e39970d"
   manifest: "muon"
   managed: true
 ---
 > 本地分析目标：`Megatron-LM` submodule commit `0823c731ed7d793aef047b6a64f2dbbf32bf6e2c`；其 `pyproject.toml` 将 `Emerging-Optimizers` 固定到 `v0.2.0`。
-> 信息截点：2026-07-14。
-> 定位：用“输入/shape/state/branch/output/test”把论文公式落到真实训练路径。
+> 代码复核日期：2026-07-16。本文只对页首固定的 commit 和依赖版本负责。
 
 ## 先读哪些实现
 
@@ -35,7 +34,7 @@ source:
 | layer-wise 分布式 | [`layer_wise_optimizer.py`](https://github.com/NVIDIA/Megatron-LM/blob/0823c731ed7d793aef047b6a64f2dbbf32bf6e2c/megatron/core/optimizer/layer_wise_optimizer.py) | owner rank、shard-aligned layout、同步时序 |
 | correctness tests | [`test_emerging_optimizers.py`](https://github.com/NVIDIA/Megatron-LM/blob/0823c731ed7d793aef047b6a64f2dbbf32bf6e2c/tests/unit_tests/test_emerging_optimizers.py) | TP modes、QKV、scale、系数、steps、adaptive variant |
 
-更详细的逐函数说明见 [Megatron-LM Muon 实现解析](/topics/muon/megatron-muon-implementation/)。本页保留跨实现的阅读合同和最小测试，不复制 400 行源码笔记。
+更详细的逐函数说明见 [Megatron-LM Muon 实现解析](/topics/muon/megatron-muon-implementation/)。本页只保留跨实现都要检查的更新顺序和最小测试。
 
 ## 数据与控制流
 

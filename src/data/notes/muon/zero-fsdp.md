@@ -6,22 +6,20 @@ section: "engineering"
 slug: "zero-fsdp"
 legacyPaths: ["/notes/zero-fsdp/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 32
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/深度学习工程/ZeRO-FSDP.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/ZeRO-FSDP.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:0fcd4ed12fc79c26e4e4c3cad29b20356ab2be3648344032b5e0c7bc45fcb03b"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/ZeRO-FSDP.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:4e7120ff2a1ca431db6a695841cbffd13976c57183134b6a474160e5882afc09"
   manifest: "muon"
   managed: true
 ---
-> 层次：深度学习工程
-
-## 一句话定位
+## 先记住什么
 
 ZeRO 和 FSDP 都是在数据并行中切分参数、梯度和优化器状态，让单卡显存不再完整承载整个模型训练状态。
 
@@ -113,6 +111,6 @@ Muon 对“完整二维矩阵”的语义很敏感。如果一个线性层权重
 
 ## 参考入口
 
-- Rajbhandari et al., *ZeRO: Memory Optimizations Toward Training Trillion Parameter Models* —— ZeRO-1/2/3 的原始状态、梯度和参数分片模型。
-- PyTorch Fully Sharded Data Parallel 文档 —— 核对当前 all-gather/reduce-scatter、state dict 与包裹策略的实际 API。
-- Megatron-Core emerging optimizers 文档中的 TensorParallelMuon/AdaptiveMuon —— 查看矩阵语义如何进入 TP mode 和 adaptive state；具体行为仍以固定源码版本为准。
+- [Rajbhandari et al., *ZeRO: Memory Optimizations Toward Training Trillion Parameter Models*](https://arxiv.org/abs/1910.02054) —— ZeRO-1/2/3 的原始状态、梯度和参数分片模型。
+- [PyTorch Fully Sharded Data Parallel](https://docs.pytorch.org/docs/stable/fsdp.html) —— 核对当前 all-gather/reduce-scatter、state dict 与包裹策略的实际 API。
+- [本地 Megatron-Core `TensorParallelMuon`](https://github.com/NVIDIA/Megatron-LM/blob/0823c731ed7d793aef047b6a64f2dbbf32bf6e2c/megatron/core/optimizer/emerging_optimizers.py) —— 查看矩阵语义如何进入 TP mode 和 adaptive state；具体行为只对页内固定源码版本负责。

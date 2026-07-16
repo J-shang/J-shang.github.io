@@ -6,22 +6,22 @@ section: "papers"
 slug: "dmuon"
 legacyPaths: ["/notes/dmuon/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 76
 source:
   repository: "J-shang/Muon"
   path: "论文精读/15-DMuon.md"
-  url: "https://github.com/J-shang/Muon/blob/ae2b5f9e6ee06b411aef2220e361c75988a7d753/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/15-DMuon.md"
-  revision: "ae2b5f9e6ee06b411aef2220e361c75988a7d753"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:8d8f13725bd47f4a7430bebdaa1d9aba917c4d8901e718b783523a8303250eb9"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/15-DMuon.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:4fb92d15a79f91274f762419aff3f813403e42034475f14b61736bb2af86799d"
   manifest: "muon"
   managed: true
 ---
-> source: [arXiv:2606.27153](https://arxiv.org/abs/2606.27153)；[官方代码](https://github.com/X-Square-Robot/dmuon)
-> source class: 2026 系统预印本 + 官方实现
-> confidence: 设计/代码可核查；性能数字 `plausible`，等待独立硬件复现
+> 原文：[arXiv:2606.27153](https://arxiv.org/abs/2606.27153)，核验版本 v1（2026-06-25）；[官方代码](https://github.com/X-Square-Robot/dmuon)
+> 来源类型：2026 年系统预印本与官方实现
+> 阅读提醒：设计和代码可核对；性能数字是作者硬件与工作负载上的报告，仍需独立复现。
 
 ## 它解决什么问题
 
@@ -72,9 +72,9 @@ $$
 
 ## 与 Moonlight distributed Muon 的关系
 
-- `optimizes-implementation-of` → full-matrix distributed Muon。
-- `preserves` → 论文目标是数学等价 update，而不是提出新 optimizer。
-- `bounded-by` → 最大矩阵 NS 临界路径和硬件拓扑。
+- **优化对象**：full-matrix distributed Muon 的实现路径。
+- **保持不变**：论文目标是数学等价 update，而不是提出新 optimizer。
+- **性能上限**：受最大矩阵 NS 临界路径和硬件拓扑限制。
 
 ## 精读后的任务
 
@@ -88,31 +88,31 @@ $$
 
 **掌握标准**：能同时给出 distributed correctness invariant 和 end-to-end performance breakdown。
 
-## 二次审计：补漏、分歧与原文核查
+## 补充阅读：遗漏、分歧与出处
 
-### A. 还值得学习的点
+### 还值得注意什么
 
 1. **DMuon 的创新是等价重排，不是新 optimizer**：§5.3 明确称其为 mathematically equivalent reformulations，保留 exact optimizer semantics，只消除系统开销。
 2. **symmetric Gram kernel 是最大单项收益**：§5.2 报告其占 optimizer-time reduction 的 48%；owner scheduling/load balance 32%，autotuning/batching 16%。这给出可复现的 profile 假设。
 3. **不可消除的 critical path 被明确指出**：最大 owner-side matrix 的 NS 至少做一次；规模继续增大时，剩余 overhead 由该矩阵主导。
 4. **性能结论依赖 workload/GPU count**：Table 1 覆盖四类 workload、8–256 A800；单 GPU 缺乏 distributed overlap/ownership收益，作者在限制中明确承认。
 
-### B. 与其他论文或学者观点的冲突检查
+### 与其他论文哪里不同
 
-| 对照观点 | 第一处分歧 | 判断 | 判别检查 |
+| 对照来源或观点 | 分歧从哪里开始 | 如何理解 | 怎样验证 |
 |---|---|---|---|
 | Moonlight distributed Muon：DP gather full matrix后计算 | DMuon 分配 matrix owner、overlap并优化 layout/kernel | **同语义的系统替代方案**，不是算法冲突 | world-size invariant global update |
 | blockwise/low-rank distributed variants | DMuon 声称 exact full-matrix semantics；其他方法可能改 target | **算法近似 vs 实现等价的真边界** | exact SVD/full NS reference comparison |
 | Muon blog 的“FLOP overhead <1%”估算 | DMuon 显示朴素 distributed 实现可比 fwd/bwd 更贵 | **FLOPs 与 realized latency/communication 的指标冲突** | kernel FLOPs、launch、comm、end-to-end 分解 |
 | “within 2% of AdamW”作为通用结论 | 论文是受测 workload 的平均 step-time overhead | **范围外外推不成立** | 新硬件/shape/topology 独立 profile |
 
-### C. 本笔记知识核查表
+### 本文内容从哪里来
 
-| 本笔记学习项 | 原文位置 | 核查结论 |
+| 本文讲到的内容 | 原文位置 | 来源说明 |
 |---|---|---|
-| owner-centric communication、symmetric Gram、load balance、batching | §3 System Design | `论文明确` |
-| 保持 exact optimizer semantics | contributions、§5.3 Limitations | `作者明确主张`，仍应以 bit/tolerance test验证实现 |
-| 平均 end-to-end step cost 距 AdamW 约 2% | §5.1–5.2、Table 1/2 | `作者硬件/工作负载报告`，非 universal |
-| 48%/32%/16% speedup breakdown | §5.2 Table 2 | `作者 ablation报告` |
-| 本笔记 $2\times2$ blockwise 反例 | 原文无此矩阵 | `仓库内数学反例`，用来解释 full/blockwise不等价 |
-| “DMuon inherits Muon convergence exactly” | §5.3 作者表述 | `条件性实现结论`：仅在数值容差内确实保持同一 update时成立 |
+| owner-centric communication、symmetric Gram、load balance、batching | §3 System Design | 论文明确 |
+| 保持 exact optimizer semantics | contributions、§5.3 Limitations | 作者明确主张，仍应以 bit/tolerance test 验证实现 |
+| 平均 end-to-end step cost 距 AdamW 约 2% | §5.1–5.2、Table 1/2 | 作者硬件/工作负载报告，非 universal |
+| 48%/32%/16% speedup breakdown | §5.2 Table 2 | 作者 ablation 报告 |
+| 本笔记 $2\times2$ blockwise 反例 | 原文无此矩阵 | 本文数学反例，用来解释 full 与 blockwise 不等价 |
+| “DMuon inherits Muon convergence exactly” | §5.3 作者表述 | 只在数值容差内确实保持同一 update 时成立 |

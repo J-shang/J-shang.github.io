@@ -6,22 +6,20 @@ section: "engineering"
 slug: "optimizer-state"
 legacyPaths: ["/notes/optimizer-state/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 31
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/深度学习工程/optimizer state.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/optimizer%20state.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:33d7ed42f4384b33f12bcf7e2cedc35094425b913e606e468fa3bb63ef7874d4"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/optimizer%20state.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:f0fcf7cd3a4d094451270eb0d3918d6cd6f9c77e314fb89d89417416b6c8f97b"
   manifest: "muon"
   managed: true
 ---
-> 层次：深度学习工程
-
-## 一句话定位
+## 先记住什么
 
 optimizer state 是参数之外为更新规则保存的历史信息，常常决定大模型训练的显存下限。
 
@@ -106,6 +104,6 @@ $$
 
 ## 参考入口
 
-- DeepSpeed ZeRO paper 与文档 —— 学习 persistent state 按 DP rank 分片后的字节数与通信代价。
-- PyTorch FSDP 文档 —— 核对 optimizer state dict 的 full/sharded 形式和恢复约束。
-- KellerJordan/Muon 与 Liu et al., *Muon is Scalable for LLM Training* —— 分别读取最小 momentum state 和规模化混合 optimizer/分布式 state 设计。
+- [ZeRO 论文](https://arxiv.org/abs/1910.02054) —— 学习 persistent state 按 DP rank 分片后的字节数与通信代价。
+- [PyTorch FSDP](https://docs.pytorch.org/docs/stable/fsdp.html) —— 核对 optimizer state dict 的 full/sharded 形式和恢复约束。
+- [KellerJordan/Muon](https://github.com/KellerJordan/Muon) 与 [*Muon is Scalable for LLM Training*](https://arxiv.org/abs/2502.16982) —— 分别读取最小 momentum state 和规模化混合 optimizer/分布式 state 设计。

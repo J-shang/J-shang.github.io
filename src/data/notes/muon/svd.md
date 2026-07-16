@@ -6,22 +6,20 @@ section: "linear-algebra"
 slug: "svd"
 legacyPaths: ["/notes/svd/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 10
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/线性代数/SVD.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/SVD.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:5949faf4286ec1f1737f75a566898901c17293aff6208e1575883055d4a9a660"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/SVD.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:f22dcedc74d1efb9c5c6c929def13ea9f07917f60f362db4e78912cc0bbb74f4"
   manifest: "muon"
   managed: true
 ---
-> 层次：线性代数
-
-## 一句话定位
+## 先记住什么
 
 SVD 把任意矩阵拆成“输入方向、每个方向的拉伸强度、输出方向”，是理解 Muon 正交化的入口。
 
@@ -130,4 +128,4 @@ $$
 
 - Golub & Van Loan, *Matrix Computations* —— SVD、polar 和稳定矩阵算法的规范参考。
 - Trefethen & Bau, *Numerical Linear Algebra* —— 用几何图像、低秩近似和条件数理解奇异值。
-- Keller Jordan, *Muon: An optimizer for hidden layers in neural networks* —— 直接观察 Muon 如何从 $M=U\Sigma V^\top$ 保留 $UV^\top$。
+- [Keller Jordan, *Muon: An optimizer for hidden layers in neural networks*](https://kellerjordan.github.io/posts/muon/) —— 直接观察 Muon 如何从 $M=U\Sigma V^\top$ 保留 $UV^\top$。

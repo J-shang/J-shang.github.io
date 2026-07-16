@@ -6,22 +6,20 @@ section: "linear-algebra"
 slug: "polar-decomposition"
 legacyPaths: ["/notes/polar-decomposition/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 14
 readtime: 8
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/线性代数/极分解.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/%E6%9E%81%E5%88%86%E8%A7%A3.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:cd3ea0b45f6c9c7548d4839bafa9273e47dc973d283463c8ac7339480fc3ca42"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/%E6%9E%81%E5%88%86%E8%A7%A3.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:f61fd611548ca4cd23ad51aa43ca82e36d596a13bc6694031be148cac66327f3"
   manifest: "muon"
   managed: true
 ---
-> 层次：线性代数
-
-## 一句话定位
+## 先记住什么
 
 极分解把矩阵拆成“方向”与“拉伸”，Muon 近似的正是其中的方向因子。
 
@@ -132,6 +130,6 @@ Muon 的“orthogonalization”更准确地说是近似计算 momentum 矩阵的
 
 ## 参考入口
 
-- Higham, *Functions of Matrices* 的 polar decomposition 章节 —— 精确分解、最近正交矩阵和数值迭代的规范来源。
-- Keller Jordan, *Muon: An optimizer for hidden layers in neural networks* —— 查看 polar factor 如何成为 optimizer update，而非 weight constraint。
-- Shulgin et al., *Beyond the Ideal: Analyzing the Inexact Muon Update* —— 研究有限步 NS 偏离精确 polar 后的理论边界。
+- [Higham, *Functions of Matrices*](https://epubs.siam.org/doi/book/10.1137/1.9780898717778) 的 polar decomposition 章节 —— 精确分解、最近正交矩阵和数值迭代的规范来源。
+- [Keller Jordan, *Muon: An optimizer for hidden layers in neural networks*](https://kellerjordan.github.io/posts/muon/) —— 查看 polar factor 如何成为 optimizer update，而非 weight constraint。
+- [Shulgin et al., *Beyond the Ideal: Analyzing the Inexact Muon Update*](https://arxiv.org/abs/2510.19933) —— 研究有限步 NS 偏离精确 polar 后的理论边界。

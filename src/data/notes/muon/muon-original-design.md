@@ -6,22 +6,22 @@ section: "papers"
 slug: "muon-original-design"
 legacyPaths: ["/notes/muon-original-design/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 61
 source:
   repository: "J-shang/Muon"
   path: "论文精读/00-Muon原始设计说明.md"
-  url: "https://github.com/J-shang/Muon/blob/ae2b5f9e6ee06b411aef2220e361c75988a7d753/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/00-Muon%E5%8E%9F%E5%A7%8B%E8%AE%BE%E8%AE%A1%E8%AF%B4%E6%98%8E.md"
-  revision: "ae2b5f9e6ee06b411aef2220e361c75988a7d753"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:eb8585c4a449b99156b3d3b2654aa143222e3ebcc6519a7c308d7edd20abca38"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/00-Muon%E5%8E%9F%E5%A7%8B%E8%AE%BE%E8%AE%A1%E8%AF%B4%E6%98%8E.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:ee745ca27775fce9013c818b60ada20ad73b1623d830cffba7d745021a912589"
   manifest: "muon"
   managed: true
 ---
-> source: [Muon: An optimizer for hidden layers in neural networks](https://kellerjordan.github.io/posts/muon/)
-> source class: 作者设计说明 + 参考实现入口
-> confidence: 算法出处 `verified`；跨规模收益只按原设置理解
+> 原文：[Muon: An optimizer for hidden layers in neural networks](https://kellerjordan.github.io/posts/muon/)
+> 来源类型：作者设计说明与参考实现入口
+> 阅读提醒：算法定义可由作者说明和代码核对；效果只按原文实验范围理解。
 
 ## 为什么先读它
 
@@ -78,16 +78,16 @@ $$
 ## 证据边界
 
 - **作者报告**：在其 nanoGPT/训练记录设置中有明显优化收益。
-- **仓库内推导**：polar 的谱作用和 shape-dependent RMS 可独立验证。
+- **本文推导**：polar 的谱作用和 shape-dependent RMS 可独立验证。
 - **不能推出**：所有 LLM、SFT、RL、卷积或任意参数 reshape 都会受益。
 - **版本风险**：NS 系数、step 数、scale、weight decay 和 momentum 定义在不同实现中并不统一。
 
 ## 知识关系
 
-- `implemented-by` → 有限步 Newton–Schulz 近似 polar。
-- `special-case-of` → 谱范数几何下的 matrix steepest direction（需固定精确 polar 与无额外状态等条件）。
-- `empirically-associated-with` → 更快的预训练 loss 下降；不是已证明的因果机制。
-- `not-equivalent-to` → Shampoo 的历史 Kronecker preconditioner。
+- **怎样实现**：用有限步 Newton–Schulz 近似 polar。
+- **怎样解释**：在精确 polar、无额外状态等条件下，它是谱范数几何中的 matrix steepest direction。
+- **实验证据**：原文观察到预训练 loss 更快下降，但没有证明具体机制是唯一原因。
+- **不要混同**：Shampoo 会维护历史 Kronecker preconditioner，实际算法并不等价。
 
 ## 精读后的任务
 
@@ -101,31 +101,31 @@ $$
 
 **掌握标准**：不用“正交化梯度所以更稳定”这类口号，能画出 object/shape/state/time-order 全链路。
 
-## 二次审计：补漏、分歧与原文核查
+## 补充阅读：遗漏、分歧与出处
 
-### A. 还值得学习的点
+### 还值得注意什么
 
 1. **NS 系数追求的不是高精度 polar**：原文“Proving…”和“Tuning…”两节明确把 tuned quintic 的长期奇异值目标放宽到约 $[0.7,1.3]$，并称这种误差在其训练里未伤害 loss。这比“用 NS 近似 SVD”更重要，因为它说明设计目标本来就是 GPU/训练效用，而非数值分析中的最高精度。
 2. **momentum 的位置有历史对照**：原文比较 Orthogonal-SGDM；后者先正交化 gradient 再加 momentum，Muon 则先形成 momentum 再正交化。两者非线性次序不同，不能合并。
 3. **Q/K/V 拆分是算法语义**：原文“Empirical considerations”明确报告 fused QKV 分开运行 Muon 更好；这支持本项目把 parameter routing 视作算法合同。
 4. **原文自己讨论证据标准**：最后一节强调 competitive task 和 tuned baseline。这是学习 optimizer 论文时值得保留的方法学，而不是 Muon 公式的一部分。
 
-### B. 与其他论文或学者观点的冲突检查
+### 与其他论文哪里不同
 
-| 对照观点 | 第一处分歧 | 判断 | 判别检查 |
+| 对照来源或观点 | 分歧从哪里开始 | 如何理解 | 怎样验证 |
 |---|---|---|---|
 | Shampoo / SOAP 的“结构化二阶预条件” | 是否跨 step 维护 curvature/second-moment statistics | **术语与机制不同，不是真冲突**；原文只把无累积 Shampoo 作为特殊代数联系 | 关闭/开启 Shampoo accumulator，比较 state 与 update |
-| *Practical Efficiency* 称 Muon 为最简单的 second-order optimizer；NS 收敛论文称它不是二阶法 | “二阶”的定义：非对角结构变换，还是必须估计/反演曲率 | **真实 taxonomy 分歧**，但公式不矛盾 | 检查算法是否存储 Hessian/Fisher/gradient-covariance estimate |
+| *Practical Efficiency* 称 Muon 为最简单的 second-order optimizer；NS 收敛论文称它不是二阶法 | “二阶”的定义：非对角结构变换，还是必须估计/反演曲率 | **真实的分类口径分歧**，但公式不矛盾 | 检查算法是否存储 Hessian/Fisher/gradient-covariance estimate |
 | *Muon is Scalable* 认为 weight decay 对长程规模化关键 | 原始实现没有 decay，只报告短程/较小任务 | **后续证据扩展，不是反驳原始定义** | 长 horizon 同 recipe 的 decay ablation |
 | 有限步 NS 理论追求逼近 exact polar | 原始 tuned quintic 接受 $[0.7,1.3]$，训练指标未随精度单调改善 | **指标分歧**：polar error 对 training loss | 对齐 RMS/LR 后同时画 polar error 与 loss-vs-time |
 
-### C. 本笔记知识核查表
+### 本文内容从哪里来
 
-| 本笔记学习项 | 原文位置 | 核查结论 |
+| 本文讲到的内容 | 原文位置 | 来源说明 |
 |---|---|---|
-| Muon 面向 hidden-layer 2D 参数，其他参数通常交给 AdamW | “Definition”“Empirical considerations” | `论文/原始说明明确` |
-| momentum 后运行 BF16、5-step quintic NS | “Definition”代码和“Design of Muon” | `原始说明明确` |
-| ideal object 是 $UV^\top$，保留奇异向量并压平奇异值 | “Design”“Proving…” | `原始说明明确`；但 tuned finite-step 输出不是精确 $UV^\top$ |
-| 本笔记的 $(9,2,0.1)\mapsto(1,1,1)$ 例子 | 无对应例子 | `仓库内推导`，由原文 SVD 公式直接验证，不是作者实验 |
-| polar 的 shape-dependent RMS | 原文没有该推导；后见 *Muon is Scalable* Lemma 1 | `跨论文补充`，不归因给原始博客 |
-| micro-batch 先 polar 与先累积后 polar 不等价 | 原文未直接陈述 | `仓库内推导`，来自 polar 非线性；需数值反例核查 |
+| Muon 面向 hidden-layer 2D 参数，其他参数通常交给 AdamW | “Definition”“Empirical considerations” | 论文/原始说明明确 |
+| momentum 后运行 BF16、5-step quintic NS | “Definition”代码和“Design of Muon” | 原始说明明确 |
+| ideal object 是 $UV^\top$，保留奇异向量并压平奇异值 | “Design”“Proving…” | 原始说明明确；但 tuned finite-step 输出不是精确 $UV^\top$ |
+| 本笔记的 $(9,2,0.1)\mapsto(1,1,1)$ 例子 | 无对应例子 | 本文推导，由原文 SVD 公式直接验证，不是作者实验 |
+| polar 的 shape-dependent RMS | 原文没有该推导；后见 *Muon is Scalable* Lemma 1 | 跨论文补充，不归因给原始博客 |
+| micro-batch 先 polar 与先累积后 polar 不等价 | 原文未直接陈述 | 本文推导，来自 polar 非线性；需数值反例核查 |

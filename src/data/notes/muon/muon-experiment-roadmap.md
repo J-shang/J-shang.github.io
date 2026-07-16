@@ -6,22 +6,21 @@ section: "research-practice"
 slug: "muon-experiment-roadmap"
 legacyPaths: ["/notes/muon-experiment-roadmap/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 83
 source:
   repository: "J-shang/Muon"
   path: "experiments/README.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/experiments/README.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:5059e121ae350733e9e2ce30163caa424d1a29d5ee2919dbeb28642b794b69e7"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/experiments/README.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:4ab26d48cea6322ba643f3ea834aba2b36dda99478453cf75e4d168c1d3c0008"
   manifest: "muon"
   managed: true
 ---
-> 信息截点：2026-07-14。
 > 目标：把“我理解了 Muon”变成可复现、可证伪的数学、实现和训练产物。
-> artifact 边界：默认只提交代码、配置、短日志摘要和小图；不提交数据、checkpoint、完整训练输出或缓存。
+> 默认只提交代码、配置、短日志摘要和小图；不提交数据、checkpoint、完整训练输出或缓存。
 
 ## 总原则
 
@@ -154,18 +153,18 @@ hardware / topology / software:
 model / parameterization / seed:
 dataset / tokenizer / exact tokens:
 optimizer routing assertion:
-Muon: lr, momentum, nesterov, wd, scale mode, coefficients, steps, dtype, TP mode
-scalar optimizer: type, lr, betas, eps, wd groups
+Muon: learning rate, momentum, nesterov, weight decay, scale mode, coefficients, steps, dtype, TP mode
+scalar optimizer: type, learning rate, betas, eps, weight-decay groups
 schedule / warmup / batch / accumulation:
 changed variable:
 controlled variables:
 failure / stop criteria:
 metrics and profiler ranges:
 result:
-source-reported fact vs local observation:
-interpretation and non-claims:
-confidence: verified | supported | plausible | open
-next discriminating check:
+作者报告的事实 / 本地观察：
+解释、适用边界与没有声称的内容：
+仍不能确定什么：
+下一项区分性检查：
 artifact links (no checkpoints/datasets by default):
 ```
 

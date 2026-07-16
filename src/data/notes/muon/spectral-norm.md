@@ -6,22 +6,20 @@ section: "linear-algebra"
 slug: "spectral-norm"
 legacyPaths: ["/notes/spectral-norm/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 11
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/线性代数/谱范数.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/%E8%B0%B1%E8%8C%83%E6%95%B0.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:ee2f1998b56743a899af585a0544b3d2204892e8eb11ecfcc364cabbdd835671"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/%E8%B0%B1%E8%8C%83%E6%95%B0.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:2d18e613aa0e9c5a49d629130c97d2797c55e0f128dabd192014a777b8c77e86"
   manifest: "muon"
   managed: true
 ---
-> 层次：线性代数
-
-## 一句话定位
+## 先记住什么
 
 谱范数衡量矩阵对向量最大能拉伸多少，是 Muon “最陡下降”解释里的关键范数。
 
@@ -112,7 +110,7 @@ Muon 的一个理论视角是：在谱范数约束下选择对损失下降最快
 ## 常见误区
 
 - 把谱范数误认为元素最大绝对值；那是 $\ell_\infty$ 风格的元素范数，不是算子范数。
-- 认为谱范数小就代表训练一定稳定。训练稳定还受学习率、归一化层、attention logits、数据和精度影响。
+- 认为谱范数小就代表训练一定稳定。训练稳定还受 learning rate、归一化层、attention logits、数据和精度影响。
 - 把理论约束视角直接等同于工程实现；实现还要处理 NS 误差、缩放和通信。
 
 ## 自测问题
@@ -124,5 +122,5 @@ Muon 的一个理论视角是：在谱范数约束下选择对损失下降最快
 ## 参考入口
 
 - Trefethen & Bau, *Numerical Linear Algebra* —— 最大奇异值、operator norm 和 power iteration 的规范入口。
-- Chen, Li & Liu, *Muon Optimizes Under Spectral Norm Constraints* —— 查看 decoupled WD 下的谱范数约束分析及其假设。
-- Keller Jordan, *Muon: An optimizer for hidden layers in neural networks* —— 把谱范数 steepest direction 与最小 Muon 实现对应起来。
+- [Chen, Li & Liu, *Muon Optimizes Under Spectral Norm Constraints*](https://arxiv.org/abs/2506.15054) —— 查看 decoupled WD 下的谱范数约束分析及其假设。
+- [Keller Jordan, *Muon: An optimizer for hidden layers in neural networks*](https://kellerjordan.github.io/posts/muon/) —— 把谱范数 steepest direction 与最小 Muon 实现对应起来。

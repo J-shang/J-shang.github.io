@@ -6,22 +6,20 @@ section: "linear-algebra"
 slug: "frobenius-norm"
 legacyPaths: ["/notes/frobenius-norm/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 12
 readtime: 8
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/线性代数/Frobenius 范数.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/Frobenius%20%E8%8C%83%E6%95%B0.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:5adc154603a7afa206bd4cdaaa163f8b37f74ef433036edb146539570a9ed06b"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/Frobenius%20%E8%8C%83%E6%95%B0.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:348097457582cd5e64ea2d86b8ec38e333f6c8fa49bb02c0adac05b33896b55c"
   manifest: "muon"
   managed: true
 ---
-> 层次：线性代数
-
-## 一句话定位
+## 先记住什么
 
 Frobenius 范数是矩阵元素平方和的平方根，也等于所有奇异值平方和的平方根。
 
@@ -39,7 +37,7 @@ $$
 \|A\|_F=\sqrt{\sum_i\sigma_i^2}.
 $$
 
-它像是把矩阵摊平成向量后取欧氏范数，因此在深度学习中常用于报告梯度范数、权重范数或更新范数。
+它像是把矩阵摊平成向量后取欧氏范数，因此在深度学习中常用于报告 gradient、weight 或 update 的整体大小。
 
 ## 相关知识展开
 
@@ -57,7 +55,7 @@ $$
 \|A\|_F=\sqrt{1^2+2^2+3^2+4^2}=\sqrt{30}.
 $$
 
-这也是为什么深度学习代码里很多 `tensor.norm()` 默认就接近这个含义。
+在 PyTorch 中可用 `torch.linalg.matrix_norm(A, ord="fro")` 明确计算它；不要依赖含义容易混淆的默认 `norm` 调用。
 
 ### 2. 为什么它等于奇异值平方和？
 
@@ -112,7 +110,7 @@ $$
 
 ## 和 Muon 的关系
 
-Muon 的更新方向 $UV^\top$ 在 Frobenius 范数下的大小与矩阵秩和形状有关。这也是为什么 Muon 工程实现要讨论 update RMS 缩放：如果不同形状矩阵的正交化方向天然 RMS 不同，直接套同一个学习率会造成层间更新尺度不一致。理解 Frobenius/RMS 有助于读懂 original-scale 与 match-RMS 等缩放约定。
+Muon 的更新方向 $UV^\top$ 在 Frobenius 范数下的大小与矩阵秩和形状有关。这也是为什么 Muon 工程实现要讨论 update RMS 缩放：如果不同形状矩阵的正交化方向天然 RMS 不同，直接套同一个 learning rate 会造成层间更新尺度不一致。理解 Frobenius/RMS 有助于读懂 original-scale 与 match-RMS 等缩放约定。
 
 ## 需要掌握到什么程度
 
@@ -125,7 +123,7 @@ Muon 的更新方向 $UV^\top$ 在 Frobenius 范数下的大小与矩阵秩和�
 
 - 认为矩阵范数只有一种。谱范数、Frobenius 范数和核范数回答的问题不同。
 - 把 Frobenius 范数当作算子最大放大倍数；那是谱范数。
-- 忽略矩阵形状导致的 RMS 差异，进而误判某个层的学习率是否过大。
+- 忽略矩阵形状导致的 RMS 差异，进而误判某个层的 learning rate 是否过大。
 
 ## 自测问题
 
@@ -136,5 +134,5 @@ Muon 的更新方向 $UV^\top$ 在 Frobenius 范数下的大小与矩阵秩和�
 ## 参考入口
 
 - Golub & Van Loan, *Matrix Computations* —— Frobenius/SVD 恒等式和矩阵计算规范入口。
-- Liu et al., *Muon is Scalable for LLM Training* —— 查看 consistent update RMS 的规模化动机与经验消融。
-- KellerJordan/Muon 中关于 update scaling 的实现 —— 用实际 shape 方向核对理论 RMS 与代码 scale factor。
+- [Liu et al., *Muon is Scalable for LLM Training*](https://arxiv.org/abs/2502.16982) —— 查看 consistent update RMS 的规模化动机与经验消融。
+- [KellerJordan/Muon](https://github.com/KellerJordan/Muon) —— 用实际 shape 方向核对理论 RMS 与代码 scale factor。

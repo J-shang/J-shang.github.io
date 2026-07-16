@@ -6,22 +6,20 @@ section: "linear-algebra"
 slug: "nuclear-norm"
 legacyPaths: ["/notes/nuclear-norm/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 13
 readtime: 8
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/线性代数/核范数.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/%E6%A0%B8%E8%8C%83%E6%95%B0.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:cb992c2bc518c4fe903e032e949fc2733738dbedc97b66e5b6d89d22c249fe0e"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/%E6%A0%B8%E8%8C%83%E6%95%B0.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:7b1a221f8e401b2f25ed097155eedfc47d3b98b2ff3b06821af5512aaa4b8f16"
   manifest: "muon"
   managed: true
 ---
-> 层次：线性代数
-
-## 一句话定位
+## 先记住什么
 
 核范数是矩阵所有奇异值之和，是秩的凸替代，也是谱范数的对偶范数。
 
@@ -136,6 +134,6 @@ Muon 的谱范数最陡下降解释会自然碰到核范数对偶。若要在谱
 
 ## 参考入口
 
-- Recht, Fazel & Parrilo, *Guaranteed Minimum-Rank Solutions of Linear Matrix Equations via Nuclear Norm Minimization* —— 核范数作为秩替代及其对偶结构的经典入口。
+- [Recht, Fazel & Parrilo, *Guaranteed Minimum-Rank Solutions of Linear Matrix Equations via Nuclear Norm Minimization*](https://doi.org/10.1137/070697835) —— 核范数作为秩替代及其对偶结构的经典入口。
 - Trefethen & Bau, *Numerical Linear Algebra* —— 用 SVD 统一理解 Schatten 范数与矩阵几何。
-- Chen, Li & Liu, *Muon Optimizes Under Spectral Norm Constraints* —— 读取核/谱对偶如何进入 Muon 分析；把优化结论限制在论文假设内。
+- [Chen, Li & Liu, *Muon Optimizes Under Spectral Norm Constraints*](https://arxiv.org/abs/2506.15054) —— 读取核/谱对偶如何进入 Muon 分析；把优化结论限制在论文假设内。

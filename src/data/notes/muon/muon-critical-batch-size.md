@@ -6,22 +6,22 @@ section: "papers"
 slug: "muon-critical-batch-size"
 legacyPaths: ["/notes/muon-critical-batch-size/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 71
 source:
   repository: "J-shang/Muon"
   path: "论文精读/10-Critical-Batch-Size.md"
-  url: "https://github.com/J-shang/Muon/blob/ae2b5f9e6ee06b411aef2220e361c75988a7d753/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/10-Critical-Batch-Size.md"
-  revision: "ae2b5f9e6ee06b411aef2220e361c75988a7d753"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:663e63ac90f6fbdb0418d2771c98b2f2ffe3fe92ff4bf56baf384af524126589"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/10-Critical-Batch-Size.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:04f02c951b2911b892115884919adcf5dc66d523d561efdf80975bdd66461b5f"
   manifest: "muon"
   managed: true
 ---
-> source: [arXiv:2507.01598](https://arxiv.org/abs/2507.01598)，当前核验版本 v5（2026-06-08）
-> source class: 理论与实验预印本
-> confidence: 定理限于假设；hyperparameter scaling `supported in-scope`；绝对最佳 batch `not predicted`
+> 原文：[arXiv:2507.01598](https://arxiv.org/abs/2507.01598)，核验版本 v5（2026-06-08）
+> 来源类型：理论与实验预印本
+> 阅读提醒：定理只在论文假设下成立；作者给出定性的超参数趋势，不预测普适的最佳 batch。
 
 ## 它解决什么问题
 
@@ -65,7 +65,7 @@ Muon 把 matrix gradient/momentum 的谱结构带进 convergence bound。effecti
 
 - *Practical Efficiency* 观察 Muon 在较大 batch 下的经验 frontier。
 - 本文尝试解释 optimizer hyperparameters 怎样移动 critical-batch 下界。
-- 两者 `empirically-associated-with`，但本文的单矩阵/假设化公式不能反推任意 LLM 的最佳 global batch。
+- 两者在实验上相关，但本文的单矩阵、假设化公式不能反推任意 LLM 的最佳 global batch。
 
 ## 精读后的任务
 
@@ -79,31 +79,31 @@ Muon 把 matrix gradient/momentum 的谱结构带进 convergence bound。effecti
 
 **掌握标准**：能把 batch、steps、SFO、wall-clock 和停止条件分开，且不把理论下界写成通用 recipe。
 
-## 二次审计：补漏、分歧与原文核查
+## 补充阅读：遗漏、分歧与出处
 
-### A. 还值得学习的点
+### 还值得注意什么
 
 1. **四种配置被统一分析**：有/无 Nesterov × 有/无 weight decay；这比只研究“Muon”一个名字更接近真实 recipe。
 2. **weight decay 的理论角色不只是 generalization**：论文证明它可在特定 LR–decay 条件下控制 parameter/gradient norms，减少对 bounded-gradient 假设的依赖。
 3. **两级验证策略值得学习**：单矩阵 full-Muon toy 严格贴理论；ResNet/VGG/Llama-320M 使用 hybrid Muon，只验证 qualitative transfer，不冒充严格定理验证。
 4. **作者明确列出三项限制**：single-matrix 无 layer heterogeneity、理论 full-Muon vs 实践 hybrid、Shampoo/SOAP 的同类 bound 尚未建立。
 
-### B. 与其他论文或学者观点的冲突检查
+### 与其他论文哪里不同
 
-| 对照观点 | 第一处分歧 | 判断 | 判别检查 |
+| 对照来源或观点 | 分歧从哪里开始 | 如何理解 | 怎样验证 |
 |---|---|---|---|
-| SOAP/Practical Efficiency 的 CBS | break point/数据效率 vs $bT(b)$ 的 SFO minimizer | **定义真实不同** | 同一 stopping target计算各定义 |
-| spectral-constraint 论文 | KKT score/decay约束 vs average gradient norm/CBS | **measure 与假设不同**；原文也警告 rate 不宜横比 | 统一 convergence measure 后才比较 |
-| Moonlight 报告更大模型可用更大 batch | 本文只给含未知 variance/rank 的定性下界 | **支持趋势但不预测绝对值** | 测真实 layerwise noise/rank再代入 |
+| SOAP/Practical Efficiency 的 CBS | break point/数据效率 vs $bT(b)$ 的 SFO minimizer | **定义真实不同** | 同一 stopping target 计算各定义 |
+| spectral-constraint 论文 | KKT score/decay 约束 vs average gradient norm/CBS | **measure 与假设不同**；原文也警告 rate 不宜横比 | 统一 convergence measure 后才比较 |
+| Moonlight 报告更大模型可用更大 batch | 本文只给含未知 variance/rank 的定性下界 | **支持趋势但不预测绝对值** | 测真实 layerwise noise/rank 再代入 |
 | Practical Efficiency 说 Muon beyond AdamW critical batch 更 data-efficient | 本文讨论 optimizer/hyperparameter 如何移动 SFO-optimal batch | **相关但非同一命题** | loss target、token budget、LR scaling 对齐 |
 
-### C. 本笔记知识核查表
+### 本文内容从哪里来
 
-| 本笔记学习项 | 原文位置 | 核查结论 |
+| 本文讲到的内容 | 原文位置 | 来源说明 |
 |---|---|---|
-| $\operatorname{SFO}(b)=bT(b)$ 与 CBS minimizer | §4.1–4.2 | `论文明确` |
-| CBS 公式含 variance、precision、effective rank，不能预测绝对值 | Abstract、§3–4、limitations | `论文反复明确` |
-| momentum/decay 影响 CBS 的定性 ordering | Proposition 4.3、Table 1、§5 | `理论下界 + 作者实验支持` |
-| full-Muon theory 与 hybrid practice 有 gap | §5 two-level validation、Conclusion limitations | `论文明确` |
-| 本笔记两种 stopping metric 的数字表 | 无原文表 | `仓库内反例`，说明定义敏感性 |
-| “报告 critical-batch 区间而非单点” | 本项目实验建议 | `方法学综合`，不是论文定理 |
+| $\operatorname{SFO}(b)=bT(b)$ 与 CBS minimizer | §4.1–4.2 | 论文明确 |
+| CBS 公式含 variance、precision、effective rank，不能预测绝对值 | Abstract、§3–4、limitations | 论文反复明确 |
+| momentum/decay 影响 CBS 的定性 ordering | Proposition 4.3、Table 1、§5 | 理论下界与作者实验分别提供支持，适用范围以原文假设为准 |
+| full-Muon theory 与 hybrid practice 有 gap | §5 two-level validation、Conclusion limitations | 论文明确 |
+| 本笔记两种 stopping metric 的数字表 | 无原文表 | 本文反例，说明定义敏感性 |
+| “报告 critical-batch 区间而非单点” | 本项目实验建议 | 本文的方法建议，不是论文定理 |

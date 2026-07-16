@@ -6,22 +6,22 @@ section: "papers"
 slug: "muon-paper-reading-guide"
 legacyPaths: ["/notes/muon-paper-reading-guide/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 featured: true
 order: 60
 source:
   repository: "J-shang/Muon"
   path: "论文精读/README.md"
-  url: "https://github.com/J-shang/Muon/blob/ae2b5f9e6ee06b411aef2220e361c75988a7d753/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/README.md"
-  revision: "ae2b5f9e6ee06b411aef2220e361c75988a7d753"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:198ef852551eaac23f022c25e231763b179241648f67fed128d09fc67d3ce6d2"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/README.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:2c6cdbbb60a6a259306e1f72a88047708962c85453c91ebf6a38ffafbc2ce9f8"
   manifest: "muon"
   managed: true
 ---
-> 信息截点：**2026-07-14**。
-> 收录原则：优先一手论文、正式会议版本、作者技术报告和官方实现；“历史影响力”与“结论置信度”分开标注。
+> 资料范围截至 **2026-07-14**；核心来源版本复核于 **2026-07-16**。
+> 收录原则：优先一手论文、正式会议版本、作者技术报告和官方实现；“历史影响力”与“结论是否可靠”分开判断。
 > 阅读目标：不是积累摘要，而是能重建公式、指出边界、对照代码并设计判别实验。
 
 ## 1. 为什么这份清单不是按引用数排序
@@ -33,7 +33,7 @@ Muon 在 2024 年下半年才出现，严格意义上的“经典 Muon 论文”
 3. **理论与数值边界**：谱范数约束、critical batch、inexact update、有限步 Newton–Schulz 收敛。
 4. **重要前沿变体与系统**：Muon²、DMuon。它们很新，重要性来自问题本身和实验规模，不应提前称为“经典”。
 
-本目录对每个核心来源建立一个文件。`source class` 说明来源身份，`confidence` 说明本笔记中结论的置信度；二者不可互相替代。
+本目录对每个核心来源建立一个文件。文件开头只保留原文入口、来源类型和阅读提醒；正文中的实验数字会写成“作者报告”，不会自动外推到其他模型或训练设置。
 
 ## 2. 核心精读清单与顺序
 
@@ -52,7 +52,7 @@ Muon 在 2024 年下半年才出现，严格意义上的“经典 Muon 论文”
 | 10 | [Convergence Bound and Critical Batch Size](/topics/muon/muon-critical-batch-size/) | 同时分析 momentum、weight decay、rank/noise 与 critical batch | 理论+实验预印本 | 核心理论 |
 | 11 | [Kimi K2](/topics/muon/kimi-k2-muonclip/) | 超大规模采用 Muon 的案例，以及 MuonClip 对 QK logit spike 的系统补丁 | 大规模技术报告 | 规模案例 |
 | 12 | [Beyond the Ideal](/topics/muon/inexact-muon-update/) | 把 NS 近似误差从“实现细节”提升为需与 LR/momentum 联调的变量 | 理论+小规模实验预印本 | 数值必读 |
-| 13 | [Convergence of Muon with Newton–Schulz](/topics/muon/muon-convergence-newton-schulz/) | 直接研究有限步 NS，而不是用精确 SVD 替代实际算法 | 理论+实验预印本 | 数值必读 |
+| 13 | [Convergence of Muon with Newton–Schulz](/topics/muon/muon-convergence-newton-schulz/) | 直接研究有限步 NS，而不是用精确 SVD 替代实际算法 | ICLR 2026 论文 | 数值必读 |
 | 14 | [Muon²](/topics/muon/muon2/) | 研究 polar 前二阶统计如何改善有限步 NS 输入谱 | 2026 预印本 | 前沿待复现 |
 | 15 | [DMuon](/topics/muon/dmuon/) | 保持完整矩阵语义时，如何把分布式 Muon 的额外成本压到近 AdamW | 2026 系统预印本 | 前沿待复现 |
 
@@ -78,42 +78,42 @@ Muon 在 2024 年下半年才出现，严格意义上的“经典 Muon 论文”
 
 ## 4. 扩展论文池
 
-下面这些材料值得继续追踪，但截至信息截点不足以和核心主线同级定论。它们已按“改变的对象”整理在 [前沿变体与开放问题](/topics/muon/muon-frontiers/)：
+下面这些材料值得继续追踪，但截至 2026-07-14 还不足以和核心主线同级定论。它们已按“改变的对象”整理在 [前沿变体与开放问题](/topics/muon/muon-frontiers/)：
 
 | 来源 | 改变的主要对象 | 当前处理 |
 |---|---|---|
 | [AdaMuon](https://arxiv.org/abs/2507.11005) | polar 后/周围的 adaptive statistics | 前沿预印本，待独立复现 |
 | [8-bit Muon](https://arxiv.org/abs/2509.23106) | momentum state 的量化表示 | 先验证 state bytes、误差与恢复一致性 |
 | [NorMuon](https://arxiv.org/abs/2510.05491) | neuron/row 级二阶归一化 | 与 full/factorized second moment 做状态匹配对照 |
-| [MuonAll](https://arxiv.org/abs/2511.06086) | 把 Muon 扩展到原本非矩阵参数 | reshape 本身是归纳偏置，当前结论 `open` |
+| [MuonAll](https://arxiv.org/abs/2511.06086) | 把 Muon 扩展到原本非矩阵参数 | reshape 本身是归纳偏置，仍待验证 |
 | [MiMuon](https://arxiv.org/abs/2605.19619) | 混合正交化与 momentum-SGD 方向 | 需要固定混合规则和理论假设 |
 | [MONA](https://arxiv.org/abs/2605.26842) | gradient-difference/EMA acceleration | 大规模作者报告，待同预算复现 |
 | [Muon in Adversarial Training](https://arxiv.org/abs/2605.26929) | 应用域与鲁棒优化动力学 | 不从预训练结论直接外推 |
 | [Muown](https://arxiv.org/abs/2605.10797) | row norm / neuron update control | 需区分 exact-polar 方向与后处理 |
 | [Tensorion](https://arxiv.org/abs/2606.25975) | 从矩阵 polar 推广到高阶 tensor | 属于 generalization，不是简单路由开关 |
 
-另有 PolarExpress、Turbo-Muon、GramMuon、Dion 等围绕 polar polynomial、Gram kernel 或低秩/分布式路径的工作；在固定官方版本和可比实验前，保留在数值/系统候选池，不把名字本身当作新机制。
+此外还有围绕 polar polynomial、Gram kernel 和低秩/分布式路径的实现工作；只有找到稳定的一手版本并建立可比实验后，才进入清单。方法名本身不构成新的机制证据。
 
 升级为核心精读的条件至少满足其一：有独立复现；改变了主线理论判断；在清晰披露 recipe 的更大规模上稳定成立；或已进入正式同行评审版本。
 
-## 5. 每篇笔记的证据合同
+## 5. 每篇笔记怎样标明出处
 
 每篇文件都必须区分：
 
 - **论文报告**：作者直接声称或展示的结果；
-- **仓库内推导**：本项目能逐步核查的数学关系；
-- **个人综合**：把多篇来源连接起来的解释；
+- **本文推导**：本项目能逐步核查的数学关系；
+- **跨论文比较**：把多篇来源连接起来的解释；
 - **开放问题**：尚不能由现有证据裁决的结论。
 
-`verified` 只用于声明范围内已由推导、代码走读或复现实验直接确认的结论；论文自身的大规模数字通常先保留为 `supported in-scope` 或 `plausible`。
+判断重点不在标签本身，而在原文定位和适用边界。大规模数字即使来自一手论文，也仍写成作者在该实验范围内的报告。
 
-## 6. 二次审计规则与主要校正
+## 6. 逐篇复核后最重要的校正
 
-截至 2026-07-14，`00`–`15` 每个文件都完成了同一组三项检查：
+截至 2026-07-16，`00`–`15` 每个文件都回答三个问题：
 
-1. `还值得学习的点`：回到一手正文的算法、定理、实验、限制和附录，补充首轮笔记遗漏的学习价值。
-2. `冲突检查`：对齐 object、assumption、scale、metric 和 approximation；只标写真冲突、条件差异、定义差异或后续证据扩展，不制造争议。
-3. `知识核查表`：把当前笔记内容逐项标成 `论文明确`、`作者报告 in-scope`、`仓库内推导`、`跨论文综合` 或 `open`，并给出原文 section/equation/table 定位。
+1. 原文还有哪些值得注意但首轮遗漏的内容？
+2. 它与其他论文的观点是真冲突，还是对象、假设、尺度、指标或近似不同？
+3. 本文每个主要知识点来自原文、作者实验、本文推导还是跨论文比较？
 
 本轮最重要的校正如下：
 
@@ -121,12 +121,12 @@ Muon 在 2024 年下半年才出现，严格意义上的“经典 Muon 论文”
 |---|---|
 | instantaneous Shampoo = polar 是 2018 Shampoo 的主结论 | 该关系由后续 *Old Optimizer, New Norm* / Muon 说明明确提出；可由 Shampoo 公式推导，但不能回溯归因给原论文 |
 | *Modular Duality* 直接提出或讨论 Muon | 正文没有使用 Muon 名称；它提出 rectangular NS duality map，和 Muon 的关系是时间线与公式上的后见综合 |
-| Muon 是/不是二阶法已经有共识 | 文献存在真实 taxonomy 分歧：*Practical Efficiency* 采用宽泛“matrix structured = second-order”称呼，finite-NS 论文要求 curvature estimate 才算二阶 |
+| Muon 是/不是二阶法已经有共识 | 文献存在真实的分类口径分歧：*Practical Efficiency* 采用宽泛的“matrix structured = second-order”称呼，finite-NS 论文要求 curvature estimate 才算二阶 |
 | “critical batch size”在各论文含义相同 | SOAP/部分实证论文用 linear-scaling break point；Sato 等定义为最小化 $bT(b)$ 的 SFO minimizer |
 | 更精确 polar 必然带来更好训练 | finite-NS/inexact 理论改善的是 error/rate；Moonlight 在固定 recipe 下观察更精确未必改善 loss。模型、kernel、超参重调与指标均不同 |
 | Muon 论文共享一套 weight decay recipe | Moonlight/spectral-constraint 重点是 decoupled decay；*Practical Efficiency* 明确研究 coupled weight decay 与其 $\mu$P transfer |
 
-若正文没有对应陈述，但公式可直接推出，本目录保留它作为 `仓库内推导`；若需要跨两篇以上来源连接，则标 `跨论文综合`。这两类都不是幻觉，但不得冒充作者原话或论文结论。
+若正文没有对应陈述，但公式可直接推出，本目录把它写成“本文推导”；若需要连接两篇以上来源，则写成“跨论文比较”。两者都必须给出可核查路径，也不能冒充作者原话或论文结论。
 
 ## 7. 总通过检查
 

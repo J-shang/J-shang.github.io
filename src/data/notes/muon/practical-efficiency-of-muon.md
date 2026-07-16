@@ -6,22 +6,22 @@ section: "papers"
 slug: "practical-efficiency-of-muon"
 legacyPaths: ["/notes/practical-efficiency-of-muon/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 69
 source:
   repository: "J-shang/Muon"
   path: "论文精读/08-Practical-Efficiency-of-Muon.md"
-  url: "https://github.com/J-shang/Muon/blob/ae2b5f9e6ee06b411aef2220e361c75988a7d753/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/08-Practical-Efficiency-of-Muon.md"
-  revision: "ae2b5f9e6ee06b411aef2220e361c75988a7d753"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:2a505352eca81140a47e3dc510118cb8b25809b4276abc9a552c1c8b5adc28bc"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/08-Practical-Efficiency-of-Muon.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:cb9e9fe79a52931455682dc23ff25ebc548f36a75f864b73e6e4032045473cf1"
   manifest: "muon"
   managed: true
 ---
-> source: [arXiv:2505.02222](https://arxiv.org/abs/2505.02222)
-> source class: 多尺度实验预印本
-> confidence: 实验趋势 `supported in-scope`；跨训练栈外推 `open`
+> 原文：[arXiv:2505.02222](https://arxiv.org/abs/2505.02222)，核验版本 v4（2025-05-20）
+> 来源类型：多尺度实验预印本
+> 阅读提醒：实验趋势只覆盖作者训练栈；跨数据、架构和系统的外推仍待验证。
 
 ## 它补了什么证据
 
@@ -78,7 +78,7 @@ muP 旨在让部分超参数沿宽度迁移，telescoping 用较小模型筛选�
 
 ## 与 critical batch 的关系
 
-本文给实证 operating point；critical-batch 理论试图解释 batch 增大到何处不再线性减少 steps。二者是 `empirical-measurement` 与 `theoretical-model` 的关系，不能把理论下界直接当作本文最佳 batch 的预测值。
+本文给出实证 operating point；critical-batch 理论试图解释 batch 增大到何处不再线性减少 steps。前者是实验测量，后者是理论模型，不能把理论下界直接当作本文最佳 batch 的预测值。
 
 ## 精读后的任务
 
@@ -92,31 +92,31 @@ muP 旨在让部分超参数沿宽度迁移，telescoping 用较小模型筛选�
 
 **掌握标准**：看到“更快”会先追问目标值、横轴、batch、硬件和调参预算。
 
-## 二次审计：补漏、分歧与原文核查
+## 补充阅读：遗漏、分歧与出处
 
-### A. 还值得学习的点
+### 还值得注意什么
 
 1. **论文真正的新评价对象是 iso-loss compute–time frontier**：§2.3 同时改变 device count 与 batch，把到达同一 loss 的资源—时间可行集画出来；这比单独 loss-vs-step 或 wall-clock 曲线信息更全。
 2. **“beyond critical batch”有专门度量**：论文定义 AdamW/Muon 到同一 loss 的 token-consumption ratio $R_L(B)$，研究它随 batch 增长是否保持/上升，而不是只凭曲线 kink。
 3. **telescoping 不是免费 transfer**：§3 承认有限宽和搜索网格误差，通过逐宽度收缩网格把 calibration 推向大模型，估计额外成本 $O(C\log N)$。
 4. **实验边界很具体**：最大 4B、batch 至 16M tokens；$\mu$P transfer 实验只变 width，固定 depth、sequence length、batch 和 steps。
 
-### B. 与其他论文或学者观点的冲突检查
+### 与其他论文哪里不同
 
-| 对照观点 | 第一处分歧 | 判断 | 判别检查 |
+| 对照来源或观点 | 分歧从哪里开始 | 如何理解 | 怎样验证 |
 |---|---|---|---|
-| 本文称 Muon 为 simplest second-order optimizer；NS 收敛论文明确称其非二阶 | 是否把 matrix-structured transform 算作二阶，还是要求 curvature estimate | **taxonomy 真冲突**，学习时保留两种定义 | 检查 persistent curvature state，而不是按名称投票 |
+| 本文称 Muon 为 simplest second-order optimizer；NS 收敛论文明确称其非二阶 | 是否把 matrix-structured transform 算作二阶，还是要求 curvature estimate | **分类口径 真冲突**，学习时保留两种定义 | 检查 persistent curvature state，而不是按名称投票 |
 | Moonlight 使用 AdamW-style decay；本文明确写 coupled WD | decay parameterization 与 transfer rule | **recipe 差异** | 用同一公式和 $\mu$P scale 复现，不能混用超参 |
 | SOAP 的 critical batch 是线性 scaling break point；Sato 是 SFO minimizer | critical batch 的数学定义 | **定义冲突** | 同一 $T(b)$ 曲线同时标两种 $b^*$ |
 | Moonlight 的 compute-optimal FLOPs 比较 | 本文比较 variable-resource iso-loss frontier | **互补指标**，不是重复验证 | 对同一 run 同时算 FLOPs 和 compute-time frontier |
 
-### C. 本笔记知识核查表
+### 本文内容从哪里来
 
-| 本笔记学习项 | 原文位置 | 核查结论 |
+| 本文讲到的内容 | 原文位置 | 来源说明 |
 |---|---|---|
-| Muon 扩展 compute–time Pareto frontier | Abstract、Figures 1–2、§2.3 | `作者报告 in-scope` |
-| large batch 下相对 AdamW 保持更好 data efficiency | Abstract、§2.4、Figure 3 | `作者报告`，依赖数据/模型/目标 loss |
-| 最大约 4B、多数据/架构 ablation | Abstract、§2.2、appendices | `论文明确` |
-| $\mu$P + telescoping，成本 $O(C\log N)$ | §3.3–3.4 | `论文主张`；依赖无新 peak 等假设/网格模型 |
-| 本笔记 1000s vs 910s 算例 | 无原文例子 | `仓库内教学算例`，算术可核查 |
-| “至少同时报告 token/FLOP/time” | 由论文 compute-time动机与本项目公平实验规范综合 | `方法学综合`，不是作者唯一规定 |
+| Muon 扩展 compute–time Pareto frontier | Abstract、Figures 1–2、§2.3 | 作者在该实验范围内报告 |
+| large batch 下相对 AdamW 保持更好 data efficiency | Abstract、§2.4、Figure 3 | 作者报告，依赖数据/模型/目标 loss |
+| 最大约 4B、多数据/架构 ablation | Abstract、§2.2、appendices | 论文明确 |
+| $\mu$P + telescoping，成本 $O(C\log N)$ | §3.3–3.4 | 论文主张；依赖无新 peak 等假设/网格模型 |
+| 本笔记 1000s vs 910s 算例 | 无原文例子 | 本文教学算例，算术可核查 |
+| “至少同时报告 token/FLOP/time” | 由论文的 compute-time 动机与本项目公平实验规范综合 | 跨论文的方法建议，不是作者唯一规定 |

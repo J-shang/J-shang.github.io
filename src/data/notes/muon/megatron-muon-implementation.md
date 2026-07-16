@@ -6,25 +6,24 @@ section: "engineering"
 slug: "megatron-muon-implementation"
 legacyPaths: ["/notes/megatron-muon-implementation/"]
 date: 2026-07-06
-updated: 2026-07-06
+updated: 2026-07-16
 order: 34
 readtime: 30
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/深度学习工程/Megatron-LM Muon 实现解析.md"
-  url: "https://github.com/J-shang/Muon/blob/030eaefef05430ba6c4c85bd2cba772416cefab6/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/Megatron-LM%20Muon%20%E5%AE%9E%E7%8E%B0%E8%A7%A3%E6%9E%90.md"
-  revision: "030eaefef05430ba6c4c85bd2cba772416cefab6"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:295853c676004d6484469054ac2d9387a7efc4ac97fd500a251c4c25d292ec95"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/Megatron-LM%20Muon%20%E5%AE%9E%E7%8E%B0%E8%A7%A3%E6%9E%90.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:07316660da06dd62de9ce381b71495775cc4d3a79b8f655c493b757021a90164"
   manifest: "muon"
   managed: true
 ---
-> 层次：深度学习工程
-> 信息截点：2026-07-06
+> 代码复核日期：2026-07-16
 > 分析对象：本仓库 submodule `Megatron-LM`，commit `0823c731ed7d793aef047b6a64f2dbbf32bf6e2c`。
 > 上游核心依赖：`NVIDIA-NeMo/Emerging-Optimizers`，Megatron-LM 在 `pyproject.toml` 中 pin 到 `v0.2.0`，对应本文核对的 commit `1effa026ff096b7fa1063ca2fba19d98be6e6cdf`。
 
-## 一句话定位
+## 先记住什么
 
 Megatron-LM 的 Muon 支持不是把普通 AdamW/ZeRO 代码改一个 optimizer 名字，而是把 Muon 拆成两层：`Emerging-Optimizers` 提供 momentum、Newton-Schulz 和 scaling 的核心更新；Megatron-LM 提供参数路由、Tensor Parallel QKV split、DP/EP/PP process group 集成、LayerWise 分布式参数布局、参数同步和 checkpoint 适配。
 

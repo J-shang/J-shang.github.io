@@ -6,22 +6,22 @@ section: "papers"
 slug: "muon-is-scalable"
 legacyPaths: ["/notes/muon-is-scalable/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 68
 source:
   repository: "J-shang/Muon"
   path: "论文精读/07-Muon-is-Scalable.md"
-  url: "https://github.com/J-shang/Muon/blob/ae2b5f9e6ee06b411aef2220e361c75988a7d753/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/07-Muon-is-Scalable.md"
-  revision: "ae2b5f9e6ee06b411aef2220e361c75988a7d753"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:9a3f4d1ff7d636935b2dc855b36074a13f6ebc5bd63be54c805e45575fcc07cf"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/07-Muon-is-Scalable.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:a3a69cd35704a1e69cfeffaad0552ebc01a7e1646230b8b0d689a151fc841d50"
   manifest: "muon"
   managed: true
 ---
-> source: [arXiv:2502.16982](https://arxiv.org/abs/2502.16982)；[Moonlight 官方仓库](https://github.com/MoonshotAI/Moonlight)
-> source class: 大规模技术预印本 + 官方实现
-> confidence: 配方/代码事实 `verified per version`；规模收益 `supported in-scope`
+> 原文：[arXiv:2502.16982](https://arxiv.org/abs/2502.16982)，核验版本 v1（2025-02-24）；[Moonlight 官方仓库](https://github.com/MoonshotAI/Moonlight)
+> 来源类型：大规模技术预印本与官方实现
+> 阅读提醒：配方和代码事实必须绑定版本；规模收益只覆盖论文的模型、数据和拟合设置。
 
 ## 为什么它是 Muon 主线论文
 
@@ -78,14 +78,14 @@ $$
 
 ## 关系图谱
 
-- `extends` → 原始 Muon 到大规模 LLM recipe。
-- `implemented-by` → Moonlight distributed optimizer。
-- `empirically-associated-with` → compute-optimal frontier 改善。
-- `motivates` → spectral constraint、critical batch、MuonClip、DMuon 等后续研究。
+- **规模化扩展**：把原始 Muon 发展成大规模 LLM recipe。
+- **实现入口**：Moonlight distributed optimizer。
+- **实验证据**：作者报告 compute-optimal frontier 改善，但只覆盖其设置。
+- **后续问题**：推动了 spectral constraint、critical batch、MuonClip、DMuon 等研究。
 
 ## 精读后的任务
 
-从论文和固定 commit 代码制作 claim-to-code 表：每条写公式、参数名、默认值、global/local shape、通信 collective、state dtype。另做一张收益证据卡，记录模型、tokens、batch、基线调参预算、横轴和硬件。
+从论文和固定 commit 代码制作“公式—代码”对照表：每条写公式、参数名、默认值、global/local shape、通信 collective 和 state dtype。另做一张收益来源卡，记录模型、tokens、batch、baseline 调参预算、横轴和硬件。
 
 ## 自测
 
@@ -95,31 +95,31 @@ $$
 
 **掌握标准**：能把算法方向、shape scale、decay、parameter routing、distributed semantics 五项作为一个完整 recipe 复述。
 
-## 二次审计：补漏、分歧与原文核查
+## 补充阅读：遗漏、分歧与出处
 
-### A. 还值得学习的点
+### 还值得注意什么
 
-1. **SFT optimizer mismatch 是主文结果，不只是展望**：§3.5 显示 Muon-pretrain + Muon-SFT 在其 ablation 中最好，但当 pretrain/SFT optimizer 不一致时，Muon-SFT 没有显著优势；Qwen2.5-7B 的 Muon-SFT 与 Adam-SFT大体相当且部分指标更低。
+1. **SFT optimizer mismatch 是主文结果，不只是展望**：§3.5 显示 Muon-pretrain + Muon-SFT 在其 ablation 中最好，但当 pretrain/SFT optimizer 不一致时，Muon-SFT 没有显著优势；Qwen2.5-7B 的 Muon-SFT 与 Adam-SFT 大体相当，且部分指标更低。
 2. **谱熵证据只是 association**：§3.4 观察 Muon 权重矩阵 SVD entropy 更高，并用它支持“更多方向”直觉；没有干预谱熵来证明因果。
 3. **update scale 有两个层次**：先消除 shape-dependent RMS，再把 Muon RMS 经验匹配到 AdamW 约 0.2–0.4，目的是共享 LR/WD。不要把两步合成一个理论常数。
-4. **Distributed Muon 的通信账本明确**：算法包含 DP gather full gradient、full NS、discard nonlocal update、all-gather updated parameters；这比“支持 ZeRO”更可学习。
+4. **Distributed Muon 的通信流程写得很具体**：算法包含 DP gather full gradient、full NS、discard nonlocal update、all-gather updated parameters；这比笼统写“支持 ZeRO”更有用。
 
-### B. 与其他论文或学者观点的冲突检查
+### 与其他论文哪里不同
 
-| 对照观点 | 第一处分歧 | 判断 | 判别检查 |
+| 对照来源或观点 | 分歧从哪里开始 | 如何理解 | 怎样验证 |
 |---|---|---|---|
 | 原始博客把 >20B/1T、分布式、finetuning 列作 open | 本报告给 16B/5.7T、distributed implementation 和 SFT ablation | **时间上的问题推进**，不是同时冲突 | 按发布日期和 scale 记录证据 |
-| *Practical Efficiency* 使用“coupled weight decay”并做 $\mu$P transfer | 本文引入 AdamW-style decoupled decay并复用 AdamW超参 | **recipe/术语真实差异** | 逐式比较 decay 是进 polar 前还是参数 update 项 |
-| Inexact/NS 理论：更准 polar 改善 bound | 本文观察更多 NS steps 更准确却不提升训练表现 | **指标/调参条件有张力** | 每个 precision 独立调 LR/momentum再比较 loss-vs-time |
+| *Practical Efficiency* 使用“coupled weight decay”并做 $\mu$P transfer | 本文引入 AdamW-style decoupled decay，并复用 AdamW 超参 | **recipe 与术语真实不同** | 逐式比较 decay 是进 polar 前还是参数 update 项 |
+| Inexact/NS 理论：更准 polar 改善 bound | 本文观察更多 NS steps 更准确却不提升训练表现 | **指标和调参条件有张力** | 每个 precision 独立调 LR/momentum，再比较 loss-vs-time |
 | Scion：实践 Muon 是 scale-invariant LMO | 本文显式添加 shape 和 match-RMS scale | **方向层一致，完整 step 尺度不同** | 去掉外部 scale 的 ablation |
 
-### C. 本笔记知识核查表
+### 本文内容从哪里来
 
-| 本笔记学习项 | 原文位置 | 核查结论 |
+| 本文讲到的内容 | 原文位置 | 来源说明 |
 |---|---|---|
-| weight decay 解决长程 weight/output RMS growth | §2.2 “Weight Decay”、Figure 2 | `论文报告`，机制措辞仍是作者解释 |
-| 满秩 $m\times n$ polar update RMS 为 $1/\sqrt{\max(m,n)}$ | Lemma 1 与 Appendix A | `论文明确/可独立推导` |
-| match AdamW RMS 约 0.2–0.4并复用 LR/WD | §2.2 “Matching update RMS” | `经验 recipe`，不是 universal constant |
-| full gather → NS → discard shard 的 distributed 流程 | §2.3 Algorithm 1 | `论文明确` |
-| 约 52% FLOPs | §3.2 fitted scaling-law curves | `作者报告 in-scope`，不是逐训练 run 的普适比例 |
-| 本笔记 full-vs-shard 不等式 | 论文用“requires full gradient matrix”表述 | `仓库内非线性综合`，应由具体矩阵反例验证 |
+| weight decay 解决长程 weight/output RMS growth | §2.2 “Weight Decay”、Figure 2 | 论文报告，机制措辞仍是作者解释 |
+| 满秩 $m\times n$ polar update RMS 为 $1/\sqrt{\max(m,n)}$ | Lemma 1 与 Appendix A | 论文明确/可独立推导 |
+| match AdamW RMS 约 0.2–0.4，并复用 LR/WD | §2.2 “Matching update RMS” | 论文中的经验 recipe，不是普适常数 |
+| full gather → NS → discard shard 的 distributed 流程 | §2.3 Algorithm 1 | 论文明确 |
+| 约 52% FLOPs | §3.2 fitted scaling-law curves | 作者在该实验范围内报告，不是逐训练 run 的普适比例 |
+| 本笔记 full-vs-shard 不等式 | 论文用“requires full gradient matrix”表述 | 本文非线性综合，应由具体矩阵反例验证 |

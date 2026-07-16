@@ -6,24 +6,22 @@ section: "optimization"
 slug: "adamw"
 legacyPaths: ["/notes/adamw/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 4
 readtime: 8
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/优化基础/AdamW.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/AdamW.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:58573182caf40872f7497d01f9288b886e59f648f0cfa3fba552e0ce152d5864"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/AdamW.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:3657cd0b091c72897cc91f7f86435d89f6a285e5a96a9f98eaedce2d76f12ed4"
   manifest: "muon"
   managed: true
 ---
-> 层次：优化基础
+## 先记住什么
 
-## 一句话定位
-
-AdamW 是大模型训练中最常见的强基线：Adam 的逐坐标自适应更新，加上与梯度更新解耦的 weight decay。
+AdamW 是大模型训练中最常见的强 baseline：Adam 的逐坐标自适应更新，加上与梯度更新解耦的 weight decay。
 
 ## 核心定义
 
@@ -72,7 +70,7 @@ $$
 \hat v_t=\frac{v_t}{1-\beta_2^t}
 $$
 
-做 bias correction。没有它，训练前几步的 update 会被系统性低估，尤其当 $\beta_2$ 很接近 1 时更明显。
+做 bias correction。没有它，$m_t$ 和 $v_t$ 都会偏向 0；两者相除后的 update 偏大还是偏小取决于 $\beta_1$、$\beta_2$ 和 step，不能简单说成统一缩小。
 
 ### 3. AdamW 的“W”到底改了什么？
 
@@ -86,14 +84,14 @@ $$
 
 然后再做 Adam update。这让“优化方向”和“权重衰减”分工更清楚，也让超参数更容易解释。
 
-### 4. 为什么 AdamW 是 LLM 的强基线？
+### 4. 为什么 AdamW 是 LLM 的强 baseline？
 
 AdamW 在 Transformer 预训练里好用，原因包括：
 
 - 对稀疏或尺度差异大的梯度坐标有自适应步长；
 - 对 embedding、norm、bias 等非矩阵参数不需要特殊几何假设；
 - 工程生态成熟，fused kernel、ZeRO/FSDP、混合精度支持充分；
-- 超参数经验丰富，很多模型 recipe 都以 AdamW 为默认基线。
+- 超参数经验丰富，很多模型 recipe 都以 AdamW 为默认 baseline。
 
 因此评估 Muon 时，如果 AdamW 没有充分调参，结论会很脆弱。Muon 的优势需要面对一个强 AdamW，而不是默认配置的 AdamW。
 
@@ -125,7 +123,7 @@ Muon 和 AdamW 的差别不是小修小补。AdamW 通过逐坐标二阶矩做�
 - 能写出 Adam 的一阶矩、二阶矩和 bias correction 的目的。
 - 能解释 AdamW 为什么比“Adam + L2 正则塞进梯度”更清晰。
 - 能理解 optimizer state 内存：AdamW 通常为每个参数保存 $m$ 和 $v$，状态开销大。
-- 能把 AdamW 当成需要认真调参的基线，而不是默认被 Muon 击败的稻草人。
+- 能把 AdamW 当成需要认真调参的 baseline，而不是默认被 Muon 击败的稻草人。
 
 ## 常见误区
 
@@ -141,6 +139,6 @@ Muon 和 AdamW 的差别不是小修小补。AdamW 通过逐坐标二阶矩做�
 
 ## 参考入口
 
-- Kingma & Ba, *Adam: A Method for Stochastic Optimization* —— 从原始算法核对一阶/二阶矩、bias correction 和逐元素分母。
-- Loshchilov & Hutter, *Decoupled Weight Decay Regularization* —— 核对 AdamW 与 L2 penalty 分叉的更新顺序和实验动机。
-- Liu et al., *Muon is Scalable for LLM Training* —— 查看现代 Muon 训练中 AdamW scalar group 的基线与配方边界。
+- [Kingma & Ba, *Adam: A Method for Stochastic Optimization*](https://arxiv.org/abs/1412.6980) —— 从原始算法核对一阶/二阶矩、bias correction 和逐元素分母。
+- [Loshchilov & Hutter, *Decoupled Weight Decay Regularization*](https://arxiv.org/abs/1711.05101) —— 核对 AdamW 与 L2 penalty 分叉的更新顺序和实验动机。
+- [Liu et al., *Muon is Scalable for LLM Training*](https://arxiv.org/abs/2502.16982) —— 查看现代 Muon 训练中 AdamW scalar group 的 baseline 与配方边界。

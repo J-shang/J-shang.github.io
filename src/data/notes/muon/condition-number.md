@@ -6,32 +6,39 @@ section: "numerical-computing"
 slug: "condition-number"
 legacyPaths: ["/notes/condition-number/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 21
 readtime: 6
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/数值计算/条件数.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/%E6%9D%A1%E4%BB%B6%E6%95%B0.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:d096c1827f8936a1dec37d02a03f2e242fc6a7b75820a9b3326b0fc4f1995a71"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/%E6%9D%A1%E4%BB%B6%E6%95%B0.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:d56b0349b22479c35906165412aedd905e3f5ebbf392f52ec6755b0f1163e4c2"
   manifest: "muon"
   managed: true
 ---
-> 层次：数值计算
-
-## 一句话定位
+## 先记住什么
 
 条件数衡量一个问题或矩阵对扰动有多敏感；在 Muon 中，它影响正交化近似和低精度计算的可靠性。
 
 ## 核心定义
 
-对满秩矩阵 $A$，二范数条件数为
+对可逆方阵 $A$，二范数条件数为
 
 $$
 \kappa_2(A)=\|A\|_2\|A^{-1}\|_2=\frac{\sigma_{\max}(A)}{\sigma_{\min}(A)}.
 $$
+
+对满秩矩形矩阵，使用 Moore–Penrose 伪逆：
+
+$$
+\kappa_2(A)=\|A\|_2\|A^\dagger\|_2
+=\frac{\sigma_{\max}(A)}{\sigma_{\min}(A)},
+$$
+
+其中分母是最小的非零奇异值。秩亏时 $\sigma_{\min}=0$，条件数记为无穷大。
 
 条件数越大，说明最大和最小奇异方向尺度差异越大，数值运算对舍入误差和输入扰动越敏感。条件数不是“矩阵元素大不大”，而是“不同方向尺度差异大不大”。
 
@@ -114,4 +121,4 @@ Muon 对 momentum 矩阵做 polar 近似，本质上要把奇异值压向统一�
 
 - Trefethen & Bau, *Numerical Linear Algebra* —— 从 SVD 与扰动角度建立条件数的几何含义。
 - Higham, *Accuracy and Stability of Numerical Algorithms* —— 区分 problem conditioning 与 algorithm stability，并学习浮点误差界。
-- Muon² / Muon-NSR 等 polar 前预条件预印本 —— 查看作者怎样试图改善进入 NS 的谱；把训练收益保留为待复现结论。
+- [Muon²](https://arxiv.org/abs/2604.09967) 等 polar 前预条件预印本 —— 查看作者怎样试图改善进入 NS 的谱；把训练收益保留为待复现结论。

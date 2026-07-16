@@ -6,22 +6,22 @@ section: "papers"
 slug: "inexact-muon-update"
 legacyPaths: ["/notes/inexact-muon-update/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 73
 source:
   repository: "J-shang/Muon"
   path: "论文精读/12-Inexact-Muon-Update.md"
-  url: "https://github.com/J-shang/Muon/blob/ae2b5f9e6ee06b411aef2220e361c75988a7d753/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/12-Inexact-Muon-Update.md"
-  revision: "ae2b5f9e6ee06b411aef2220e361c75988a7d753"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:54bf8e2a32c7d393509af41481445f4fba23c94b9bebd126dd478fd9c00c4fa3"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/12-Inexact-Muon-Update.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:82293c595a4490eab1807c5bc18f65e599afae2bef0a816a77fea16a425fd9b3"
   manifest: "muon"
   managed: true
 ---
-> source: [arXiv:2510.19933](https://arxiv.org/abs/2510.19933)
-> source class: 理论 + nanoGPT/CIFAR 实验预印本
-> confidence: error-bound 结论限于模型假设；co-tuning 现象 `supported in-scope`
+> 原文：[arXiv:2510.19933](https://arxiv.org/abs/2510.19933)，核验版本 v1（2025-10-22）
+> 来源类型：理论与 nanoGPT/CIFAR 实验预印本
+> 阅读提醒：误差界只在论文模型假设下成立；learning rate、momentum 与近似精度的联调现象来自作者实验。
 
 ## 它修复了哪条理论—实践裂缝
 
@@ -88,31 +88,31 @@ oracle error 会削弱线性下降项，而过大的 $\eta$ 放大二次余项�
 
 **掌握标准**：不再把 `ns_steps` 当孤立 kernel knob，而是把它放进优化超参数联合面。
 
-## 二次审计：补漏、分歧与原文核查
+## 补充阅读：遗漏、分歧与出处
 
-### A. 还值得学习的点
+### 还值得注意什么
 
 1. **层间 precision 不应默认相同**：Appendix C.2 的 block-wise analysis 为每层引入不同 norm、smoothness 和 inexactness，指出统一 NS steps 可能不是计算最优。
 2. **实验主要用 PolarExpress 而不只 NS**：nanoGPT 主实验用 PolarExpress iterations 作为 $\delta$ proxy，CNN 也涉及不同 approximation；“少一步 NS”不是全部实证对象。
 3. **precision 还改变 stable region**：Figure 1 不只看最佳 loss，也显示更高 precision 扩大 LR/momentum 的稳定超参区域。
 4. **理论还有 generalized smoothness/time-varying extensions**：附录把主结果扩展到 $(L_0,L_1)$-smoothness、layer-wise 和 time-varying parameters；学习时应区分主定理与扩展。
 
-### B. 与其他论文或学者观点的冲突检查
+### 与其他论文哪里不同
 
-| 对照观点 | 第一处分歧 | 判断 | 判别检查 |
+| 对照来源或观点 | 分歧从哪里开始 | 如何理解 | 怎样验证 |
 |---|---|---|---|
-| Moonlight：更多 NS steps 更准确但未提升表现 | approximation algorithm、模型/训练规模、LR/momentum 是否为每个 precision重调 | **真实经验张力，尚不能裁决** | 同模型同 kernel，对每个 steps 独立调参并报 loss-vs-time |
-| finite-NS convergence论文给具体 polynomial 的快速误差界 | 本文用一般 additive LMO error $\delta$ | **抽象层不同、互补** | 将 concrete NS error 映射为 empirical LMO gap |
+| Moonlight：更多 NS steps 更准确但未提升表现 | approximation algorithm、模型/训练规模、LR/momentum 是否为每个 precision 重调 | **真实经验张力，尚不能裁决** | 同模型同 kernel，对每个 steps 独立调参并报 loss-vs-time |
+| finite-NS convergence 论文给具体 polynomial 的快速误差界 | 本文用一般 additive LMO error $\delta$ | **抽象层不同、互补** | 将 concrete NS error 映射为 empirical LMO gap |
 | Muon² 通过 second moment 改善 NS 输入 condition | 本文把 approximation quality 当外生/可分层配置 | **Muon² 提供一种降低 $\delta$ 的机制，但也会改 exact direction** | exact SVD on preconditioned/unpreconditioned snapshots |
-| 原始博客接受 singular values 在 $[0.7,1.3]$ | 本文固定设置发现更高 precision通常改善 | **训练 regime 与评价不同** | 对齐原 quintic和 PolarExpress、固定/调优超参两套比较 |
+| 原始博客接受 singular values 在 $[0.7,1.3]$ | 本文固定设置发现更高 precision 通常改善 | **训练 regime 与评价不同** | 对齐原 quintic 和 PolarExpress、固定/调优超参两套比较 |
 
-### C. 本笔记知识核查表
+### 本文内容从哪里来
 
-| 本笔记学习项 | 原文位置 | 核查结论 |
+| 本文讲到的内容 | 原文位置 | 来源说明 |
 |---|---|---|
-| additive inexact LMO 模型 | §2 Assumption 1, Eq. 3 | `论文明确` |
-| error 与 step size、momentum coupling | Abstract、Corollaries、§4 experiments | `论文定理 + 作者实验支持` |
-| 低精度需要更小 step size、不同/更大 momentum | Abstract/理论最优参数讨论 | `论文主张 under assumptions`，不是通用固定换算 |
-| nanoGPT/CIFAR 实验 | §4 | `论文明确`；nanoGPT 主 proxy 是 PolarExpress iterations |
-| 本笔记 smoothness descent inequality | 标准 smoothness 教学展开，不是论文原式逐字复现 | `仓库内解释`，与分析方向一致 |
-| Frobenius error、LMO gap、training utility 三层指标 | 跨数值/优化/训练综合 | `项目审计框架`，不是作者三分法 |
+| additive inexact LMO 模型 | §2 Assumption 1, Eq. 3 | 论文明确 |
+| error 与 step size、momentum coupling | Abstract、Corollaries、§4 experiments | 论文定理 + 作者实验支持 |
+| 低精度需要更小 step size、不同/更大 momentum | Abstract/理论最优参数讨论 | 论文主张 under assumptions，不是通用固定换算 |
+| nanoGPT/CIFAR 实验 | §4 | 论文明确；nanoGPT 主 proxy 是 PolarExpress iterations |
+| 本笔记 smoothness descent inequality | 标准 smoothness 教学展开，不是论文原式逐字复现 | 本文解释，与分析方向一致 |
+| Frobenius error、LMO gap、training utility 三层指标 | 跨数值、优化和训练层面综合 | 本文的阅读框架，不是作者提出的三分法 |

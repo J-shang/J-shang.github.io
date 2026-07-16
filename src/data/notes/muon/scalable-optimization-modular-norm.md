@@ -6,22 +6,22 @@ section: "papers"
 slug: "scalable-optimization-modular-norm"
 legacyPaths: ["/notes/scalable-optimization-modular-norm/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 63
 source:
   repository: "J-shang/Muon"
   path: "论文精读/02-Scalable-Optimization-in-the-Modular-Norm.md"
-  url: "https://github.com/J-shang/Muon/blob/ae2b5f9e6ee06b411aef2220e361c75988a7d753/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/02-Scalable-Optimization-in-the-Modular-Norm.md"
-  revision: "ae2b5f9e6ee06b411aef2220e361c75988a7d753"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:5b8fe7943751cc2125cbd07f0cda3440d44abe5e0f458ef7cbf22d6d6c2c0cb9"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/02-Scalable-Optimization-in-the-Modular-Norm.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:4bcb5f2e7775d69d8f51758995cdfc1ca846d3c2dcec6843b43eeccd21db117a"
   manifest: "muon"
   managed: true
 ---
-> source: [NeurIPS 2024 proceedings](https://proceedings.neurips.cc/paper_files/paper/2024/hash/8629b0fff229b8a27efb1422e990605f-Abstract-Conference.html)
-> source class: 同行评审会议论文
-> confidence: 形式体系与论文内定理 `verified in-paper`；跨架构 recipe 收益 `supported in-scope`
+> 原文：[NeurIPS 2024 proceedings](https://proceedings.neurips.cc/paper_files/paper/2024/hash/8629b0fff229b8a27efb1422e990605f-Abstract-Conference.html)
+> 来源类型：同行评审会议论文
+> 阅读提醒：形式体系和定理按原文假设成立；跨架构效果只覆盖论文实验。
 
 ## 它解决什么问题
 
@@ -60,10 +60,10 @@ $$
 
 ## 与 Muon 的关系
 
-- `prerequisite-for` → 理解 shape-aware update scale 不是“调参补丁”。
-- `generalizes` → 从单个 linear layer 的自然 norm 扩展到完整架构组合。
-- `analogy-to` → muP 的可迁移超参数目标；二者形式和适用假设不同。
-- `not-equivalent-to` → Muon 是产生方向的 optimizer，modular normalization 可包裹不同 base optimizer。
+- **解释 shape scale**：shape-aware update scale 不是单纯的调参补丁。
+- **推广范围**：从单个 linear layer 的自然 norm 扩展到完整架构组合。
+- **与 muP 的相似处**：都关心超参数迁移；形式和适用假设不同。
+- **不要混同**：Muon 负责产生方向，modular normalization 可以包裹不同 base optimizer。
 
 ## 论文报告与边界
 
@@ -83,31 +83,31 @@ $$
 
 **掌握标准**：面对新架构，能从模块组合推导需要检查的尺度，而不是只查 `fan_in`。
 
-## 二次审计：补漏、分歧与原文核查
+## 补充阅读：遗漏、分歧与出处
 
-### A. 还值得学习的点
+### 还值得注意什么
 
 1. **mass 不只是 norm 的别名**：论文给模块分配 mass，并讨论 feature learning 如何随 mass 在复合模块间分配。它为 residual branches 的相对学习强度提供可操作旋钮。
-2. **atomic module 与 bond module 分工**：附录把 Linear/Embedding/Conv2D 等带参数原子，与 Add 等无参数“胶水”分开；递归理论依赖这种 typed composition。
+2. **atomic module 与 bond module 分工**：附录把 Linear/Embedding/Conv2D 等带参数原子，与 Add 等无参数“胶水”分开；递归理论依赖这种按模块类型组合的方式。
 3. **Embedding 的输入 norm 不同**：附录明确因 one-hot 输入而用 $L_1$ 输入 norm、RMS 输出 norm。这解释“数组同为二维”仍不能按 Linear 路由。
 4. **实验证据有固定轴**：GPT/TinyStories、ResMLP、ResNet 的 width transfer 在固定 depth 下做，depth transfer 在固定 width 下做；不能把它读成所有维度同时变化的无条件 transfer。
 
-### B. 与其他论文或学者观点的冲突检查
+### 与其他论文哪里不同
 
-| 对照观点 | 第一处分歧 | 判断 | 判别检查 |
+| 对照来源或观点 | 分歧从哪里开始 | 如何理解 | 怎样验证 |
 |---|---|---|---|
 | $\mu$P 从无限宽 parameterization 讨论 hyperparameter transfer | modular norm 从有限模块的 operator norm/组合规则出发 | **不同理论路径，目标部分重叠**，不是已证明等价 | 同一 width/depth grid 比较各自 scale prescription |
-| Muon 原始说明：embedding 用 AdamW，output head 也经验上用 AdamW | modular theory能解释 embedding 角色；原作者称 output-head 差异未由理论直接给出 | **理论覆盖不完整，不是冲突** | 分别消融 embedding/head routing |
-| Scion 选择具体 $1\to\infty$、RMS$\to\infty$ norm | 本文提供递归 modular framework而非唯一 norm 选择 | **specialization** | 对齐 module type 和 norm 后比较 duality map |
+| Muon 原始说明：embedding 用 AdamW，output head 也经验上用 AdamW | modular theory 能解释 embedding 角色；原作者称 output-head 差异未由理论直接给出 | **理论覆盖不完整，不是冲突** | 分别消融 embedding/head routing |
+| Scion 选择具体 $1\to\infty$、RMS$\to\infty$ norm | 本文提供递归 modular framework，而非唯一 norm 选择 | **specialization** | 对齐 module type 和 norm 后比较 duality map |
 | “统一 shape scale 即可” | 本文依赖 module role、mass、composition | **与简化 recipe 真有张力** | 相同 shape 不同 role 的 function-space perturbation |
 
-### C. 本笔记知识核查表
+### 本文内容从哪里来
 
-| 本笔记学习项 | 原文位置 | 核查结论 |
+| 本文讲到的内容 | 原文位置 | 来源说明 |
 |---|---|---|
-| modular norm 随架构递归定义，并用于 normalize base optimizer updates | Abstract、§3–4 | `论文明确` |
-| 对 well-behaved atomic modules，gradient 在 modular norm 下 Lipschitz，常数递归 | Abstract、理论章节 | `论文明确且有条件` |
-| width/depth LR transfer | 主文实验及附录 Figures 10–12 | `论文报告`，固定另一轴、任务和训练预算 |
-| 本笔记随机 $\operatorname{Var}[(\Delta Wx)_i]\approx nr^2$ 例子 | 无对应原文推导 | `教学性仓库推导`，只说明 fan-in scaling，不等于 modular theorem |
-| Muon polar RMS 与 modular scaling 的“天然联系” | 论文不讨论 Muon 名称或该 RMS 式 | `跨论文综合/analogy`，不得称为论文结论 |
-| 新模块需检查 residual multiplier、attention、embedding/readout | 来自论文 type/composition 逻辑与本项目实现需求 | `综合后的操作清单`，不是逐字结论 |
+| modular norm 随架构递归定义，并用于 normalize base optimizer updates | Abstract、§3–4 | 论文明确 |
+| 对 well-behaved atomic modules，gradient 在 modular norm 下 Lipschitz，常数递归 | Abstract、理论章节 | 论文明确且有条件 |
+| width/depth LR transfer | 主文实验及附录 Figures 10–12 | 论文报告，固定另一轴、任务和训练预算 |
+| 本笔记随机 $\operatorname{Var}[(\Delta Wx)_i]\approx nr^2$ 例子 | 无对应原文推导 | 本文的教学推导，只说明 fan-in scaling，不等于 modular theorem |
+| Muon polar RMS 与 modular scaling 的“天然联系” | 论文不讨论 Muon 名称或该 RMS 式 | 跨论文类比，不得称为论文结论 |
+| 新模块需检查 residual multiplier、attention、embedding/readout | 来自论文 type/composition 逻辑与本项目实现需求 | 跨论文和实现需要整理出的检查清单，不是作者的逐字结论 |

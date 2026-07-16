@@ -6,24 +6,22 @@ section: "engineering"
 slug: "mixed-precision"
 legacyPaths: ["/notes/mixed-precision/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 30
 readtime: 6
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/深度学习工程/mixed precision.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/mixed%20precision.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:3129cec33c240d676d71190c8c3a2f50c9088d69f1647cda206bf90435cb4196"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E7%A8%8B/mixed%20precision.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:31aa872f739b7b45c127a6ed00b597f558af1ff59775d2acffcb760ee8537f70"
   manifest: "muon"
   managed: true
 ---
-> 层次：深度学习工程
-> 信息截点：2026-07-14
-> 主推理路径：实现追踪——逐一标注参数、梯度、状态、NS 输入/累加/输出和最终 update 的 dtype 与时序。
+> 资料范围截至：2026-07-14
 
-## 一句话定位
+## 先记住什么
 
 mixed precision 是把训练中的不同张量和运算放在不同精度上，以换取吞吐、显存和稳定性的平衡。
 

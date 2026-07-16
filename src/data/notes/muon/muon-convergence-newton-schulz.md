@@ -6,26 +6,26 @@ section: "papers"
 slug: "muon-convergence-newton-schulz"
 legacyPaths: ["/notes/muon-convergence-newton-schulz/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 74
 source:
   repository: "J-shang/Muon"
   path: "论文精读/13-Convergence-with-Newton-Schulz.md"
-  url: "https://github.com/J-shang/Muon/blob/ae2b5f9e6ee06b411aef2220e361c75988a7d753/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/13-Convergence-with-Newton-Schulz.md"
-  revision: "ae2b5f9e6ee06b411aef2220e361c75988a7d753"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:4dbb23f0ca5eeee52eef2294e179eab2311123c7c515732ff51f1c0822d2b01d"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/13-Convergence-with-Newton-Schulz.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:916d7ca12d706a69c790b8fe4b22e88e7c616a913dfd3013c0a9042e74343fe4"
   manifest: "muon"
   managed: true
 ---
-> source: [arXiv:2601.19156](https://arxiv.org/abs/2601.19156)
-> source class: 理论 + 多工作负载实验预印本
-> confidence: theorem `verified in-paper under assumptions`；现实通用性 `plausible`
+> 原文：[arXiv:2601.19156](https://arxiv.org/abs/2601.19156)，核验版本 v1（2026-01-27）；arXiv 标注已被 ICLR 2026 接收
+> 来源类型：同行评审会议论文，含理论与多工作负载实验
+> 阅读提醒：收敛定理只在论文的多项式、谱和光滑性假设下成立；现实通用性仍需逐实现检查。
 
 ## 它回答什么问题
 
-本文直接分析实际 Muon 的有限步 Newton–Schulz，而不是用 exact SVD polar 代替。作者证明：给定 NS steps 时，非凸 stationarity rate 与 SVD-polar idealization 相同到一个常数因子；该因子随 NS steps 双指数趋近 1，并声称相对 vector SGD-momentum 消除典型的 square-root-of-rank loss。
+本文直接分析实际 Muon 的有限步 Newton–Schulz，而不是用 exact SVD polar 代替。作者证明：给定 NS steps 时，非凸 stationarity rate 与 SVD-polar idealization 相同到一个常数因子；该因子随 NS steps 双指数趋近 1，并证明在论文采用的范数与光滑性度量下，相对 vector SGD-momentum 消除典型的 square-root-of-rank loss。
 
 ## NS 的谱标量视角
 
@@ -93,31 +93,31 @@ $$
 
 **掌握标准**：能从标量 polynomial 推回矩阵行为，并主动检查 production 系数与定理假设是否一致。
 
-## 二次审计：补漏、分歧与原文核查
+## 补充阅读：遗漏、分歧与出处
 
-### A. 还值得学习的点
+### 还值得注意什么
 
 1. **论文公开反对“Muon 是二阶法”的分类**：Related Work 明确说 Shampoo/SOAP 维护曲率统计，而 Muon 不估计/反演 curvature；这是与 *Practical Efficiency* 的术语冲突。
 2. **分析同时包含 iteration 与 wall-clock complexity**：附录计算每步 orthogonalization FLOPs，理论主张不是“同 rate”就自动更快，而是把少步矩阵乘成本一起比较。
 3. **polynomial degree 与 step 数是两个变量**：作者不只分析 $q$ steps，还分析近似方向 polynomial 的 degree $\kappa$，并做 degree ablation。
 4. **rank 优势是 norm/smoothness measure 下的 bound**：论文自己把它作为相对 vectorized SGD-momentum 的理论比较；不能外推为所有数据的实际 $\sqrt r$ speedup。
 
-### B. 与其他论文或学者观点的冲突检查
+### 与其他论文哪里不同
 
-| 对照观点 | 第一处分歧 | 判断 | 判别检查 |
+| 对照来源或观点 | 分歧从哪里开始 | 如何理解 | 怎样验证 |
 |---|---|---|---|
-| *Practical Efficiency* 称 Muon second-order | curvature-state definition | **taxonomy 直接冲突**；本笔记采用“是否估计曲率”时归为非二阶 | state/公式检查 |
+| *Practical Efficiency* 称 Muon second-order | curvature-state definition | **分类口径直接冲突**；本笔记采用“是否估计曲率”时归为非二阶 | state/公式检查 |
 | Moonlight：更精确 NS 未必训练更好 | 理论是 stationarity complexity constant；实证是固定 recipe 的 loss | **outcome/超参不同** | 同步报告 theorem proxy、polar error、loss/time |
-| *Beyond the Ideal* 用 additive LMO error | 本文把 concrete polynomial误差显式带入 rate | **互补 parameterization** | 计算同 snapshot 的两种 error bound tightness |
-| 原始 tuned quintic非经典 polar polynomial | 定理对 polynomial degree/系数和 basin有假设 | **实现适配问题** | 逐条检查 production $(a,b,c)$ 是否满足 theorem assumptions |
+| *Beyond the Ideal* 用 additive LMO error | 本文把 concrete polynomial 误差显式带入 rate | **互补 parameterization** | 计算同 snapshot 的两种 error bound tightness |
+| 原始 tuned quintic 不是经典 polar polynomial | 定理对 polynomial degree、系数和 basin 有假设 | **实现适配问题** | 逐条检查 production $(a,b,c)$ 是否满足 theorem assumptions |
 
-### C. 本笔记知识核查表
+### 本文内容从哪里来
 
-| 本笔记学习项 | 原文位置 | 核查结论 |
+| 本文讲到的内容 | 原文位置 | 来源说明 |
 |---|---|---|
-| finite NS 与 SVD-polar 有相同 stationarity rate到常数因子 | Abstract、Theorem 1 | `论文定理 under assumptions` |
-| 常数随 steps 双指数趋近 1并受 degree 改善 | Theorem 2、§4.2 | `论文定理 under stated polynomial/basin assumptions` |
-| 相对 SGD-momentum 改善 $\sqrt r$ rank factor | Theorem 3、Table 1 | `论文理论比较`，不是实测 wall-clock倍数 |
-| 多工作负载实验到约 1.3B | experimental appendices | `作者实验报告` |
-| 本笔记经典 cubic 的 $e_{k+1}=\frac32e_k^2-\frac12e_k^3$ | 教学 special case | `仓库内精确展开`，不等于 production quintic |
-| “少数 steps 在现实 BF16 一定足够” | 理论/实验均有条件 | `不可升级为 universal fact`；需真实 spectrum/dtype检查 |
+| finite NS 与 SVD-polar 有相同 stationarity rate，到常数因子 | Abstract、Theorem 1 | 论文定理，只在其假设下成立 |
+| 常数随 steps 双指数趋近 1，并受 degree 改善 | Theorem 2、§4.2 | 论文定理，只在给定 polynomial 与 basin 假设下成立 |
+| 相对 SGD-momentum 改善 $\sqrt r$ rank factor | Theorem 3、Table 1 | 论文理论比较，不是实测 wall-clock 倍数 |
+| 多工作负载实验到约 1.3B | experimental appendices | 作者实验报告 |
+| 本笔记经典 cubic 的 $e_{k+1}=\frac32e_k^2-\frac12e_k^3$ | 教学 special case | 本文精确展开，不等于 production quintic |
+| “少数 steps 在现实 BF16 一定足够” | 理论/实验均有条件 | 原文不支持这个普适结论；仍需检查真实 spectrum 和 dtype |

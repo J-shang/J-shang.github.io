@@ -6,22 +6,20 @@ section: "optimization"
 slug: "nesterov"
 legacyPaths: ["/notes/nesterov/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 3
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/优化基础/Nesterov.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/Nesterov.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:b88f8ce31c12039883a470b621ebdd5d814714ba412d6da8a179e4ad16366fc4"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/Nesterov.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:1589a116c3718db92a113299e7eb694a1c8dad97db720ad47303ddbcd41e593e"
   manifest: "muon"
   managed: true
 ---
-> 层次：优化基础
-
-## 一句话定位
+## 先记住什么
 
 Nesterov momentum 的核心直觉是“先按惯性看一眼将要到达的位置，再在那里计算修正方向”。
 
@@ -75,7 +73,7 @@ param -= lr * update
 
 在凸优化里，Nesterov accelerated gradient 对某些光滑凸问题有 $O(1/k^2)$ 的收敛率，而普通梯度下降是 $O(1/k)$。这就是它在优化理论里非常有名的原因。
 
-但大模型训练不是简单凸问题。这里使用 Nesterov 更多是经验性选择：它可能改善有效方向，也可能和学习率、warmup、weight decay、梯度裁剪产生复杂相互作用。因此论文或代码里看到 `nesterov=True`，要把它当作训练配方的一部分，而不是理论保证自动生效。
+但大模型训练不是简单凸问题。这里使用 Nesterov 更多是经验性选择：它可能改善有效方向，也可能和 learning rate、warmup、weight decay、梯度裁剪产生复杂相互作用。因此论文或代码里看到 `nesterov=True`，要把它当作训练配方的一部分，而不是理论保证自动生效。
 
 ### 4. 一个一维直觉
 
@@ -90,7 +88,7 @@ param -= lr * update
 - momentum 系数；
 - Nesterov 是否开启；
 - 进入正交化的是普通 momentum buffer，还是 Nesterov 修正后的 update；
-- 学习率是否为该设置重新调过。
+- learning rate 是否为该设置重新调过。
 
 因为 Muon 后面会把这个矩阵方向做 polar 近似，前面 Nesterov 的小差异可能被正交化放大或改变。
 
@@ -107,7 +105,7 @@ Muon 的主线实现可以选择是否启用 Nesterov 风格的 momentum。理�
 
 ## 常见误区
 
-- 把 Nesterov 当成“总是更好”的免费开关。它可能改善稳定性，也可能需要重新调学习率。
+- 把 Nesterov 当成“总是更好”的免费开关。它可能改善稳定性，也可能需要重新调 learning rate。
 - 用连续动力学直觉忽略实现差异；不同框架的 momentum/Nesterov 约定可能导致数值不完全一致。
 - 认为 Nesterov 是 Muon 效果的根源。Muon 的关键仍是矩阵正交化和参数路由。
 
@@ -120,5 +118,5 @@ Muon 的主线实现可以选择是否启用 Nesterov 风格的 momentum。理�
 ## 参考入口
 
 - Nesterov, *A method for solving the convex programming problem with convergence rate $O(1/k^2)$* —— 理论起点；只把结论用于其凸优化假设，不直接外推 LLM。
-- Sutskever et al., *On the importance of initialization and momentum in deep learning* —— 连接加速方法与深度网络训练中的 momentum 经验。
-- PyTorch `torch.optim.SGD` 中 Nesterov momentum 的实现说明 —— 用来核对 buffer 更新和 look-ahead 记号，不用抽象名称猜公式。
+- [Sutskever et al., *On the importance of initialization and momentum in deep learning*](https://proceedings.mlr.press/v28/sutskever13.html) —— 连接加速方法与深度网络训练中的 momentum 经验。
+- [PyTorch `torch.optim.SGD`](https://docs.pytorch.org/docs/stable/generated/torch.optim.SGD.html) —— 核对当前 buffer 更新和 Nesterov 记号，不用抽象名称猜公式。

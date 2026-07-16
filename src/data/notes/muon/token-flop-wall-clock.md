@@ -6,28 +6,26 @@ section: "experiments"
 slug: "token-flop-wall-clock"
 legacyPaths: ["/notes/token-flop-wall-clock/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 43
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/LLM 实验方法/token-FLOP-wall-clock 公平比较.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/token-FLOP-wall-clock%20%E5%85%AC%E5%B9%B3%E6%AF%94%E8%BE%83.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:ef28f33100c7f803cfae6baaaf73f5406f2801a2e5d941569107d6d2a8629a53"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/token-FLOP-wall-clock%20%E5%85%AC%E5%B9%B3%E6%AF%94%E8%BE%83.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:4be1fd0b709da7ab6bafd4610909987d0dad27538af6e3bfdce1788f208a18cf"
   manifest: "muon"
   managed: true
 ---
-> 层次：LLM 实验方法
-
-## 一句话定位
+## 先记住什么
 
 token、FLOP 和 wall-clock 是三种不同效率口径；Muon 讨论中最常见的误读，就是把其中一种胜利当成全部胜利。
 
 ## 核心定义
 
-**token efficiency** 关心达到同等 loss 需要多少训练 token。**FLOP efficiency** 关心达到同等 loss 消耗多少计算量，通常要计入模型大小、序列长度、训练步数和主要算子。**wall-clock efficiency** 关心真实时间，受硬件利用率、通信、kernel、数据加载、checkpoint、optimizer step 等影响。三者相关但不等价。
+**token efficiency** 关心达到同等 loss 需要多少训练 token。**FLOP efficiency** 关心达到同等 loss 消耗多少计算量，通常要计入模型大小、sequence length、训练步数和主要算子。**wall-clock efficiency** 关心真实时间，受硬件利用率、通信、kernel、数据加载、checkpoint、optimizer step 等影响。三者相关但不等价。
 
 ## 相关知识展开
 
@@ -61,7 +59,7 @@ $$
 
 ### 5. 公平 A/B 的最低要求
 
-比较 Muon 和 AdamW 时，至少应固定或明确报告：模型架构和参数量、tokenizer 与数据顺序、global batch tokens、token budget、学习率和 schedule、weight decay 和参数路由、dtype 与并行策略、optimizer step 时间是否计入。
+比较 Muon 和 AdamW 时，至少应固定或明确报告：模型架构和参数量、tokenizer 与数据顺序、global batch tokens、token budget、learning rate 和 schedule、weight decay 和参数路由、dtype 与并行策略、optimizer step 时间是否计入。
 
 如果两边都充分调参，回答的是“各自上限”；如果只替换 optimizer，回答的是“配方迁移能力”。这两个问题都可以研究，但不能混在一起。
 
@@ -104,6 +102,6 @@ Muon 可能让 loss 按 token 或 FLOP 更快下降，但每步 optimizer 需要
 
 ## 参考入口
 
-- Hoffmann et al., *Training Compute-Optimal Large Language Models* —— 学习如何在共同 compute budget 下比较模型与数据配置。
-- Liu et al., *Muon is Scalable for LLM Training* —— 检查论文如何从 scaling-law 曲线得到 FLOP efficiency，而不是把该数字当 wall-clock。
-- Essential AI, *Practical Efficiency of Muon for Pretraining* —— 重点读 compute-time Pareto frontier、batch sweep 和 profiling 口径。
+- [Hoffmann et al., *Training Compute-Optimal Large Language Models*](https://arxiv.org/abs/2203.15556) —— 学习如何在共同 compute budget 下比较模型与数据配置。
+- [Liu et al., *Muon is Scalable for LLM Training*](https://arxiv.org/abs/2502.16982) —— 检查论文如何从 scaling-law 曲线得到 FLOP efficiency，而不是把该数字当 wall-clock。
+- [Essential AI, *Practical Efficiency of Muon for Pretraining*](https://arxiv.org/abs/2505.02222) —— 重点读 compute-time Pareto frontier、batch sweep 和 profiling 口径。

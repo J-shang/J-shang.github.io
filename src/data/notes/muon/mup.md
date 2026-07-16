@@ -6,30 +6,28 @@ section: "experiments"
 slug: "mup"
 legacyPaths: ["/notes/mup/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 42
 readtime: 6
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/LLM 实验方法/muP.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/muP.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:b9758b9b79fc6d3ea4c3f7709b0033254203b768b9c8403adb0d2a178b3734f9"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/muP.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:bfb09ce499cfd63519daa3745ecb07a18067d0ca23679de249166836ed5ccb03"
   manifest: "muon"
   managed: true
 ---
-> 层次：LLM 实验方法
-> 信息截点：2026-07-14
-> 主推理路径：约束驱动——先定义“跨宽度可迁移”要保持的可观测量，再检查参数化和 optimizer recipe 是否满足。
+> 资料范围截至：2026-07-14
 
-## 一句话定位
+## 先记住什么
 
 muP（maximal update parametrization）是一套让超参数更容易跨宽度迁移的参数化方法，用来减少小模型调参到大模型时的失真。
 
 ## 动机问题与最小例子
 
-希望用宽度 $d=256$ 的 proxy 选择学习率，再把它迁移到 $d=4096$。若普通参数化让某个 hidden matrix 的梯度或 update-to-weight ratio 随 $d$ 系统性变化，那么“大模型复用同一学习率”并不是同一实验条件。
+希望用宽度 $d=256$ 的 proxy 选择 learning rate，再把它迁移到 $d=4096$。若普通参数化让某个 hidden matrix 的梯度或 update-to-weight ratio 随 $d$ 系统性变化，那么“大模型复用同一 learning rate”并不是同一实验条件。
 
 一个不依赖具体 muP 规则、但可直接测量的诊断是参数组 $p$ 的相对更新：
 
@@ -37,11 +35,11 @@ $$
 r_p(t)=\frac{\|\Delta p_t\|_F}{\|p_t\|_F+\varepsilon}.
 $$
 
-若 proxy 与 target 在训练初期的对应参数角色上，$r_p(t)$ 相差几个数量级，超参数迁移失败并不令人意外。muP 的目标不是强迫所有 $r_p$ 完全相等，而是通过角色相关的初始化、乘子与学习率缩放，得到良定义的宽度极限和可迁移的训练动态。
+若 proxy 与 target 在训练初期的对应参数角色上，$r_p(t)$ 相差几个数量级，超参数迁移失败并不令人意外。muP 的目标不是强迫所有 $r_p$ 完全相等，而是通过角色相关的初始化、乘子与 learning rate 缩放，得到良定义的宽度极限和可迁移的训练动态。
 
 ## 核心定义
 
-普通参数化下，模型宽度变化会改变激活、梯度和更新尺度，导致在小模型上调出的学习率、初始化或 optimizer 配置不一定能迁移到大模型。muP 通过特定初始化、学习率缩放和参数分类，让不同宽度模型在无限宽极限下保持可比较的更新行为。它不是一个优化器，而是训练 recipe 的尺度约定。
+普通参数化下，模型宽度变化会改变激活、梯度和更新尺度，导致在小模型上调出的 learning rate、初始化或 optimizer 配置不一定能迁移到大模型。muP 通过特定初始化、learning rate 缩放和参数分类，让不同宽度模型在无限宽极限下保持可比较的更新行为。它不是一个优化器，而是训练 recipe 的尺度约定。
 
 ## 假设与适用范围
 
@@ -55,13 +53,13 @@ $$
 
 ### 1. 为什么小模型调参不能直接搬到大模型？
 
-模型宽度变大时，很多量的尺度会变：激活方差、梯度方差、logit 尺度、每层 update-to-weight ratio。若参数化方式不合适，小模型上最好的学习率到了大模型可能过大或过小。
+模型宽度变大时，很多量的尺度会变：激活方差、梯度方差、logit 尺度、每层 update-to-weight ratio。若参数化方式不合适，小模型上最好的 learning rate 到了大模型可能过大或过小。
 
 这会让低成本 proxy 实验失效：你以为在小模型上比较的是优化器，其实比较到的是“哪个优化器更适应错误的尺度迁移”。
 
 ### 2. muP 的核心思想
 
-muP 试图定义一套参数化，使不同宽度模型在训练初期和训练过程中保持可比较的更新尺度。它会规定不同参数类型的初始化和学习率如何随宽度变化。
+muP 试图定义一套参数化，使不同宽度模型在训练初期和训练过程中保持可比较的更新尺度。它会规定不同参数类型的初始化和 learning rate 如何随宽度变化。
 
 关键不是“所有参数同一个缩放”，而是按参数角色分类：输入层、隐藏层、输出层、bias、norm 等可能有不同规则。
 
@@ -100,7 +98,7 @@ $$
 \operatorname{RMS}(O)=\frac{1}{\sqrt{\max(m,n)}}.
 $$
 
-因此 Muon 的 `spectral`、`unit_rms_norm` 或其他 shape scaling 会直接改变宽度扩展时的 update scale。即使普通 AdamW 参数已经按 muP 分类，如果 Muon scale mode 又乘入一个依赖 $m,n$ 的因子，最终有效学习率仍可能随宽度漂移。
+因此 Muon 的 `spectral`、`unit_rms_norm` 或其他 shape scaling 会直接改变宽度扩展时的 update scale。即使普通 AdamW 参数已经按 muP 分类，如果 Muon scale mode 又乘入一个依赖 $m,n$ 的因子，最终有效 learning rate 仍可能随宽度漂移。
 
 本地 Megatron-LM 在 Muon 与 muP 同时启用时会检查 scale mode，并为不同参数角色构造 optimizer override。代码走读入口是 [`get_mup_config_overrides`](https://github.com/NVIDIA/Megatron-LM/blob/0823c731ed7d793aef047b6a64f2dbbf32bf6e2c/megatron/core/optimizer/__init__.py)；应核对实际 commit 的 warning、LR/epsilon multiplier 与参数 predicate，而不是只看命令行写了 `--use-mup`。
 
@@ -120,11 +118,11 @@ $$
 
 ### 8. 公平比较要注意什么？
 
-公平的 Muon vs AdamW 比较最好说明：两者是否都用 muP；两者是否分别调学习率；Muon 的 update scaling 是否与 muP 规则一致；embedding、output head、norm 参数是否用相同路由；小模型上调出的超参数是否在大模型上验证过。
+公平的 Muon vs AdamW 比较最好说明：两者是否都用 muP；两者是否分别调 learning rate；Muon 的 update scaling 是否与 muP 规则一致；embedding、output head、norm 参数是否用相同路由；小模型上调出的超参数是否在大模型上验证过。
 
 ## 和 Muon 的关系
 
-Muon 的核心也关心“更新尺度”与矩阵形状，因此和 muP 的相互作用很重要。若用小模型 proxy 评估 Muon，再把学习率和缩放规则迁移到大模型，muP 可以帮助降低宽度变化带来的混杂因素。但 Muon 的正交化、update RMS、参数路由可能引入额外尺度约定，不能假设 AdamW 的 muP 配方原样适用。
+Muon 的核心也关心“更新尺度”与矩阵形状，因此和 muP 的相互作用很重要。若用小模型 proxy 评估 Muon，再把 learning rate 和缩放规则迁移到大模型，muP 可以帮助降低宽度变化带来的混杂因素。但 Muon 的正交化、update RMS、参数路由可能引入额外尺度约定，不能假设 AdamW 的 muP 配方原样适用。
 
 ## 需要掌握到什么程度
 
@@ -139,7 +137,7 @@ Muon 的核心也关心“更新尺度”与矩阵形状，因此和 muP 的相�
 
 - 把 muP 当成“更好的初始化”或“新优化器”。它主要是参数化和缩放规则。
 - 认为用了 muP 就不需要大模型验证。muP 减少失真，不消灭所有规模效应。
-- 忽略 Muon 自身 update scaling 与 muP 学习率缩放之间可能互相影响。
+- 忽略 Muon 自身 update scaling 与 muP learning rate 缩放之间可能互相影响。
 
 ## 自测问题
 

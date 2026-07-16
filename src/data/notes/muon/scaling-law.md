@@ -6,22 +6,20 @@ section: "experiments"
 slug: "scaling-law"
 legacyPaths: ["/notes/scaling-law/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 40
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/LLM 实验方法/scaling law.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/scaling%20law.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:ab222c3f203ba21e9fefca8d17479346363d9fae1d639aa6e2d51724ea35cc02"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/LLM%20%E5%AE%9E%E9%AA%8C%E6%96%B9%E6%B3%95/scaling%20law.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:55ca5894baa41db263df819ea5ce8f53c86fe9f8e1288da4633f8d3796754493"
   manifest: "muon"
   managed: true
 ---
-> 层次：LLM 实验方法
-
-## 一句话定位
+## 先记住什么
 
 scaling law 用经验规律描述模型规模、数据规模、计算量和 loss 之间的关系，是判断优化器是否真的提升训练效率的坐标系。
 
@@ -51,7 +49,7 @@ $$
 C\approx 6ND.
 $$
 
-这里的 6 是经验近似，真实数值会受架构、序列长度、attention、MoE active 参数等影响。读论文时要看作者如何计算 FLOPs。
+这里的 6 是经验近似，真实数值会受架构、sequence length、attention、MoE active 参数等影响。读论文时要看作者如何计算 FLOPs。
 
 ### 3. 为什么会有 compute-optimal？
 
@@ -63,7 +61,7 @@ Chinchilla 之后，一个重要经验是许多早期大模型相对“参数太
 
 isoFLOP 是固定计算预算，扫描不同模型大小和 token 数。比如同样 $C$ 下训练 300M、600M、1B 模型，各自 token 数配平，然后看哪个 loss 最低。
 
-如果 Muon 论文说在 compute-optimal scaling law 设置下更省 FLOPs，你要看它是否做了类似扫描，而不是只拿一个模型、一个 batch、一个学习率做单点比较。
+如果 Muon 论文说在 compute-optimal scaling law 设置下更省 FLOPs，你要看它是否做了类似扫描，而不是只拿一个模型、一个 batch、一个 learning rate 做单点比较。
 
 ### 5. 拟合和外推的风险
 
@@ -105,6 +103,6 @@ Muon 论文中“达到 AdamW 同等表现需要更少 FLOPs”这类说法，�
 
 ## 参考入口
 
-- Kaplan et al., *Scaling Laws for Neural Language Models* —— 读取参数量、数据量与 loss 的早期幂律拟合；重点看拟合区间和外推假设。
-- Hoffmann et al., *Training Compute-Optimal Large Language Models* —— 理解固定 compute 下模型/数据配比怎样改变，避免沿用单一 scaling law。
-- Liu et al., *Muon is Scalable for LLM Training* —— 查看 Muon/AdamW 的 compute-optimal 对照；只在其模型族、数据和拟合设置内解释“约 2×”。
+- [Kaplan et al., *Scaling Laws for Neural Language Models*](https://arxiv.org/abs/2001.08361) —— 读取参数量、数据量与 loss 的早期幂律拟合；重点看拟合区间和外推假设。
+- [Hoffmann et al., *Training Compute-Optimal Large Language Models*](https://arxiv.org/abs/2203.15556) —— 理解固定 compute 下模型/数据配比怎样改变，避免沿用单一 scaling law。
+- [Liu et al., *Muon is Scalable for LLM Training*](https://arxiv.org/abs/2502.16982) —— 查看 Muon/AdamW 的 compute-optimal 对照；只在其模型族、数据和拟合设置内解释“约 2×”。

@@ -6,22 +6,20 @@ section: "optimization"
 slug: "momentum"
 legacyPaths: ["/notes/momentum/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 2
 readtime: 7
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/优化基础/momentum.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/momentum.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:ef8b0fc2c27c9c64f7f11227abd0dcf01253e81841e1dbf78de1906d41f6aa53"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/momentum.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:4dcebf7805c939bfbbc15a23638bc81d21e4b3987e74cfabaf656934950f1519"
   manifest: "muon"
   managed: true
 ---
-> 层次：优化基础
-
-## 一句话定位
+## 先记住什么
 
 momentum 是给 SGD 加“惯性”：不只看当前梯度，还累计过去方向，让更新在稳定方向上加速、在震荡方向上互相抵消。
 
@@ -74,9 +72,9 @@ $$
 m_t=\beta m_{t-1}+(1-\beta)g_t.
 $$
 
-第二种是指数滑动平均，长期稳定梯度 $g$ 下会收敛到 $g$；第一种在稳定梯度下会收敛到 $g/(1-\mu)$。所以读实现时不能只看“用了 0.9 momentum”，还要看 buffer 是否乘了 $(1-\beta)$、学习率是否配套调整。
+第二种是指数滑动平均，长期稳定梯度 $g$ 下会收敛到 $g$；第一种在稳定梯度下会收敛到 $g/(1-\mu)$。所以读实现时不能只看“用了 0.9 momentum”，还要看 buffer 是否乘了 $(1-\beta)$、learning rate 是否配套调整。
 
-### 4. momentum 与曲率、学习率的相互作用
+### 4. momentum 与曲率、learning rate 的相互作用
 
 momentum 会增加有效步长。对连续同向梯度，heavy-ball 形式的稳态 buffer 约为
 
@@ -84,7 +82,7 @@ $$
 v\approx \frac{g}{1-\mu}.
 $$
 
-当 $\mu=0.9$，这相当于把方向累积放大约 10 倍。因此 momentum 往往需要和学习率一起调。学习率原本安全，打开 momentum 后可能开始 overshoot；反过来，恰当的 momentum 又能让较小学习率获得更快进展。
+当 $\mu=0.9$，这相当于把方向累积放大约 10 倍。因此 momentum 往往需要和 learning rate 一起调。learning rate 原本安全，打开 momentum 后可能开始 overshoot；反过来，恰当的 momentum 又能让较小 learning rate 获得更快进展。
 
 ### 5. optimizer state 里 momentum 长什么样？
 
@@ -110,14 +108,14 @@ Muon 的输入通常不是裸梯度，而是 momentum 矩阵。对二维权重�
 ## 需要掌握到什么程度
 
 - 能写出 momentum 更新式，知道 $\mu$ 或 $\beta$ 越大，历史记忆越长。
-- 能解释为什么 momentum 可能允许更大的有效步长，也可能在学习率过大时造成 overshoot。
+- 能解释为什么 momentum 可能允许更大的有效步长，也可能在 learning rate 过大时造成 overshoot。
 - 能看懂 optimizer state 中的 momentum buffer。
 - 能区分 momentum 与 Adam 的二阶矩状态：前者累计方向，后者估计逐坐标尺度。
 
 ## 常见误区
 
 - 认为 momentum 只是“平滑梯度”。平滑是结果之一，更重要的是它改变了离散动力学。
-- 忽略不同框架对 momentum 的尺度约定；同样的学习率在不同写法下未必等价。
+- 忽略不同框架对 momentum 的尺度约定；同样的 learning rate 在不同写法下未必等价。
 - 把 Muon 的 momentum buffer 当作 AdamW 的一阶矩和二阶矩组合。标准 Muon 主要保留一阶动量。
 
 ## 自测问题
@@ -129,5 +127,5 @@ Muon 的输入通常不是裸梯度，而是 momentum 矩阵。对二维权重�
 ## 参考入口
 
 - Polyak, *Some methods of speeding up the convergence of iteration methods* —— heavy-ball 方法的原始理论入口；核对二次问题中的动力学。
-- Sutskever et al., *On the importance of initialization and momentum in deep learning* —— 查看 momentum、初始化和深度网络训练的经验连接。
-- KellerJordan/Muon 参考实现中的 momentum buffer —— 直接确认进入 NS 的是 buffer 还是 Nesterov 组合，以及是否有尺度归一化。
+- [Sutskever et al., *On the importance of initialization and momentum in deep learning*](https://proceedings.mlr.press/v28/sutskever13.html) —— 查看 momentum、初始化和深度网络训练的经验连接。
+- [KellerJordan/Muon 参考实现](https://github.com/KellerJordan/Muon) —— 直接确认进入 NS 的是 buffer 还是 Nesterov 组合，以及是否有尺度归一化。

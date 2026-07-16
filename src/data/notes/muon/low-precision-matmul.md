@@ -6,24 +6,22 @@ section: "numerical-computing"
 slug: "low-precision-matmul"
 legacyPaths: ["/notes/low-precision-matmul/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 22
 readtime: 6
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/数值计算/低精度矩阵乘.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/%E4%BD%8E%E7%B2%BE%E5%BA%A6%E7%9F%A9%E9%98%B5%E4%B9%98.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:fcf129c4c678e961af9d7a373dddbda95673515e4302f41106bd7724899f0467"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/%E4%BD%8E%E7%B2%BE%E5%BA%A6%E7%9F%A9%E9%98%B5%E4%B9%98.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:7b752148cec7a19d474896193ed4580f002afc4cdec3d87287b35959f74b8b48"
   manifest: "muon"
   managed: true
 ---
-> 层次：数值计算
-> 信息截点：2026-07-14
-> 主推理路径：从误差模型推到可测诊断，再回到 Muon 的有限步 NS。
+> 资料范围截至：2026-07-14
 
-## 一句话定位
+## 先记住什么
 
 低精度矩阵乘用更少位宽换吞吐和显存，但会把舍入、溢出、累加精度和数值稳定性变成优化器设计的一部分。
 

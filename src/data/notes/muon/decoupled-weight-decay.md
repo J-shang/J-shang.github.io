@@ -6,22 +6,20 @@ section: "optimization"
 slug: "decoupled-weight-decay"
 legacyPaths: ["/notes/decoupled-weight-decay/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 5
 readtime: 8
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/优化基础/解耦 weight decay.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/%E8%A7%A3%E8%80%A6%20weight%20decay.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:31f68a6232bdf01f530426b34d74676c3c01aac088862f8e5d3d1cec76170a01"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E4%BC%98%E5%8C%96%E5%9F%BA%E7%A1%80/%E8%A7%A3%E8%80%A6%20weight%20decay.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:1307edc401579779c8427b8459b4c1d2430cd0b3aa645c34a66e459d072ca409"
   manifest: "muon"
   managed: true
 ---
-> 层次：优化基础
-
-## 一句话定位
+## 先记住什么
 
 解耦 weight decay 是把“让参数变小”的操作从“沿梯度更新”里拆出来，使正则强度不再被自适应梯度缩放扭曲。
 
@@ -78,15 +76,15 @@ $$
 
 就能保持“按比例缩小参数”的含义。
 
-### 3. weight decay 与学习率仍然相关
+### 3. weight decay 与 learning rate 仍然相关
 
-“解耦”不是说 weight decay 与学习率完全无关。每一步衰减因子仍是
+“解耦”不是说 weight decay 与 learning rate 完全无关。每一步衰减因子仍是
 
 $$
 1-\eta_t\lambda.
 $$
 
-如果学习率有 warmup 和 cosine decay，实际衰减强度也随时间变。训练日志里只写 `weight_decay=0.1` 不够，还要知道学习率 schedule 和总步数。
+如果 learning rate 有 warmup 和 cosine decay，实际衰减强度也随时间变。训练日志里只写 `weight_decay=0.1` 不够，还要知道 learning rate schedule 和总步数。
 
 ### 4. 哪些参数通常不做 weight decay？
 
@@ -101,7 +99,7 @@ $$
 
 ### 5. weight decay 与“稳定训练”不是同义词
 
-weight decay 能抑制权重范数增长，但不能替代学习率、梯度裁剪、attention logit 控制、数值精度和数据清洗。Muon 文献里 weight decay 很重要，是因为正交化更新可能带来不同的权重范数演化；但如果训练出现 loss spike，不能只靠调大 weight decay 解决。
+weight decay 能抑制权重范数增长，但不能替代 learning rate、梯度裁剪、attention logit 控制、数值精度和数据清洗。Muon 文献里 weight decay 很重要，是因为正交化更新可能带来不同的权重范数演化；但如果训练出现 loss spike，不能只靠调大 weight decay 解决。
 
 ### 6. 一个配置检查清单
 
@@ -130,7 +128,7 @@ weight decay 能抑制权重范数增长，但不能替代学习率、梯度裁�
 
 - 给 bias、LayerNorm/RMSNorm scale、embedding 等参数机械套同一个 weight decay。
 - 认为 weight decay 越大越稳定；过大衰减会压制表示学习。
-- 忽略学习率和 weight decay 的耦合：解耦衰减仍然含有 $\eta\lambda$。
+- 忽略 learning rate 和 weight decay 的耦合：解耦衰减仍然含有 $\eta\lambda$。
 
 ## 自测问题
 
@@ -140,6 +138,6 @@ weight decay 能抑制权重范数增长，但不能替代学习率、梯度裁�
 
 ## 参考入口
 
-- Loshchilov & Hutter, *Decoupled Weight Decay Regularization* —— 推导 adaptive optimizer 中 L2 penalty 与 decay 为什么不等价。
-- Liu et al., *Muon is Scalable for LLM Training* —— 查看 weight decay 如何成为规模化 Muon 的关键消融，而非一般性稳定口号。
-- PyTorch `AdamW` 与 `SGD` 文档中的 weight decay 说明 —— 核对当前 API 的更新顺序和命名，避免跨库迁移时混用语义。
+- [Loshchilov & Hutter, *Decoupled Weight Decay Regularization*](https://arxiv.org/abs/1711.05101) —— 推导 adaptive optimizer 中 L2 penalty 与 decay 为什么不等价。
+- [Liu et al., *Muon is Scalable for LLM Training*](https://arxiv.org/abs/2502.16982) —— 查看 weight decay 如何成为规模化 Muon 的关键消融，而非一般性稳定口号。
+- [PyTorch `AdamW`](https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html) 与 [`SGD`](https://docs.pytorch.org/docs/stable/generated/torch.optim.SGD.html) —— 核对当前 API 的更新顺序和命名，避免跨库迁移时混用语义。

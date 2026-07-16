@@ -6,22 +6,22 @@ section: "papers"
 slug: "muon2"
 legacyPaths: ["/notes/muon2/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 75
 source:
   repository: "J-shang/Muon"
   path: "论文精读/14-Muon2.md"
-  url: "https://github.com/J-shang/Muon/blob/ae2b5f9e6ee06b411aef2220e361c75988a7d753/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/14-Muon2.md"
-  revision: "ae2b5f9e6ee06b411aef2220e361c75988a7d753"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:8fdf51c6506e35568a5d4c6d686676dcb88d22814afa4fb16f1d57ca4a1485f9"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/14-Muon2.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:4c2278b3d0bd69dfe114fc5c2f7e5920bd12fa457a88a22de961185c8de47f3f"
   manifest: "muon"
   managed: true
 ---
-> source: [arXiv:2604.09967](https://arxiv.org/abs/2604.09967)，核验版本 v2（2026-06-05）
-> source class: 2026 前沿预印本
-> confidence: 算法定义 `verified`；最高 13B 实验为作者报告，独立复现 `open`
+> 原文：[arXiv:2604.09967](https://arxiv.org/abs/2604.09967)，核验版本 v2（2026-06-05）
+> 来源类型：2026 年前沿预印本
+> 阅读提醒：算法定义可按原文复核；最高 13B 实验是作者报告，独立复现仍待完成。
 
 ## 它改变了 Muon 的哪个对象
 
@@ -71,9 +71,9 @@ $$
 
 ## 与 SOAP/AdaMuon 的关系
 
-- `combines` → Adam 式二阶统计与 Muon polar，但操作顺序决定算法。
-- `analogy-to` → SOAP 都用二阶统计改善结构化变换；basis/state 位置不同。
-- `not-equivalent-to` → polar 后 adaptive scaling，因为 nonlinear operations 不可交换。
+- **组合内容**：Adam 式二阶统计与 Muon polar；操作顺序决定算法。
+- **与 SOAP 的相似处**：都用二阶统计改善结构化变换，但 basis/state 位置不同。
+- **不要混同**：它不等于 polar 后 adaptive scaling，因为 nonlinear operations 不可交换。
 
 ## 精读后的任务
 
@@ -87,31 +87,31 @@ $$
 
 **掌握标准**：能把 exact direction、finite-step conditioning、persistent state 和 wall-clock 四个效应拆开验证。
 
-## 二次审计：补漏、分歧与原文核查
+## 补充阅读：遗漏、分歧与出处
 
-### A. 还值得学习的点
+### 还值得注意什么
 
 1. **directional alignment 是作者新定义的实用质量指标**：§3.3 用与 exact orthogonalized direction 的 cosine，刻意消除 global scaling，区别于只看 orthogonality error。
 2. **Muon² 同时可能改变 target 与 approximation**：elementwise second-moment scaling 一般会改变 singular vectors，所以 exact polar 本身可能不同；论文主要强调 conditioning/alignment，但不能把收益全归于“更快逼近原 Muon target”。
 3. **Muon²-F 的价值需结合实测 memory**：Table 6 报告 1B/7B 上内存接近 Muon，而 full Muon² 接近/超过 AdamW；它不是只看 $m+n$ 渐近式。
 4. **作者明确承认 scale 限制**：§6 称最高 13B 仍不是 frontier industrial scale，当前结果不构成生产规模共识。
 
-### B. 与其他论文或学者观点的冲突检查
+### 与其他论文哪里不同
 
-| 对照观点 | 第一处分歧 | 判断 | 判别检查 |
+| 对照来源或观点 | 分歧从哪里开始 | 如何理解 | 怎样验证 |
 |---|---|---|---|
-| Moonlight：更精确 orthogonalization未必更好训练 | Muon² 增加 second-moment history且可能改变 exact direction，不只是加 NS steps | **看似冲突但 intervention 不同** | exact SVD + precondition-on/off 2× steps factorial |
-| SOAP：在 Shampoo eigenbasis运行 Adam | Muon² 在原坐标 elementwise precondition后做 polar | **结构相似但 basis/state位置不同** | 记录 second moment所在 basis和旋转时序 |
+| Moonlight：更精确 orthogonalization 未必更好训练 | Muon² 增加 second-moment history，且可能改变 exact direction，不只是加 NS steps | **看似冲突但 intervention 不同** | exact SVD + precondition-on/off 2× steps factorial |
+| SOAP：在 Shampoo eigenbasis 运行 Adam | Muon² 在原坐标 elementwise precondition 后做 polar | **结构相似但 basis/state 位置不同** | 记录 second moment 所在 basis 和旋转时序 |
 | NorMuon/AdaMuon 的 adaptive scaling | pre-polar vs post-polar | **非交换操作产生真实算法差异** | 比较 $\operatorname{polar}(D(M))$ 与 $D(\operatorname{polar}(M))$ |
-| finite-NS theory把 target固定为原 momentum polar | Muon² 改了进入 NS 的矩阵 | **理论对象不同** | 分别以 $\operatorname{polar}(M)$ 和 $\operatorname{polar}(\widehat M)$ 作 target |
+| finite-NS theory 把 target 固定为原 momentum polar | Muon² 改了进入 NS 的矩阵 | **理论对象不同** | 分别以 $\operatorname{polar}(M)$ 和 $\operatorname{polar}(\widehat M)$ 作 target |
 
-### C. 本笔记知识核查表
+### 本文内容从哪里来
 
-| 本笔记学习项 | 原文位置 | 核查结论 |
+| 本文讲到的内容 | 原文位置 | 来源说明 |
 |---|---|---|
-| second-moment preconditioning 发生在 orthogonalization 前 | §3.1 Algorithm 1 | `论文明确` |
-| Muon²-F 使用 Adafactor-style row/column factorization | §3.6 | `论文明确` |
-| 最多 13B、NS steps 减少 40%、最高节省约 25% GPU-hours | Abstract、Tables 3/5/6、§4.6 | `作者报告 in-scope` |
-| conditioning改善与 directional alignment | §3.3–3.5 | `作者机制分析 + snapshot证据`，因果仍需隔离 |
-| 本笔记对角矩阵 exact-polar 不变例子 | 原文无此例 | `仓库内反例`，只对正对角 special case成立 |
-| “收益可能来自 target改变与近似加速两者” | 论文重点偏后者 | `审计综合/开放问题`，需 exact-SVD factorial 实验 |
+| second-moment preconditioning 发生在 orthogonalization 前 | §3.1 Algorithm 1 | 论文明确 |
+| Muon²-F 使用 Adafactor-style row/column factorization | §3.6 | 论文明确 |
+| 最多 13B、NS steps 减少 40%、最高节省约 25% GPU-hours | Abstract、Tables 3/5/6、§4.6 | 作者在该实验范围内报告 |
+| conditioning 改善与 directional alignment | §3.3–3.5 | 作者机制分析 + snapshot 证据，因果仍需隔离 |
+| 本笔记对角矩阵 exact-polar 不变例子 | 原文无此例 | 本文反例，只对正对角 special case 成立 |
+| “收益可能来自 target 改变与近似加速两者” | 论文重点偏后者 | 本文比较，仍待验证；需 exact-SVD factorial 实验 |

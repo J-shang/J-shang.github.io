@@ -52,7 +52,7 @@
       order: 6
     - id: research-practice
       title: 研究实践
-      description: 用证据账本、代码走读、开放问题和可复现实验把理解变成可验证产出。
+      description: 用术语约定、来源对照、代码走读和可复现实验把理解变成可验证产出。
       order: 7
 
 - id: pretraining-data

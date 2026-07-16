@@ -6,22 +6,22 @@ section: "papers"
 slug: "kimi-k2-muonclip"
 legacyPaths: ["/notes/kimi-k2-muonclip/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 72
 source:
   repository: "J-shang/Muon"
   path: "论文精读/11-Kimi-K2-and-MuonClip.md"
-  url: "https://github.com/J-shang/Muon/blob/ae2b5f9e6ee06b411aef2220e361c75988a7d753/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/11-Kimi-K2-and-MuonClip.md"
-  revision: "ae2b5f9e6ee06b411aef2220e361c75988a7d753"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:3a785eb0fa52efed5a09e742bc797753a17a14c7bf242ad82ccddc8374af63a3"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/11-Kimi-K2-and-MuonClip.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:ed5c39d0d532f6ccfdb045bd7381a2afbda1d22f1e199bfcbe7e929da7d60bb8"
   manifest: "muon"
   managed: true
 ---
-> source: [arXiv:2507.20534](https://arxiv.org/abs/2507.20534)
-> source class: 超大规模模型技术报告
-> confidence: 系统采用与作者披露 recipe `verified as reported`；因果归因 `open`
+> 原文：[arXiv:2507.20534](https://arxiv.org/abs/2507.20534)，核验版本 v2（2026-02-03）
+> 来源类型：超大规模模型技术报告
+> 阅读提醒：系统采用和配方是团队披露的事实；K2 的最终能力不能因果归给 MuonClip。
 
 ## 为什么读它而不是把它当 Muon 理论论文
 
@@ -74,9 +74,9 @@ Muon 约束/归一化的是 update geometry，并不自动约束 attention activ
 
 ## 与其他论文的关系
 
-- `case-study-of` → *Muon is Scalable* 的规模化路线。
-- `failure-mode-patch-for` → attention logit instability，而不是 polar error。
-- `does-not-validate` → spectral-constraint 理论的全部假设。
+- **规模案例**：延续 *Muon is Scalable* 的规模化路线。
+- **修复对象**：attention logit instability，而不是 polar error。
+- **不能验证**：spectral-constraint 理论的全部假设。
 
 ## 精读后的任务
 
@@ -90,31 +90,31 @@ Muon 约束/归一化的是 update geometry，并不自动约束 attention activ
 
 **掌握标准**：能把 Muon、MuonClip、MoE 系统和最终能力拆成不同因果节点。
 
-## 二次审计：补漏、分歧与原文核查
+## 补充阅读：遗漏、分歧与出处
 
-### A. 还值得学习的点
+### 还值得注意什么
 
 1. **QK-Clip 不改变当前 step 的 forward/backward**：§2.1 明确复用当前 forward 已计算的 max logit，随后在 Muon update 后调权重；它影响下一步，而不是给 softmax 加当前步 clipping op。
 2. **从 global clipping 改成 per-head clipping**：作者观察只有少数 heads 爆炸，因此减少干预；MLA 中只缩放 head-specific components，共享 rotary component 保持不变。
 3. **MuonClip 是一整套 optimizer recipe 名称**：Algorithm 1 把 Muon、weight decay、consistent RMS matching、QK-Clip 合为 MuonClip。只实现 QK-Clip 不能宣称复现 MuonClip。
 4. **稳定性证据有中间尺度**：作者先在 9B active/53B total MoE 上观察 vanilla Muon max logits 超过 1000，再报告 K2 用阈值 100 控制；这是 failure-mode 证据，不是 optimizer 因果隔离实验。
 
-### B. 与其他论文或学者观点的冲突检查
+### 与其他论文哪里不同
 
-| 对照观点 | 第一处分歧 | 判断 | 判别检查 |
+| 对照来源或观点 | 分歧从哪里开始 | 如何理解 | 怎样验证 |
 |---|---|---|---|
 | 谱约束论文称 decay 约束 weight spectral norm | K2 的问题是 activation-derived QK logits，受输入、两组权重和对齐共同影响 | **不同对象，不冲突**；parameter bound 不充分控制 logit | 同时记录 $\|W_Q\|_2,\|W_K\|_2,\|X\|$ 和 max logit |
 | 原始 Muon/ Moonlight 未把 QK-Clip 作为核心算法 | K2 在更大规模观察新 instability | **规模化补丁**，不是原算法的数学必然 | 随 scale 做 clip-off ablation |
-| QK-norm 等 architecture-side 稳定方法 | QK-Clip 在 optimizer step 后改 weights；QK-norm在 forward 中归一化 activations | **机制替代/可组合关系尚未定** | 2×2 factorial ablation |
+| QK-norm 等 architecture-side 稳定方法 | QK-Clip 在 optimizer step 后改 weights；QK-norm 在 forward 中归一化 activations | **机制替代/可组合关系尚未定** | 2×2 factorial ablation |
 | “K2 能力来自 MuonClip” | 报告同时改变 MoE architecture、data、system、post-training | **因果归因不成立** | optimizer-only controlled pretraining |
 
-### C. 本笔记知识核查表
+### 本文内容从哪里来
 
-| 本笔记学习项 | 原文位置 | 核查结论 |
+| 本文讲到的内容 | 原文位置 | 来源说明 |
 |---|---|---|
-| K2 是 1T total / 32B active，预训练 15.5T tokens | Abstract、§2、§2.4 | `技术报告明确` |
-| QK-Clip 使用 per-head max pre-softmax logit 作为信号 | §2.1 definition | `报告明确` |
-| clip 在 Muon optimizer step 后，当前 forward/backward 不变 | §2.1、Algorithm 1 | `报告明确` |
-| 本笔记等比例缩放两侧得 $Z'=\alpha^2Z$ | 原文有 balancing parameter，常用相等分配 | `简化后的仓库内代数`；只对应 equal-scaling 情形 |
-| shared MLA rotary component 不应被同一 per-head factor缩放 | §2.1 bullet list | `报告明确` |
-| K2 最终 benchmark 不能归因给 optimizer | 报告设计不提供 optimizer-only causal ablation | `证据边界判断`，不是作者自称结论 |
+| K2 是 1T total / 32B active，预训练 15.5T tokens | Abstract、§2、§2.4 | 技术报告明确 |
+| QK-Clip 使用 per-head max pre-softmax logit 作为信号 | §2.1 definition | 报告明确 |
+| clip 在 Muon optimizer step 后，当前 forward/backward 不变 | §2.1、Algorithm 1 | 报告明确 |
+| 本笔记等比例缩放两侧得 $Z'=\alpha^2Z$ | 原文有 balancing parameter，常用相等分配 | 本文的简化代数；只对应 equal-scaling 情形 |
+| shared MLA rotary component 不应被同一 per-head factor 缩放 | §2.1 bullet list | 报告明确 |
+| K2 最终 benchmark 不能归因给 optimizer | 报告设计不提供 optimizer-only causal ablation | 本文对证据边界的判断，不是作者自称的结论 |

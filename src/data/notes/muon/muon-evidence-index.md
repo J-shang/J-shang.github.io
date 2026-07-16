@@ -1,29 +1,29 @@
 ---
 title: "Muon 论文与证据索引"
-description: "用来源类别、结论置信度和 claim ledger 管理 Muon 主线结论与证据缺口。"
+description: "对照来源、结论范围和仍待验证的问题，梳理 Muon 主线判断。"
 topic: "muon"
 section: "research-practice"
 slug: "muon-evidence-index"
 legacyPaths: ["/notes/muon-evidence-index/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 80
 source:
   repository: "J-shang/Muon"
   path: "notes/论文与证据索引.md"
-  url: "https://github.com/J-shang/Muon/blob/65164a375bd729b71f0e89b03642c67c50e624b3/notes/%E8%AE%BA%E6%96%87%E4%B8%8E%E8%AF%81%E6%8D%AE%E7%B4%A2%E5%BC%95.md"
-  revision: "65164a375bd729b71f0e89b03642c67c50e624b3"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:631af5bc894f1286719a48ad4c9d85d7206e0a1219bd1e114937de2b47c2c0fd"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/notes/%E8%AE%BA%E6%96%87%E4%B8%8E%E8%AF%81%E6%8D%AE%E7%B4%A2%E5%BC%95.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:304f71acf385f3d2e07514aec644a18bccf2c106baee346f2f077a1f0b5779ba"
   manifest: "muon"
   managed: true
 ---
 > 范围：Muon 主线论文、官方实现/文档和决定学习结论的代表性前沿工作。
-> 信息截点：2026-07-14。
-> 用法：先查“结论账本”，再按阅读路径进入原始来源；不要按论文数量投票。
+> 资料范围截至 2026-07-14；核心来源版本复核于 2026-07-16。
+> 用法：先查“结论与来源对照表”，再按阅读路径进入原文；不要按论文数量投票。
 
-逐篇精读正文见 [Muon 论文精读路线](/topics/muon/muon-paper-reading-guide/)。该目录为每个核心来源单独记录公式、证据边界、可核查锚点、实现/实验任务和推理型自测；本页继续承担跨论文 claim ledger。
+逐篇精读正文见 [Muon 论文精读路线](/topics/muon/muon-paper-reading-guide/)。该目录为每个核心来源单独记录公式、证据边界、可核查锚点、实现或实验任务和推理型自测；本页只保留跨论文结论及其来源边界。
 
 ## 一页结论
 
@@ -31,40 +31,18 @@ source:
 
 大模型预训练收益已有多个规模化来源支持，但“约 2×”仍是指定 compute-optimal scaling-law 设置下的作者报告，不是跨架构定律。微调、RL、非 Transformer、不同并行布局和不同 NS kernel 仍需要分别验证。
 
-## 证据语言
+## 结论与来源对照表
 
-### 来源类别
-
-| 类别 | 能直接支持什么 | 不能自动支持什么 |
-|---|---|---|
-| 数学推导/教材 | 恒等式、定理及其假设 | 现实训练收益 |
-| 官方代码/文档 | 指定版本的参数、分支和执行行为 | 跨版本稳定性、训练效果 |
-| 大规模技术报告 | 指定 recipe/硬件/数据下的结果 | 因果机制、跨设置外推 |
-| 多尺度实验论文 | 受控范围内的趋势和消融 | 未测试架构或训练阶段 |
-| 早期预印本 | 值得检验的机制与作者报告 | 已独立复现的共识 |
-| 博客/个人说明 | 设计史、直觉、最小实现入口 | 高置信度的规模化结论 |
-
-### 结论置信度
-
-- `verified`：在声明范围内由推导、版本固定的代码走读或可复现实验直接确认。
-- `supported`：多个相关检查一致，但范围和剩余限制已写明。
-- `plausible`：解释自洽且有部分证据，仍缺少区分性检查。
-- `open`：证据不足、相互冲突或尚未检查。
-
-“来源是一手”与“结论 verified”不是一回事。例如，一篇预印本是一手来源，但它对自身大规模收益的结论仍可能只是单一团队的作者报告。
-
-## 结论账本
-
-| 结论 | 关系强度 | 当前判断 | 最强支持 | 仍缺什么 |
+| 结论 | 准确边界 | 当前判断 | 最强支持 | 仍缺什么 |
 |---|---|---:|---|---|
-| 精确 polar factor 为 $UV^\top$ | exact（薄 SVD 约定下） | verified | 线性代数推导 | 秩亏时需说明非唯一性 |
-| 有限步低精度 NS 得到精确 polar | approximation，不是 exact | verified（否定强等价） | 迭代公式、数值对照 | 不同系数/kernel 的误差面 |
-| shape scaling 与 weight decay 对规模化 Muon 很关键 | empirical + implementation | supported | *Muon is Scalable* 及其代码 | 跨架构独立消融 |
-| Muon 达到 AdamW 同等表现约需一半 FLOPs | empirical，特定 operating point | supported in-scope | Moonlight scaling-law 报告 | 独立复现、其他数据/架构/预算 |
-| Muon 在更大 batch 保持较好 data efficiency | empirical | supported in-scope | *Practical Efficiency of Muon* 多尺度实验 | 更长 horizon、更多训练栈复现 |
-| 谱压平导致更好的表征/泛化 | causal claim | plausible | SVD entropy 与训练结果的关联 | 干预谱变换的区分性消融 |
-| Muon 是“二阶优化器” | analogy / framework-dependent | open as taxonomy | Shampoo 代数联系、norm geometry | 先固定“二阶”的定义；Muon 不显式用 Hessian |
-| AdamW checkpoint 可无风险切换 Muon 微调 | empirical generalization | open，且已有反例信号 | 2026 微调预印本 | 多任务、SFT/RL、更新约束的独立验证 |
+| 精确 polar factor 为 $UV^\top$ | 薄 SVD 约定下的恒等式 | 可直接复核 | 线性代数推导 | 秩亏时需说明非唯一性 |
+| 有限步低精度 NS 得到精确 polar | 这是近似，不是恒等式 | 强等价不成立 | 迭代公式、数值对照 | 不同系数和 kernel 的误差面 |
+| shape scaling 与 weight decay 对规模化 Muon 很关键 | 实现与实验结论 | 有论文支持，范围受限 | *Muon is Scalable* 及其代码 | 跨架构独立消融 |
+| Muon 达到 AdamW 同等表现约需一半 FLOPs | 特定 compute-optimal 拟合点 | 作者报告 | Moonlight scaling-law 报告 | 独立复现、其他数据/架构/预算 |
+| Muon 在更大 batch 保持较好 data efficiency | 多尺度实验趋势 | 作者报告 | *Practical Efficiency of Muon* | 更长训练和更多训练栈复现 |
+| 谱压平导致更好的表征或泛化 | 因果解释 | 仍待验证 | SVD entropy 与训练结果的相关性 | 直接干预谱变换的消融 |
+| Muon 是“二阶优化器” | 取决于是否要求显式曲率估计 | 分类口径未统一 | Shampoo 代数联系、norm geometry | 先固定“二阶”的定义 |
+| AdamW checkpoint 可无风险切换 Muon 微调 | 跨训练阶段外推 | 证据不足，已有反例信号 | 2026 微调预印本 | 多任务、SFT/RL 和更新约束的独立验证 |
 
 ## 推荐阅读路径
 
@@ -84,7 +62,7 @@ source:
 3. [Practical Efficiency of Muon for Pretraining](https://arxiv.org/abs/2505.02222)：这是一篇多尺度实验预印本；读 muP、critical batch 与 compute-time Pareto frontier。
 4. [Kimi K2 技术报告](https://arxiv.org/abs/2507.20534)：把 MuonClip 当作超大规模训练案例，不把整套系统收益归给优化器。
 
-输出：制作一张 claim-to-evidence 表，每条收益注明模型、token、batch、调参预算、横轴和基线。
+输出：制作一张“结论—来源”表，每条收益注明模型、token、batch、调参预算、横轴和 baseline。
 
 ### 路径 C：数值近似和分布式系统
 
@@ -98,20 +76,19 @@ source:
 ## 单篇论文记录模板
 
 ```text
-source / version / date:
-source class:
-question and comparison axes:
-model / data / tokens / hardware:
-optimizer routing and full recipe:
-reported fact:
-authors' mechanism explanation:
-my derivation or synthesis:
-assumptions and omitted effects:
-confidence: verified | supported | plausible | open
-discriminating check:
+原文 / 版本 / 日期：
+这篇论文回答什么：
+模型 / 数据 / token / 硬件：
+optimizer 路由与完整配方：
+作者直接报告的事实：
+作者给出的机制解释：
+本文推导或跨论文比较：
+假设与未覆盖因素：
+还不能确定什么：
+怎样用实验区分竞争解释：
 ```
 
-把“reported fact”“mechanism explanation”和“my synthesis”分开。若两篇解释冲突，先对齐它们研究的对象、尺度、指标和近似，再找第一处分歧。
+把“作者报告的事实”“作者的机制解释”和“本文推导”分开。若两篇解释冲突，先对齐它们研究的对象、尺度、指标和近似，再找第一处分歧。
 
 ## 当前证据缺口
 

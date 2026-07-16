@@ -6,22 +6,22 @@ section: "papers"
 slug: "soap"
 legacyPaths: ["/notes/soap/"]
 date: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 cutoff: 2026-07-14
 order: 64
 source:
   repository: "J-shang/Muon"
   path: "论文精读/03-SOAP.md"
-  url: "https://github.com/J-shang/Muon/blob/ae2b5f9e6ee06b411aef2220e361c75988a7d753/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/03-SOAP.md"
-  revision: "ae2b5f9e6ee06b411aef2220e361c75988a7d753"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:be8c7af1865d50539044f4cff082d217f23e66e6a329f746dac5a3befb3a3e5a"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E8%AE%BA%E6%96%87%E7%B2%BE%E8%AF%BB/03-SOAP.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:9ccc1b19f266e211ffbbfde9c1d195becdfd0c9e918fa6d8098a241dc3b64c99"
   manifest: "muon"
   managed: true
 ---
-> source: [arXiv:2409.11321](https://arxiv.org/abs/2409.11321)
-> source class: 实验与理论预印本
-> confidence: 理想化等价 `verified under stated assumptions`；效率数字 `supported in-scope`
+> 原文：[arXiv:2409.11321](https://arxiv.org/abs/2409.11321)，核验版本 v2（2025-01-31）
+> 来源类型：理论与实验预印本
+> 阅读提醒：理想化等价只在论文列出的修改和假设下成立；效率数字是作者实验结果。
 
 ## 它解决什么问题
 
@@ -78,31 +78,31 @@ $$
 
 **掌握标准**：能把 basis、逐坐标 state、preconditioner frequency 三者分开解释。
 
-## 二次审计：补漏、分歧与原文核查
+## 补充阅读：遗漏、分歧与出处
 
-### A. 还值得学习的点
+### 还值得注意什么
 
 1. **critical batch 是论文的重要实证线**：§6.3 报告 SOAP 在其设置中更接近 batch doubling/step halving 的理想线；这解释其 large-batch wall-clock 收益不只来自单步 preconditioner。
 2. **one-sided SOAP 是明确的成本—质量变体**：§7.1–7.3 讨论只使用一侧 eigenbasis、Adafactor 替代 Adam和低精度 state；它们改变 state、矩阵分解次数与旋转成本。
 3. **basis 更新慢、diagonal state 更新快是核心时间尺度分离**：这比“Shampoo + Adam”名称更能解释算法。
 4. **作者自己承认规模边界**：§9 明确实验模型比当时大 LLM 小两个数量级，把跨规模泛化写成 hypothesis。
 
-### B. 与其他论文或学者观点的冲突检查
+### 与其他论文哪里不同
 
-| 对照观点 | 第一处分歧 | 判断 | 判别检查 |
+| 对照来源或观点 | 分歧从哪里开始 | 如何理解 | 怎样验证 |
 |---|---|---|---|
 | Shampoo 原论文的双侧 matrix power | SOAP 在 Shampoo eigenbasis 内每步运行 diagonal Adam/Adafactor | **generalization/变体，不冲突** | 固定 basis，关闭 diagonal state 更新 |
 | Muon/Old Norm 的 accumulation-free polar | SOAP 保留慢变的结构化 basis 和快变二阶 state | **核心 state 不同**；把 SOAP reduce 到 Muon 需删除信息 | state ablation + update cosine |
 | SOAP 说“rotated Adam”支持跨规模稳健性 | §9 同时承认该泛化尚未验证 | **作者内部是 hypothesis，不是已证冲突** | 更大模型和不同 domain 的独立复现 |
 | critical batch 的定义（SOAP）与 Sato 等 SFO-minimizer 定义 | 前者是线性 scaling 开始失效处；后者最小化 $bT(b)$ | **定义层真实差异** | 同一曲线同时计算 break point 与 SFO minimizer |
 
-### C. 本笔记知识核查表
+### 本文内容从哪里来
 
-| 本笔记学习项 | 原文位置 | 核查结论 |
+| 本文讲到的内容 | 原文位置 | 来源说明 |
 |---|---|---|
-| $\widehat G=Q_L^\top GQ_R$，在 eigenbasis 内运行 Adam 再旋回 | §4 Algorithm 3 | `论文明确` |
-| idealized $1/2$-power Shampoo 等价于 eigenbasis Adafactor | §4.1 Claim 1 | `论文明确但有三个修改条件` |
-| basis 不每步更新时，SOAP 每步仍更新 diagonal second moment | §4.1 实际差异讨论 | `论文明确` |
-| 360M/660M、相对 AdamW iteration >40%、wall-clock >35% | Abstract、§6 | `作者报告 in-scope` |
-| 本笔记 45° rotation toy | 原文无该例子 | `仓库内反例/教学推导`，用于验证 Adam 非旋转不变性 |
-| SOAP 与 Muon 的 object/state/cost 表 | 跨论文整理 | `个人综合`，各单元可由两篇算法逐项核查 |
+| $\widehat G=Q_L^\top GQ_R$，在 eigenbasis 内运行 Adam 再旋回 | §4 Algorithm 3 | 论文明确 |
+| idealized $1/2$-power Shampoo 等价于 eigenbasis Adafactor | §4.1 Claim 1 | 论文明确但有三个修改条件 |
+| basis 不每步更新时，SOAP 每步仍更新 diagonal second moment | §4.1 实际差异讨论 | 论文明确 |
+| 360M/660M、相对 AdamW iteration >40%、wall-clock >35% | Abstract、§6 | 作者在该实验范围内报告 |
+| 本笔记 45° rotation toy | 原文无该例子 | 本文反例/教学推导，用于验证 Adam 非旋转不变性 |
+| SOAP 与 Muon 的 object/state/cost 表 | 跨论文整理 | 跨论文比较，各单元可由两篇算法逐项核查 |

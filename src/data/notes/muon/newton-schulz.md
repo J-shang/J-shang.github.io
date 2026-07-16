@@ -6,22 +6,20 @@ section: "numerical-computing"
 slug: "newton-schulz"
 legacyPaths: ["/notes/newton-schulz/"]
 date: 2026-07-01
-updated: 2026-07-14
+updated: 2026-07-16
 order: 20
 readtime: 13
 source:
   repository: "J-shang/Muon"
   path: "必备知识地图/数值计算/Newton–Schulz 迭代.md"
-  url: "https://github.com/J-shang/Muon/blob/f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/Newton%E2%80%93Schulz%20%E8%BF%AD%E4%BB%A3.md"
-  revision: "f6b7bd6ea9ca6a833648ad92c9f339cf56ccdf13"
-  syncedAt: "2026-07-14"
-  contentHash: "sha256:cdb41275bbc19603cd84bec3ee7a393f3f2d46e9915ae30dc2b4b1dc1024c94b"
+  url: "https://github.com/J-shang/Muon/blob/97e51478028b351af529830cf14917daff8dd5ef/%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97/Newton%E2%80%93Schulz%20%E8%BF%AD%E4%BB%A3.md"
+  revision: "97e51478028b351af529830cf14917daff8dd5ef"
+  syncedAt: "2026-07-16"
+  contentHash: "sha256:2c9ff614a92dcc05ffdb1906a624fe9f5cf8a656f4c865146e9640c1da40b703"
   manifest: "muon"
   managed: true
 ---
-> 层次：数值计算
-
-## 一句话定位
+## 先记住什么
 
 Newton–Schulz 迭代是 Muon 用少量矩阵乘近似 polar factor 的计算核心，用来避免每一步显式 SVD。
 
@@ -151,7 +149,7 @@ if transposed:
 - `G.norm()` 之类的缩放是为了让 NS 的初始奇异值进入安全区间；
 - `X @ X.T` 或 `X.T @ X` 的选择和矩阵长宽有关，通常会选择较小的一侧来减少计算；
 - `a, b, c` 可能不是经典 NS 系数，而是 Muon 配方中为了训练表现调过的系数；
-- 迭代结束的 `X` 只是更新方向，后面通常还会乘学习率、weight decay 和 update scaling。
+- 迭代结束的 `X` 只是更新方向，后面通常还会乘 learning rate、weight decay 和 update scaling。
 
 如果你看到实现里先把高矩阵转置成宽矩阵，再迭代，通常不是算法含义变了，而是在减少中间矩阵的尺寸。例如对 $m\times n$ 矩阵，若 $m>n$，计算 $X^\top X$ 得到的是 $n\times n$；若 $n$ 更小，这会比构造 $m\times m$ 中间矩阵便宜得多。
 
@@ -220,6 +218,6 @@ NS 在深度学习里好用，是因为它主要由矩阵乘组成，GPU 友好�
 
 ## 参考入口
 
-- KellerJordan/Muon 中的 Newton–Schulz 函数 —— 最小实现入口；逐行核对 transpose、归一化、系数、steps 和 dtype。
-- Higham, *Functions of Matrices* —— 矩阵函数、polar decomposition 与迭代收敛的规范数学背景。
-- Shulgin et al., *Beyond the Ideal: Analyzing the Inexact Muon Update* —— 研究有限步近似如何与学习率/momentum 耦合；属于前沿理论预印本。
+- [KellerJordan/Muon 中的 Newton–Schulz 函数](https://github.com/KellerJordan/Muon) —— 最小实现入口；逐行核对 transpose、归一化、系数、steps 和 dtype。
+- [Higham, *Functions of Matrices*](https://epubs.siam.org/doi/book/10.1137/1.9780898717778) —— 矩阵函数、polar decomposition 与迭代收敛的规范数学背景。
+- [Shulgin et al., *Beyond the Ideal: Analyzing the Inexact Muon Update*](https://arxiv.org/abs/2510.19933) —— 研究有限步近似如何与 learning rate、momentum 耦合；属于前沿理论预印本。
