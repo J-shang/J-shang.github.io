@@ -1,0 +1,435 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import '../styles/presentation.css';
+
+interface Props {
+  title: string;
+  description: string;
+  topicTitle: string;
+  topicHref: string;
+  status: 'draft' | 'published';
+  date: Date;
+  updated?: Date;
+  cutoff?: Date;
+  audience: string;
+  duration: number;
+  slideCount: number;
+  slideTitles: string[];
+  source: {
+    repository: string;
+    path: string;
+    url: string;
+    revision: string;
+    dirty?: boolean;
+  };
+}
+
+const {
+  title,
+  description,
+  topicTitle,
+  topicHref,
+  status,
+  date,
+  updated,
+  cutoff,
+  audience,
+  duration,
+  slideCount,
+  slideTitles,
+  source,
+} = Astro.props;
+const digits = String(slideCount).length;
+const slideId = (index: number) => `slide-${String(index + 1).padStart(digits, '0')}`;
+const fmt = (value: Date) => new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric', month: '2-digit', day: '2-digit',
+}).format(value);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  article
+  presentation
+  noindex={status === 'draft' || source.dirty === true}
+>
+  <a class="deck-skip-link" href="#deck-track">跳至演示内容</a>
+  <div
+    class="deck-app"
+    data-deck
+    data-slide-count={slideCount}
+    data-deck-status={status}
+  >
+    <header class="deck-toolbar">
+      <a class="deck-back" href={topicHref} aria-label={`返回${topicTitle}专题`}>
+        <span aria-hidden="true">←</span>
+        <span>{topicTitle}</span>
+      </a>
+
+      <div class="deck-identity">
+        <span>Presentation · {duration} min</span>
+        <strong title={title}>{title}</strong>
+      </div>
+
+      {status === 'draft' && <span class="deck-badge">Draft</span>}
+      {source.dirty && <span class="deck-badge deck-badge--warm">Worktree</span>}
+
+      <details class="deck-index">
+        <summary>目录</summary>
+        <nav aria-label="Slides 目录">
+          <div class="deck-index__meta">
+            <span>{slideCount} 页</span>
+            <span>{fmt(updated ?? date)}</span>
+          </div>
+          <ol>
+            {slideTitles.map((slideTitle, index) => (
+              <li>
+                <a href={`#${slideId(index)}`} data-slide-target={index}>
+                  <span>{String(index + 1).padStart(digits, '0')}</span>
+                  {slideTitle}
+                </a>
+              </li>
+            ))}
+          </ol>
+          <footer>
+            <span>听众：{audience}</span>
+            {cutoff && <span>信息截点：{fmt(cutoff)}</span>}
+            {!source.dirty
+              ? <a href={source.url} target="_blank" rel="noreferrer">查看 Markdown 源文档 ↗</a>
+              : <span>源文档尚未提交，GitHub 链接暂不可用</span>}
+          </footer>
+        </nav>
+      </details>
+
+      <button class="theme-toggle deck-tool" type="button" aria-label="切换明暗主题" title="切换明暗主题">
+        <span aria-hidden="true">◐</span>
+      </button>
+      <button class="deck-tool js-only" type="button" data-notes-toggle aria-label="显示演讲者备注" aria-pressed="false">
+        备注
+      </button>
+      <button class="deck-tool js-only" type="button" data-fullscreen aria-label="进入全屏" aria-pressed="false">
+        全屏
+      </button>
+    </header>
+
+    <div class="deck-progress" aria-hidden="true"><span data-progress></span></div>
+
+    <div id="deck-track" class="deck-track" tabindex="0" aria-label={`${title}演示文稿`}>
+      <article class="deck">
+        <slot />
+      </article>
+    </div>
+
+    <nav class="deck-controls js-only" aria-label="演示导航">
+      <button type="button" data-previous aria-label="上一页">←</button>
+      <div class="deck-counter" aria-hidden="true">
+        <span data-current>1</span>
+        <i>/</i>
+        <span>{slideCount}</span>
+      </div>
+      <span class="deck-hint">← → 翻页 · F 全屏 · N 备注</span>
+      <button type="button" data-next aria-label="下一页">→</button>
+    </nav>
+
+    <output class="sr-only" data-announcer aria-live="polite" aria-atomic="true"></output>
+  </div>
+
+  <script>
+    const interactiveSelector = 'a, button, input, textarea, select, summary, pre, [contenteditable], [data-keyboard-scroll]';
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    document.querySelectorAll<HTMLElement>('[data-deck]').forEach((root) => {
+      const track = root.querySelector<HTMLElement>('.deck-track');
+      const slides = [...root.querySelectorAll<HTMLElement>('.slide')];
+      if (!track || slides.length === 0) return;
+
+      const currentOutput = root.querySelector<HTMLElement>('[data-current]');
+      const progress = root.querySelector<HTMLElement>('[data-progress]');
+      const announcer = root.querySelector<HTMLOutputElement>('[data-announcer]');
+      const previous = root.querySelector<HTMLButtonElement>('[data-previous]');
+      const next = root.querySelector<HTMLButtonElement>('[data-next]');
+      const notesToggle = root.querySelector<HTMLButtonElement>('[data-notes-toggle]');
+      const fullscreen = root.querySelector<HTMLButtonElement>('[data-fullscreen]');
+      const index = root.querySelector<HTMLDetailsElement>('.deck-index');
+      let current = 0;
+      let notesOpen = false;
+      let frame = 0;
+      let announceTimer = 0;
+      let scrollSettleTimer = 0;
+      let programmaticTarget: number | undefined;
+      let initialized = false;
+      const revealCounts = new WeakMap<HTMLElement, number>();
+
+      const incrementalItems = (slide: HTMLElement) => (
+        [...slide.querySelectorAll<HTMLElement>('.incremental > li')]
+      );
+
+      const applyReveals = (slide: HTMLElement) => {
+        const items = incrementalItems(slide);
+        const revealed = Math.max(0, Math.min(items.length, revealCounts.get(slide) ?? 0));
+        items.forEach((item, itemIndex) => {
+          const visible = itemIndex < revealed;
+          item.classList.toggle('is-revealed', visible);
+          item.setAttribute('aria-hidden', String(!visible));
+        });
+      };
+
+      const updateNavigationState = () => {
+        const items = incrementalItems(slides[current]);
+        const revealed = revealCounts.get(slides[current]) ?? 0;
+        if (previous) previous.disabled = current === 0 && revealed === 0;
+        if (next) next.disabled = current === slides.length - 1 && revealed >= items.length;
+      };
+
+      const readableText = (element?: HTMLElement | null) => {
+        if (!element) return '';
+        const readable = element.cloneNode(true) as HTMLElement;
+        readable.querySelectorAll('[aria-hidden="true"], annotation').forEach((node) => node.remove());
+        return readable.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+      };
+
+      const headingText = (slide: HTMLElement) => (
+        readableText(slide.querySelector<HTMLElement>('h1, h2'))
+      );
+
+      const updateScrollRegions = () => {
+        root.querySelectorAll<HTMLElement>('table, .katex-display, pre').forEach((region) => {
+          const overflowing = (
+            region.scrollWidth > region.clientWidth + 1
+            || region.scrollHeight > region.clientHeight + 1
+          );
+          if (overflowing) {
+            region.tabIndex = 0;
+            region.dataset.keyboardScroll = '';
+            region.dataset.deckScrollRegion = 'true';
+          } else if (region.dataset.deckScrollRegion === 'true') {
+            region.removeAttribute('tabindex');
+            delete region.dataset.keyboardScroll;
+            delete region.dataset.deckScrollRegion;
+          }
+        });
+      };
+
+      const classifyFigureMedia = () => {
+        root.querySelectorAll<HTMLImageElement>('.slide--figure .slide__media img').forEach((image) => {
+          const classify = () => {
+            const slide = image.closest<HTMLElement>('.slide--figure');
+            if (!slide) return;
+            const width = image.naturalWidth || Number(image.getAttribute('width'));
+            const height = image.naturalHeight || Number(image.getAttribute('height'));
+            if (!(width > 0 && height > 0)) return;
+            const ratio = width / height;
+            const hasCopy = Boolean(slide.querySelector('.slide__copy'));
+            slide.classList.remove('slide--figure-wide', 'slide--figure-compact');
+            slide.classList.add(ratio >= 2.25 || !hasCopy
+              ? 'slide--figure-wide'
+              : 'slide--figure-compact');
+            slide.dataset.figureRatio = ratio.toFixed(2);
+          };
+
+          classify();
+          if (!image.complete) image.addEventListener('load', () => {
+            classify();
+            requestAnimationFrame(() => {
+              classifyOverflowingSlides();
+              updateScrollRegions();
+            });
+          }, { once: true });
+        });
+      };
+
+      const classifyOverflowingSlides = () => {
+        slides.forEach((slide) => slide.classList.remove('slide--overfull'));
+        slides.forEach((slide) => {
+          const surface = slide.querySelector<HTMLElement>('.slide__surface');
+          if (surface && surface.scrollHeight > surface.clientHeight + 2) {
+            slide.classList.add('slide--overfull');
+          }
+        });
+      };
+
+      const updateNotes = () => {
+        slides.forEach((slide, slideIndex) => {
+          const notes = slide.querySelector<HTMLElement>('.slide-notes');
+          if (notes) notes.hidden = !(notesOpen && slideIndex === current);
+        });
+        root.dataset.notesOpen = String(notesOpen);
+        notesToggle?.setAttribute('aria-pressed', String(notesOpen));
+        notesToggle?.setAttribute('aria-label', notesOpen ? '隐藏演讲者备注' : '显示演讲者备注');
+      };
+
+      const setCurrent = (indexValue: number, announce = true) => {
+        const nextIndex = Math.max(0, Math.min(slides.length - 1, indexValue));
+        if (nextIndex === current && initialized) {
+          updateNavigationState();
+          return;
+        }
+        current = nextIndex;
+        slides.forEach((slide, slideIndex) => {
+          slide.classList.toggle('is-current', slideIndex === current);
+          if (slideIndex === current) slide.setAttribute('aria-current', 'page');
+          else slide.removeAttribute('aria-current');
+        });
+        if (currentOutput) currentOutput.textContent = String(current + 1);
+        if (progress) progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+        updateNavigationState();
+        notesToggle?.toggleAttribute('disabled', !slides[current].querySelector('.slide-notes'));
+        updateNotes();
+
+        const hash = `#${slides[current].id}`;
+        if (location.hash !== hash) history.replaceState(null, '', hash);
+        if (announce && announcer) {
+          window.clearTimeout(announceTimer);
+          announceTimer = window.setTimeout(() => {
+            announcer.textContent = `第 ${current + 1} 页，共 ${slides.length} 页。${headingText(slides[current])}`;
+          }, 180);
+        }
+        initialized = true;
+      };
+
+      const goTo = (indexValue: number, focus = false) => {
+        const targetIndex = Math.max(0, Math.min(slides.length - 1, indexValue));
+        programmaticTarget = targetIndex;
+        track.scrollTo({
+          top: slides[targetIndex].offsetTop - slides[0].offsetTop,
+          behavior: reducedMotion ? 'auto' : 'smooth',
+        });
+        setCurrent(targetIndex);
+        window.clearTimeout(scrollSettleTimer);
+        scrollSettleTimer = window.setTimeout(() => {
+          programmaticTarget = undefined;
+          syncFromScroll();
+        }, reducedMotion ? 0 : 140);
+        if (focus) slides[targetIndex].focus({ preventScroll: true });
+      };
+
+      const revealNext = () => {
+        const slide = slides[current];
+        const items = incrementalItems(slide);
+        const revealed = revealCounts.get(slide) ?? 0;
+        if (revealed >= items.length) return false;
+        revealCounts.set(slide, revealed + 1);
+        applyReveals(slide);
+        updateNavigationState();
+        if (announcer) announcer.textContent = readableText(items[revealed]);
+        return true;
+      };
+
+      const concealPrevious = () => {
+        const slide = slides[current];
+        const revealed = revealCounts.get(slide) ?? 0;
+        if (revealed <= 0) return false;
+        revealCounts.set(slide, revealed - 1);
+        applyReveals(slide);
+        updateNavigationState();
+        return true;
+      };
+
+      const nextStep = () => {
+        if (!revealNext()) goTo(current + 1, true);
+      };
+
+      const previousStep = () => {
+        if (!concealPrevious()) goTo(current - 1, true);
+      };
+
+      const syncFromScroll = () => {
+        frame = 0;
+        const marker = track.scrollTop + track.clientHeight * 0.35;
+        let nearest = 0;
+        for (let indexValue = 0; indexValue < slides.length; indexValue += 1) {
+          if (slides[indexValue].offsetTop - slides[0].offsetTop <= marker) nearest = indexValue;
+          else break;
+        }
+        setCurrent(nearest);
+      };
+
+      track.addEventListener('scroll', () => {
+        if (programmaticTarget !== undefined) {
+          window.clearTimeout(scrollSettleTimer);
+          scrollSettleTimer = window.setTimeout(() => {
+            programmaticTarget = undefined;
+            syncFromScroll();
+          }, reducedMotion ? 0 : 140);
+          return;
+        }
+        if (!frame) frame = requestAnimationFrame(syncFromScroll);
+      }, { passive: true });
+
+      previous?.addEventListener('click', previousStep);
+      next?.addEventListener('click', nextStep);
+      notesToggle?.addEventListener('click', () => {
+        notesOpen = !notesOpen;
+        updateNotes();
+      });
+
+      root.querySelectorAll<HTMLAnchorElement>('[data-slide-target]').forEach((link) => {
+        link.addEventListener('click', (event) => {
+          event.preventDefault();
+          goTo(Number(link.dataset.slideTarget), true);
+          if (index) index.open = false;
+        });
+      });
+
+      if (!document.fullscreenEnabled && fullscreen) fullscreen.hidden = true;
+      const updateFullscreen = () => {
+        const active = document.fullscreenElement === root;
+        fullscreen?.setAttribute('aria-pressed', String(active));
+        fullscreen?.setAttribute('aria-label', active ? '退出全屏' : '进入全屏');
+        if (fullscreen) fullscreen.textContent = active ? '退出' : '全屏';
+      };
+      fullscreen?.addEventListener('click', async () => {
+        if (document.fullscreenElement === root) await document.exitFullscreen();
+        else await root.requestFullscreen();
+      });
+      document.addEventListener('fullscreenchange', updateFullscreen);
+
+      addEventListener('keydown', (event) => {
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+        const target = event.target instanceof Element ? event.target : null;
+        if (target?.closest(interactiveSelector)) return;
+
+        let handled = true;
+        if (event.key === 'ArrowRight' || event.key === 'PageDown' || (event.key === ' ' && !event.shiftKey)) {
+          nextStep();
+        } else if (event.key === 'ArrowLeft' || event.key === 'PageUp' || (event.key === ' ' && event.shiftKey)) {
+          previousStep();
+        } else if (event.key === 'Home') {
+          goTo(0, true);
+        } else if (event.key === 'End') {
+          goTo(slides.length - 1, true);
+        } else if (event.key.toLowerCase() === 'f' && fullscreen && !fullscreen.hidden) {
+          fullscreen.click();
+        } else if (event.key.toLowerCase() === 'n' && notesToggle && !notesToggle.disabled) {
+          notesToggle.click();
+        } else {
+          handled = false;
+        }
+        if (handled) event.preventDefault();
+      });
+
+      const initial = slides.findIndex((slide) => `#${slide.id}` === location.hash);
+      slides.forEach((slide) => {
+        revealCounts.set(slide, 0);
+        applyReveals(slide);
+      });
+      classifyFigureMedia();
+      classifyOverflowingSlides();
+      root.classList.add('deck-ready');
+      setCurrent(initial >= 0 ? initial : 0, false);
+      requestAnimationFrame(() => {
+        updateScrollRegions();
+        track.scrollTo({ top: slides[current].offsetTop - slides[0].offsetTop, behavior: 'auto' });
+      });
+      let resizeFrame = 0;
+      addEventListener('resize', () => {
+        cancelAnimationFrame(resizeFrame);
+        resizeFrame = requestAnimationFrame(() => {
+          classifyFigureMedia();
+          classifyOverflowingSlides();
+          updateScrollRegions();
+        });
+      }, { passive: true });
+    });
+  </script>
+</BaseLayout>

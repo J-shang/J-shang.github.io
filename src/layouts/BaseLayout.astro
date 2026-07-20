@@ -8,6 +8,8 @@ interface Props {
   description?: string;
   image?: string;
   article?: boolean;
+  presentation?: boolean;
+  noindex?: boolean;
 }
 
 const {
@@ -15,6 +17,8 @@ const {
   description = '关于 AI 系统、优化器、数据处理与规模化训练的技术笔记。',
   image = '/og-default.svg',
   article = false,
+  presentation = false,
+  noindex = false,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const fullTitle = title.includes('J. Shang') ? title : `${title} · J. Shang`;
@@ -27,6 +31,7 @@ const fullTitle = title.includes('J. Shang') ? title : `${title} · J. Shang`;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#f5f3ed" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -40,22 +45,27 @@ const fullTitle = title.includes('J. Shang') ? title : `${title} · J. Shang`;
     <title>{fullTitle}</title>
     <script is:inline>
       (() => {
+        document.documentElement.dataset.js = 'true';
         const stored = localStorage.getItem('theme');
         const preferred = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.dataset.theme = stored || preferred;
+        const theme = stored || preferred;
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#101310' : '#f5f3ed');
       })();
     </script>
   </head>
-  <body>
-    <Header />
-    <main><slot /></main>
-    <Footer />
+  <body class:list={{ 'presentation-page': presentation }}>
+    {!presentation && <Header />}
+    <main class:list={{ 'presentation-main': presentation }}><slot /></main>
+    {!presentation && <Footer />}
     <script>
-      const toggle = document.querySelector('.theme-toggle');
-      toggle?.addEventListener('click', () => {
-        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-        document.documentElement.dataset.theme = next;
-        localStorage.setItem('theme', next);
+      document.querySelectorAll('.theme-toggle').forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+          const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+          document.documentElement.dataset.theme = next;
+          localStorage.setItem('theme', next);
+          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#101310' : '#f5f3ed');
+        });
       });
     </script>
   </body>

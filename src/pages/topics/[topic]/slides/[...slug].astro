@@ -1,0 +1,86 @@
+---
+import { render } from 'astro:content';
+import PresentationLayout from '../../../../layouts/PresentationLayout.astro';
+import { loadSiteContent, topicHref } from '../../../../lib/content';
+
+function cleanSlideTitle(value: string) {
+  return value
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\$([^$]+)\$/g, (_match, math: string) => math
+      .replace(/\^\\top/g, '⊤')
+      .replace(/\\top/g, '⊤')
+      .replace(/\\times/g, '×')
+      .replace(/\\cdot/g, '·')
+      .replace(/[{}]/g, '')
+      .replace(/\\/g, ''))
+    .replace(/[*_~]/g, '')
+    .trim();
+}
+
+function slideTitlesFromMarkdown(body: string) {
+  const titles: Array<string | undefined> = [undefined];
+  let fence: string | undefined;
+  let inComment = false;
+
+  for (const line of body.split(/\r?\n/)) {
+    if (inComment) {
+      if (line.includes('-->')) inComment = false;
+      continue;
+    }
+    const commentStart = line.indexOf('<!--');
+    if (commentStart >= 0) {
+      if (line.indexOf('-->', commentStart + 4) < 0) inComment = true;
+      continue;
+    }
+    const marker = line.match(/^\s*(`{3,}|~{3,})/);
+    if (marker) {
+      const token = marker[1][0];
+      if (!fence) fence = token;
+      else if (fence === token) fence = undefined;
+      continue;
+    }
+    if (fence) continue;
+    if (/^---\s*$/.test(line)) {
+      titles.push(undefined);
+      continue;
+    }
+    const heading = line.match(/^#{1,2}\s+(.+?)\s*#*\s*$/);
+    if (heading && !titles.at(-1)) titles[titles.length - 1] = cleanSlideTitle(heading[1]);
+  }
+
+  return titles.map((title, index) => {
+    if (!title) throw new Error(`Slide ${index + 1} must have an H1 or H2 title.`);
+    return title;
+  });
+}
+
+export async function getStaticPaths() {
+  const { slides, topicById } = await loadSiteContent();
+  return slides.map((deck) => {
+    const topic = topicById.get(deck.data.topic);
+    if (!topic) throw new Error(`Missing topic for slide deck "${deck.id}".`);
+    return {
+      params: { topic: topic.id, slug: deck.data.slug },
+      props: { deck, topic },
+    };
+  });
+}
+
+const { deck, topic } = Astro.props;
+const { Content } = await render(deck);
+const slideTitles = slideTitlesFromMarkdown(deck.body ?? '');
+if (slideTitles.length !== deck.data.slideCount) {
+  throw new Error(`${deck.id}: metadata says ${deck.data.slideCount} slides, found ${slideTitles.length} titles.`);
+}
+---
+
+<PresentationLayout
+  {...deck.data}
+  topicTitle={topic.data.title}
+  topicHref={topicHref(topic.id)}
+  slideTitles={slideTitles}
+>
+  <Content />
+</PresentationLayout>

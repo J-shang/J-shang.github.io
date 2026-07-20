@@ -57,4 +57,37 @@ const notes = defineCollection({
   }),
 });
 
-export const collections = { topics, notes };
+const slides = defineCollection({
+  loader: glob({
+    pattern: '*/*/index.md',
+    base: './src/data/slides',
+    generateId: ({ entry }) => entry.replace(/\/index\.md$/, ''),
+  }),
+  schema: z.object({
+    title: z.string(),
+    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    description: z.string(),
+    topic: z.string(),
+    status: z.enum(['draft', 'published']),
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    cutoff: z.coerce.date().optional(),
+    audience: z.string(),
+    duration: z.number().int().positive(),
+    slideCount: z.number().int().positive(),
+    publicPreview: z.boolean().default(false),
+    source: z.object({
+      repository: z.string(),
+      path: z.string(),
+      url: z.url(),
+      revision: z.string(),
+      syncedAt: z.coerce.date(),
+      contentHash: z.string(),
+      manifest: z.string(),
+      dirty: z.boolean().default(false),
+      managed: z.boolean().default(true),
+    }),
+  }),
+});
+
+export const collections = { topics, notes, slides };

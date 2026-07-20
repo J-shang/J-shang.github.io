@@ -2,6 +2,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 export type NoteEntry = CollectionEntry<'notes'>;
 export type TopicEntry = CollectionEntry<'topics'>;
+export type SlideEntry = CollectionEntry<'slides'>;
 
 export function noteSlug(note: NoteEntry) {
   return note.data.slug ?? note.id.split('/').at(-1) ?? note.id;
@@ -15,14 +16,19 @@ export function noteHref(note: NoteEntry) {
   return `${topicHref(note.data.topic)}${noteSlug(note)}/`;
 }
 
+export function slideHref(slide: SlideEntry) {
+  return `${topicHref(slide.data.topic)}slides/${slide.data.slug}/`;
+}
+
 export function sectionTitle(topic: TopicEntry, sectionId: string) {
   return topic.data.sections.find((section) => section.id === sectionId)?.title ?? sectionId;
 }
 
 export async function loadSiteContent() {
-  const [rawTopics, rawNotes] = await Promise.all([
+  const [rawTopics, rawNotes, rawSlides] = await Promise.all([
     getCollection('topics'),
     getCollection('notes'),
+    getCollection('slides'),
   ]);
   const topics = rawTopics.sort((a, b) => a.data.order - b.data.order);
   const topicById = new Map(topics.map((topic) => [topic.id, topic]));
@@ -32,6 +38,17 @@ export async function loadSiteContent() {
     || a.data.order - b.data.order
     || a.data.date.valueOf() - b.data.date.valueOf()
   ));
+  const includeDrafts = import.meta.env.DEV || import.meta.env.PUBLIC_SHOW_DRAFTS === '1';
+  const slides = rawSlides
+    .filter((slide) => includeDrafts || (
+      slide.data.source.dirty !== true
+      && (slide.data.status === 'published' || slide.data.publicPreview === true)
+    ))
+    .sort((a, b) => (
+      (topicOrder.get(a.data.topic) ?? 99) - (topicOrder.get(b.data.topic) ?? 99)
+      || a.data.date.valueOf() - b.data.date.valueOf()
+      || a.data.title.localeCompare(b.data.title, 'zh-CN')
+    ));
   const routes = new Set<string>();
   const legacyRoutes = new Set<string>();
   const idPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -53,6 +70,9 @@ export async function loadSiteContent() {
   }
 
   for (const note of notes) {
+    if (noteSlug(note) === 'slides') {
+      throw new Error(`Note "${note.id}" uses reserved slug "slides".`);
+    }
     if (!idPattern.test(noteSlug(note))) {
       throw new Error(`Note "${note.id}" has non URL-safe slug "${noteSlug(note)}".`);
     }
@@ -81,6 +101,19 @@ export async function loadSiteContent() {
     }
   }
 
+  const slideRoutes = new Set<string>();
+  for (const slide of slides) {
+    const topic = topicById.get(slide.data.topic);
+    if (!topic) {
+      throw new Error(`Slides "${slide.id}" references unknown topic "${slide.data.topic}".`);
+    }
+    const route = slideHref(slide);
+    if (slideRoutes.has(route)) {
+      throw new Error(`Multiple slide decks resolve to the same route "${route}".`);
+    }
+    slideRoutes.add(route);
+  }
+
   for (const topic of topics) {
     const topicNotes = notes.filter((note) => note.data.topic === topic.id);
     const slugs = new Set(topicNotes.map(noteSlug));
@@ -94,5 +127,5 @@ export async function loadSiteContent() {
     }
   }
 
-  return { topics, notes, topicById };
+  return { topics, notes, slides, topicById };
 }

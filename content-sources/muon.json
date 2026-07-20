@@ -3,6 +3,11 @@
   "repository": "J-shang/Muon",
   "repositoryUrl": "https://github.com/J-shang/Muon",
   "output": "src/data/notes/muon",
+  "presentations": {
+    "source": "slides",
+    "output": "src/data/slides/muon",
+    "publicPreviewSlugs": ["muon-geometry-to-distributed-systems"]
+  },
   "legacyBase": "/notes/",
   "linkRoutes": {
     "必备知识地图/README.md": "/topics/muon/"

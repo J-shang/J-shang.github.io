@@ -35,7 +35,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Synchronize managed content
-        run: npm run sync:content -- --topic muon --source .sync-sources/muon --prune --strict-discovery
+        run: |
+          npm run sync:content -- --topic muon --source .sync-sources/muon --prune --strict-discovery
+          npm run sync:slides -- --topic muon --source .sync-sources/muon --prune
       - name: Validate synchronized site
         run: |
           npm run check
@@ -47,7 +49,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ -z "$(git status --porcelain -- src/data/notes/muon)" ]; then
+          if [ -z "$(git status --porcelain -- src/data/notes/muon src/data/slides/muon)" ]; then
             echo "Muon content is already current."
             exit 0
           fi
@@ -56,8 +58,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "$branch"
-          git add src/data/notes/muon
-          git commit -m "content: sync Muon notes"
+          git add src/data/notes/muon src/data/slides/muon
+          git commit -m "content: sync Muon notes and slides"
           git push --force origin "HEAD:$branch"
 
           existing="$(gh pr list --head "$branch" --state open --json url --jq '.[0].url')"
@@ -65,7 +67,7 @@ jobs:
             gh pr create \
               --base main \
               --head "$branch" \
-              --title "content: sync Muon notes" \
+              --title "content: sync Muon notes and slides" \
               --body "Automated one-way synchronization from J-shang/Muon. Review source revisions, rendered content, and checks before merging."
           else
             echo "Updated existing pull request: $existing"

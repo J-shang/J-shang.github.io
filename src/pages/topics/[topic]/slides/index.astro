@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import { loadSiteContent, slideHref, topicHref } from '../../../../lib/content';
+
+export async function getStaticPaths() {
+  const { topics, slides } = await loadSiteContent();
+  return topics
+    .map((topic) => ({
+      topic,
+      topicSlides: slides.filter((deck) => deck.data.topic === topic.id),
+    }))
+    .filter(({ topicSlides }) => topicSlides.length > 0)
+    .map(({ topic, topicSlides }) => ({
+      params: { topic: topic.id },
+      props: { topic, topicSlides },
+    }));
+}
+
+const { topic, topicSlides } = Astro.props;
+const fmt = (value: Date) => new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric', month: '2-digit', day: '2-digit',
+}).format(value);
+---
+
+<BaseLayout title={`${topic.data.title}演示`} description={`以逐页演示方式阅读${topic.data.title}专题。`}>
+  <header class="page-hero shell slides-archive__hero">
+    <p class="eyebrow"><a href={topicHref(topic.id)}>{topic.data.title}</a> / Presentations</p>
+    <h1>演示与<br />研究分享</h1>
+    <p>用逐页叙事连接公式、代码、系统图和证据边界；适合分享、复习与讨论。</p>
+  </header>
+
+  <section class="slides-archive shell" aria-label={`${topic.data.title}演示列表`}>
+    {topicSlides.map((deck, index) => (
+      <a class="presentation-card" href={slideHref(deck)}>
+        <div class="presentation-card__meta">
+          <span>{String(index + 1).padStart(2, '0')} / {deck.data.slideCount} SLIDES</span>
+          <span>{deck.data.duration} MIN · {fmt(deck.data.updated ?? deck.data.date)}</span>
+        </div>
+        <h2>{deck.data.title}</h2>
+        <p>{deck.data.description}</p>
+        <div class="presentation-card__footer">
+          <span>{deck.data.status === 'draft' ? 'DRAFT PREVIEW' : 'OPEN PRESENTATION'}</span>
+          <i aria-hidden="true">→</i>
+        </div>
+      </a>
+    ))}
+  </section>
+</BaseLayout>
+
+<style>
+  .slides-archive__hero h1 { max-width: 900px; }
+  .slides-archive { display: grid; gap: 1rem; padding-bottom: 2rem; }
+  .presentation-card { display: grid; min-height: 360px; padding: clamp(1.5rem, 4vw, 3rem); border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--paper-raised) 94%, transparent); transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease; }
+  .presentation-card:hover { transform: translateY(-4px); border-color: var(--signal); box-shadow: var(--shadow); }
+  .presentation-card__meta { display: flex; justify-content: space-between; gap: 1rem; color: var(--ink-soft); font-family: var(--mono); font-size: .66rem; letter-spacing: .04em; }
+  .presentation-card h2 { max-width: 18ch; margin: 4rem 0 1rem; font-family: var(--serif); font-size: clamp(2.2rem, 5vw, 4.8rem); font-weight: 600; letter-spacing: -.055em; line-height: 1.08; }
+  .presentation-card p { max-width: 680px; margin: 0; color: var(--ink-soft); font-size: 1rem; }
+  .presentation-card__footer { display: flex; justify-content: space-between; align-items: end; margin-top: 3rem; color: var(--signal); font-family: var(--mono); font-size: .68rem; font-weight: 700; letter-spacing: .08em; }
+  .presentation-card__footer i { font-family: var(--sans); font-size: 2rem; font-style: normal; }
+  @media (max-width: 660px) { .presentation-card { min-height: 320px; } .presentation-card__meta { align-items: flex-start; flex-direction: column; } .presentation-card h2 { margin-top: 3rem; } }
+</style>
