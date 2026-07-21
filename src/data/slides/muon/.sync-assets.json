@@ -1,17 +1,16 @@
 {
   "manifest": "muon-slides",
   "files": {
-    "muon-geometry-to-distributed-systems/assets/dmuon-owner-pipeline-paper.svg": "sha256:5cdf2a33c209331d3e657069711a49bd95579a91430cfae587f339471a9681b0",
-    "muon-geometry-to-distributed-systems/assets/dp-tp-owner-grid-paper.svg": "sha256:c87a91e6ae211780a7952840bf509c9cfbbde6507829c28a73da469f09f40022",
-    "muon-geometry-to-distributed-systems/assets/evolution-roadmap-paper.svg": "sha256:96181331df4d8648e1e03d5d23ef0bae80c428b862f1eefed88ecfbe0aeef03f",
-    "muon-geometry-to-distributed-systems/assets/full-vs-sharded-polar-paper.svg": "sha256:f22059b454b4db1071c1fc2aa6c67c18b48c248282f1ec2e136b0512c996041d",
-    "muon-geometry-to-distributed-systems/assets/gram-space-ns-paper.svg": "sha256:237becd33d6cbca5f5fcf723ad3c033ff371779c9dfe2972f0d8601a9813ee7c",
-    "muon-geometry-to-distributed-systems/assets/megatron-owner-step-paper.svg": "sha256:7cfb5537fd26d0f9b458bc1804040563bd9c5158530699c05cc96b2d33e500bf",
-    "muon-geometry-to-distributed-systems/assets/mlp-expansion-paper.svg": "sha256:58a9b95b38fded5d3dbe055f0661a4baed3d399480f287894d9c55abd8dd39a9",
-    "muon-geometry-to-distributed-systems/assets/muon-step-contract-paper.svg": "sha256:cac7d6fdfd32ff4aaff5768393cd5703bea996a17f38e6378d16806ad1707871",
-    "muon-geometry-to-distributed-systems/assets/muonclip-feedback-paper.svg": "sha256:dbae7bd3777feea524956efd5f9a63c8c71683afca80249739f1aa03d56f34e6",
-    "muon-geometry-to-distributed-systems/assets/muonr-rotation-paper.svg": "sha256:59b72dc6f1dbf33f84902614bdf51294717557dd17eaf28974f91f4e22bc96a1",
-    "muon-geometry-to-distributed-systems/assets/ns-spectrum-flattening-paper.svg": "sha256:775bcce965e70ea2ac11ef17309422b0843a48caf2f46f956018a2971f439afb",
+    "muon-geometry-to-distributed-systems/assets/dmuon-owner-pipeline-paper.svg": "sha256:d6f0b4c76b64bce13b85077f7ae0cef3a3159fc994f89650f26fdb0eb95e6cb1",
+    "muon-geometry-to-distributed-systems/assets/dp-tp-owner-grid-paper.svg": "sha256:a18fca01c198f2650a96d6aa5ed10ac8e333da17e8e3142dceb7ce1ab41383a4",
+    "muon-geometry-to-distributed-systems/assets/evolution-roadmap-paper.svg": "sha256:7334236dd0c271bfd25ebc75af1ca4430b1b1631fe6c06a5fb75f5c811cf2f5d",
+    "muon-geometry-to-distributed-systems/assets/full-vs-sharded-polar-paper.svg": "sha256:d92eb9b9da52393702194eb1b2757d70a72c54649c553437cf7ffb4db64e58b6",
+    "muon-geometry-to-distributed-systems/assets/gram-space-ns-paper.svg": "sha256:788695ca8fb777f83728d6baa440d1f52b37e9d1ea1b82c3d46e3f95b87303c4",
+    "muon-geometry-to-distributed-systems/assets/megatron-owner-step-paper.svg": "sha256:ff40d285e5fb01140eade3ce450d5df21e1f734f7144003fcbe14156bde6375d",
+    "muon-geometry-to-distributed-systems/assets/muon-step-contract-paper.svg": "sha256:46ce272746b22c9a78032307253a7b700d3f1287ff71023ee3da96c0c97358ed",
+    "muon-geometry-to-distributed-systems/assets/muonclip-feedback-paper.svg": "sha256:5b44a2433a3315e3dfa0359d9ef6ab03268e0f89656240f3c271d1dce0b504a5",
+    "muon-geometry-to-distributed-systems/assets/muonr-rotation-paper.svg": "sha256:527f8fdf9f9811e45ad3f1ee663963a7c923cadb3c3ed241790a85ddb7e14ee1",
+    "muon-geometry-to-distributed-systems/assets/ns-spectrum-flattening-paper.svg": "sha256:d9a29f4ab0934df6feb84d893d9af0777c721bdac82b5da74d59a57aad5f3f4f",
     "muon-geometry-to-distributed-systems/assets/source-figures/dmuon-optimizer-compute-fig8a.png": "sha256:714d550477badb04e3737ce7d469f5c703e0cabee3dccc7e0465677c5425e44e",
     "muon-geometry-to-distributed-systems/assets/source-figures/dmuon-throughput-fig8b.jpg": "sha256:914538fe564b0601ce2774fb44f3e24eeac75a3e4019c185d73f31b85058d47e",
     "muon-geometry-to-distributed-systems/assets/source-figures/kimi-k2-logit-explosion-fig2a.png": "sha256:3ed7d328ff304b829f4ef82896b40762271f7fd457593fd823cfb775e2fcba2c",
@@ -19,7 +18,7 @@
     "muon-geometry-to-distributed-systems/assets/source-figures/muon-scalable-scaling-law-fig3.png": "sha256:f63749a1e7143bd60b3afa3d6dfcae191abe22a618ad7052942248d4826cedff",
     "muon-geometry-to-distributed-systems/assets/source-figures/muon-scalable-svd-entropy-fig4.png": "sha256:76718395fd3cbf289adebccbdc4cd7abf0646b63f29a15893732ed5ad01386fd",
     "muon-geometry-to-distributed-systems/assets/source-figures/muon-scalable-weight-decay-fig2.png": "sha256:fef4fe329d5b3a14a430414ccc8cc83dc59d151fa133dfbe2e937a3b3e80303a",
-    "muon-geometry-to-distributed-systems/assets/spectrum-levels-paper.svg": "sha256:21ff13d012cef04f6d35378e913e77023c70ba2ea164a53ec541b251bb35ad9c",
-    "muon-geometry-to-distributed-systems/assets/svd-polar-semantics-paper.svg": "sha256:121da4c74463af255fc87a1f726ff47984b0b0e36fa1d3d9dd562a2337ed740c"
+    "muon-geometry-to-distributed-systems/assets/spectrum-levels-paper.svg": "sha256:3fe9f9545c54b399eb494b0dee79ae6175c8089682508deb6dea25b64da09b6e",
+    "muon-geometry-to-distributed-systems/assets/svd-polar-semantics-paper.svg": "sha256:dc17a72024af2eaa8478e96124e6e56fafdbd6b138565e04c63b74539d28c693"
   }
 }
