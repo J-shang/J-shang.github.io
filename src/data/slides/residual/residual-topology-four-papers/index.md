@@ -1,5 +1,5 @@
 ---
-title: "从固定加法到可学习的深度记忆"
+title: "从固定加法到深度记忆"
 slug: "residual-topology-four-papers"
 description: "以统一的 state/read/write/transport contract 比较 HC、mHC、AttnRes 与 xHC，并审计稳定性、质量证据和系统成本。"
 topic: "residual"
@@ -14,8 +14,8 @@ source:
   path: "src/data/slides/residual/residual-topology-four-papers/index.md"
   url: "https://github.com/J-shang/J-shang.github.io/blob/main/src/data/slides/residual/residual-topology-four-papers/index.md"
   revision: "main"
-  syncedAt: "2026-07-25"
-  contentHash: "sha256:68183a795ee3e22e7d2247840fc68abfc2e618db8dea31004e9070e6b2d5bf7e"
+  syncedAt: "2026-07-26"
+  contentHash: "sha256:b8a736def0ec0c19c607774d45cc3bc55e23f784233133bd4f41c7117f287a08"
   manifest: "local-residual-slides"
   dirty: false
   managed: false
@@ -23,9 +23,14 @@ source:
 
 <!-- layout: title -->
 
-# 从固定加法到可学习的深度记忆
+# 从固定加法到深度记忆
 
 HC、mHC、AttnRes 与 xHC 的 residual topology
+
+![Hyper-Connections 机制总览](./assets/hc-fig2-overview.png)
+![mHC 机制总览](./assets/mhc-fig1-overview.png)
+![Attention Residuals 机制总览](./assets/attnres-fig1-overview.png)
+![xHC 机制总览](./assets/xhc-fig3-overview.png)
 
 <!-- notes:
 0.5 分钟。只报题目、四篇论文与分享目标：把 residual connection 当作沿 depth 运行的 memory policy。
@@ -43,11 +48,19 @@ HC、mHC、AttnRes 与 xHC 的 residual topology
 
 ## 一次加法其实规定了 memory policy
 
-![标准 residual 把 embedding 与历史 branch delta 压进一条累计 state，下一层只能读取这条 state](./assets/residual-memory-policy.svg)
+令 $v_0=h_1,\ v_i=f_i(h_i)$：
 
-标准 residual 同时固定了四件事：**保存一条累计 state、读取全部历史、以系数 1 写入、没有单独 retrieval**。
+$$
+h_l=\sum_{i=0}^{l-1}v_i
+$$
 
-> 综合推导；起点见 [Attention Residuals](https://arxiv.org/abs/2603.15031v1)，Eq. 1–2
+- **stored state**：一条累计表示
+- **read / write**：全部读取、系数 1 写入
+- **retrieval**：不能单独访问历史 source
+
+![Standard Residuals 把 embedding 与历史 branch delta 累加到同一条 residual path](./assets/attnres-fig1-standard.png)
+
+> **Derived** · Attention Residuals, arXiv:2603.15031v1, Fig. 1(a), PDF p.1；Eq. 1–2
 
 <!-- notes:
 1.5 分钟。先问：如果 residual 是 memory，它的 eviction policy 是什么？答案是没有显式 eviction，也不能单独检索 source。
@@ -59,21 +72,16 @@ HC、mHC、AttnRes 与 xHC 的 residual topology
 
 ---
 
-<!-- layout: figure -->
+<!-- layout: comparison -->
 
 ## 标准 residual 是固定 depth mixing
 
-令 $v_0=h_1,\ v_i=f_i(h_i)$，则
-
-$$
-h_l=\sum_{i=0}^{l-1}v_i.
-$$
-
+![Attention Residuals 论文中的 Standard Residuals 基线](./assets/attnres-fig1-standard.png)
 ![标准 residual 的 causal depth mixing 矩阵在可见区域全部使用固定系数 1](./assets/fixed-depth-mixing.svg)
 
 direct path 帮助信息与梯度跨层传播；同一个固定权重也限制了按内容选择历史 source 的能力。
 
-> [Attention Residuals](https://arxiv.org/abs/2603.15031v1)，Eq. 1–2
+> **Reported + Derived** · Attention Residuals, arXiv:2603.15031v1, Fig. 1(a), PDF p.1；Eq. 1–2
 
 <!-- notes:
 1.5 分钟。identity path、identity initialization 和训练后学成 identity 是三件事；本页只建立共同起点。
@@ -105,11 +113,16 @@ direct path 帮助信息与梯度跨层传播；同一个固定权重也限制�
 
 ## 四篇论文回应四类设计压力
 
-![从 Standard PreNorm 到 HC、mHC、AttnRes 与 xHC 的问题驱动演化图](./assets/residual-evolution-map.svg)
+![Hyper-Connections：打开多流 topology](./assets/hc-fig2-overview.png)
+![mHC：约束深层 transport](./assets/mhc-fig1-overview.png)
+![Attention Residuals：检索 depth source](./assets/attnres-fig1-overview.png)
+![xHC：扩大 capacity、稀疏 mutation](./assets/xhc-fig3-overview.png)
 
-AttnRes 是另一条 retrieval 轴，不是 HC 家族的线性后继；四者最终都回到同一个 depth-memory 视角。
+| HC | mHC | AttnRes | xHC |
+|---|---|---|---|
+| topology | stability | retrieval | large-state cost |
 
-> [HC](https://arxiv.org/abs/2409.19606v3) · [mHC](https://arxiv.org/abs/2512.24880v2) · [AttnRes](https://arxiv.org/abs/2603.15031v1) · [xHC](https://arxiv.org/abs/2607.14530v1)
+> **Derived** · HC Fig. 2 · mHC Fig. 1 · Attention Residuals Fig. 1 · xHC Fig. 3
 
 <!-- notes:
 0.5 分钟。快速预告：capacity、stability、retrieval、large-state cost。
@@ -127,11 +140,14 @@ AttnRes 是另一条 retrieval 轴，不是 HC 家族的线性后继；四者最
 
 ## HC 扩张的是 residual state
 
-![HC 将单流状态从 B×S×d 扩成 B×S×n×d，同时保持主 Attention 或 MLP branch 为 d 到 d](./assets/hc-state-expansion.svg)
+![Hyper-Connections Figure 2：从标准 residual 到 static / dynamic hyper-connections](./assets/hc-fig2-overview.png)
 
-当前层先从 $n$ 条 streams 读出一个 $d$ 维向量，主 branch 仍保持原宽度，输出再写回多流 state。
+$$
+[B,S,d]\ \longrightarrow\ [B,S,n,d],
+\qquad \text{branch}:d\to d
+$$
 
-> [Hyper-Connections](https://arxiv.org/abs/2409.19606v3)，§2
+> **Reported** · Hyper-Connections, arXiv:2409.19606v3, Fig. 2, PDF p.2；§2
 
 <!-- notes:
 2 分钟。用 n=2 的最小例子说明：扩的是跨 depth 持久 state，不是 FFN hidden size。
@@ -146,7 +162,7 @@ AttnRes 是另一条 retrieval 轴，不是 HC 家族的线性后继；四者最
 
 ## HC 把连接拆成 read、mix、write
 
-![HC 一层状态机：A_m 读取多流，A_r 传输多流，B 将单个 branch output 写回多流](./assets/hc-read-mix-write.svg)
+![Hyper-Connections Figure 2(b)：dynamic hyper-connections 的 read、transport 与 write](./assets/hc-fig2-overview.png)
 
 $$
 u_l=H_l^\top A_m,\qquad
@@ -154,7 +170,9 @@ y_l=F_l(\operatorname{Norm}(u_l)),\qquad
 H_{l+1}=A_r^\top H_l+B^\top y_l^\top.
 $$
 
-> [Hyper-Connections](https://arxiv.org/abs/2409.19606v3)，Eq. 1–8
+`A_m:[n,1]` read · `A_r:[n,n]` transport · `B:[1,n]` write
+
+> **Reported** · Hyper-Connections, arXiv:2409.19606v3, Fig. 2(b), PDF p.2；Eq. 1–8
 
 <!-- notes:
 1.5 分钟。矩阵转置取决于存储 convention；不变的是 source-to-target 语义与 shapes。
@@ -165,9 +183,11 @@ $$
 
 ---
 
-<!-- layout: comparison -->
+<!-- layout: figure -->
 
 ## DHC 从熟悉函数出发，再学习 token 路由
+
+![DHC 的 per-token mapping 与多流状态](./assets/hc-fig2-overview.png)
 
 | 初始化时 | 训练后 |
 |---|---|
@@ -178,7 +198,7 @@ $$
 
 这是一种 **PreNorm-compatible 多流函数**；不等于每层 hidden 都与普通 PreNorm 完全相同。
 
-> [Hyper-Connections](https://arxiv.org/abs/2409.19606v3)，§2 与 Appendix
+> **Reported** · Hyper-Connections, arXiv:2409.19606v3, Fig. 2(b), PDF p.2；§2 与 Appendix
 
 <!-- notes:
 1.5 分钟。只讲 optimizer-owned 参数如何生成运行时 mapping，不展开全部 DHC 参数化。
@@ -189,15 +209,16 @@ $$
 
 ---
 
-<!-- layout: figure -->
+<!-- layout: comparison -->
 
 ## HC 的算术很轻，状态并不轻
 
-![HC 在 7B dense matched setting 的质量变化与三种模型设置的训练显存增幅](./assets/hc-quality-and-memory.svg)
+![HC 论文报告的训练效率、验证 loss 与下游结果](./assets/hc-fig1-results.png)
+![HC 在三种模型设置上的实测训练显存](./assets/hc-table9-memory.png)
 
-“1.8× faster convergence”描述达到同 loss 的 **token efficiency**，不是 1.8× wall-clock speedup。
+7B dense DHC×4：V2 loss `2.581 → 2.559`，下游平均 `70.1 → 71.0`；训练显存增幅约 **9.7%–28.3%**。
 
-> [Hyper-Connections](https://arxiv.org/abs/2409.19606v3)，Table 5、Appendix A
+> **Reported** · Hyper-Connections, arXiv:2409.19606v3, Fig. 1, PDF p.1；Table 9, PDF p.16。token efficiency ≠ wall-clock speedup。
 
 <!-- notes:
 2 分钟。质量和显存分别读；不同模型设置不能拼成一条严格 Pareto curve。大模型结果无多 seed/error bar。
@@ -208,17 +229,18 @@ $$
 
 ---
 
-<!-- layout: figure -->
+<!-- layout: comparison -->
 
 ## HC 的风险藏在深层 transport 乘积
 
-![连续多层不受约束 transport 的乘积可能让 residual signal 与 gradient 放大或收缩](./assets/deep-transport-product.svg)
+![HC 的 single-layer 与 composite propagation gain](./assets/mhc-fig3-propagation-instability.png)
+![HC 的 loss gap 与 gradient norm 不稳定现象](./assets/mhc-fig2-training-instability.png)
 
 $$
 H_L=\left(\prod_{l=1}^{L-1}A_{r,l}^{\top}\right)H_1+\text{writes}.
 $$
 
-单层 mapping 看似温和，不代表几十层复合仍然温和。
+> **Reported + Derived** · mHC, arXiv:2512.24880v2, Fig. 2–3, PDF p.7。Amax common-mode gain ≠ spectral norm。
 
 <!-- notes:
 1.5 分钟。先用 scalar gain 连乘建立直觉，再切回矩阵。PreNorm-compatible 初始化不保证训练全过程。
@@ -234,15 +256,15 @@ $$
 
 ## mHC 约束的是 transport，不是主变换
 
-![自由 logits 经过指数与 20 次 Sinkhorn 归一化，生成近似双随机 residual transport](./assets/mhc-sinkhorn-transport.svg)
+![mHC Figure 1：HC 与 manifold-constrained transport 的结构对照](./assets/mhc-fig1-overview.png)
 
 $$
 \mathcal B_n=\{H\ge 0\mid H\mathbf1=\mathbf1,\ \mathbf1^\top H=\mathbf1^\top\}.
 $$
 
-主 Attention/MLP 仍保持原宽度；Birkhoff polytope 是凸多面体，不应笼统称为处处光滑 manifold。
+自由 logits 经 `exp + 20-step Sinkhorn` 生成近似双随机 `H_res`；主 Attention/MLP 仍保持原宽度。
 
-> [mHC](https://arxiv.org/abs/2512.24880v2)，Eq. 6–9
+> **Reported** · mHC, arXiv:2512.24880v2, Fig. 1, PDF p.1；Eq. 6–9。Birkhoff polytope 是凸多面体。
 
 <!-- notes:
 2 分钟。20 次 Sinkhorn 是有限步近似；运行时 row/column error 决定保证离精确条件有多远。
@@ -253,9 +275,11 @@ $$
 
 ---
 
-<!-- layout: comparison -->
+<!-- layout: figure -->
 
 ## 双随机约束保的是共同模式与均值
+
+![mHC 使用近似双随机 residual transport](./assets/mhc-fig1-overview.png)
 
 | 精确条件下 | 一行推导 | 含义 |
 |---|---|---|
@@ -264,7 +288,7 @@ $$
 | non-expansive | $\|H\|_2\le\sqrt{\|H\|_1\|H\|_\infty}=1$ | Euclidean operator norm 不放大 |
 | closure | $H_2H_1\in\mathcal B_n$ | 性质可跨 depth 组合 |
 
-**没有保证：** $H=I$、每个 stream difference 等距、finite Sinkhorn 精确满足约束。
+> **Derived** · 没有保证 $H=I$、stream differences 等距；finite Sinkhorn 仅近似满足约束。
 
 <!-- notes:
 2 分钟。把 exact matrix property 与 finite-iteration implementation boundary 放在同一页说清。
@@ -275,15 +299,17 @@ $$
 
 ---
 
-<!-- layout: figure -->
+<!-- layout: comparison -->
 
 ## mHC 的强证据是稳定性链条
 
-![27B MoE 运行中 HC 与 mHC 的 composite Amax gain 对比，并标出 gradient 与 loss 现象的时间对齐](./assets/mhc-stability-evidence.svg)
+![HC 的 composite Amax gain 可接近 3000](./assets/mhc-fig3-propagation-instability.png)
+![mHC 的 composite Amax gain 约维持在 1–1.6](./assets/mhc-fig7-propagation-stability.png)
+![Baseline、HC 与 mHC 的 training loss gap 和 gradient norm](./assets/mhc-fig5-training-stability.png)
 
-作者运行中，HC 在约 12k step 出现 loss surge 与 gradient spike；mHC 的 gradient profile 更接近 baseline。
+作者 27B MoE 运行中，mHC 的 gradient profile 更接近 baseline；最终 loss 相对 baseline 低 `0.021`，8/8 报告任务更高。
 
-> [mHC](https://arxiv.org/abs/2512.24880v2)，Fig. 2–3、5、7–8
+> **Reported** · mHC, arXiv:2512.24880v2, Fig. 3, 5, 7, PDF p.7/12/14。单次运行；Amax ≠ spectral norm。
 
 <!-- notes:
 2 分钟。3000 与 1.6 是 approximate composite Amax common-mode gain，不是完整 spectral norm；单次运行也不建立统计显著性。
@@ -298,11 +324,16 @@ $$
 
 ## mHC 把系统优化变成方法的一部分
 
-![多流方法的成本层级：参数与 FLOPs、HBM I/O、activation、pipeline payload](./assets/residual-system-cost.svg)
+![mHC 的 communication–computation overlap schedule](./assets/mhc-fig4-system-overlap.png)
 
-当完整多流 state 跨 pipeline boundary 时，payload 可近似随 $n$ 倍增长；fusion、recompute 与 overlap 因而进入方法 contract。
+| 成本边界 | `n=4` 的压力 |
+|---|---|
+| residual-side I/O | 论文静态 accounting 约 `34C` |
+| activation | 持久多流 state |
+| PP payload | 完整 state 跨界时近似 `4×` |
+| wall-clock | 作者报告 6.7%，setup 不完整 |
 
-> [mHC](https://arxiv.org/abs/2512.24880v2)，Table 2；6.7% overhead 缺完整硬件与吞吐分解
+> **Reported + Derived** · mHC, arXiv:2512.24880v2, Fig. 4, PDF p.12；Table 2。timeline 是示意，不是精确比例。
 
 <!-- notes:
 1.5 分钟。静态 accounting 中 n=4 residual-side I/O 约 34C；它不等于实测 HBM bytes 或 wall-clock。
@@ -314,9 +345,11 @@ $$
 
 ---
 
-<!-- layout: statement -->
+<!-- layout: figure -->
 
 ## AttnRes 把固定求和改成 depth softmax
+
+![Attention Residuals Figure 1：Standard、Full 与 Block residual structures](./assets/attnres-fig1-overview.png)
 
 $$
 \underbrace{\sum_i v_i}_{\text{fixed depth mixing}}
@@ -330,7 +363,7 @@ $$
 
 softmax 轴是 **depth/source**，不是 sequence token。
 
-> [Attention Residuals](https://arxiv.org/abs/2603.15031v1)，Eq. 1–4
+> **Reported** · Attention Residuals, arXiv:2603.15031v1, Fig. 1, PDF p.1；Eq. 1–4
 
 <!-- notes:
 1.5 分钟。query 是 layer-specific parameter；key/value 来自输入相关历史 source。同一 token 的 channels 默认共享 source 权重。
@@ -341,15 +374,16 @@ softmax 轴是 **depth/source**，不是 sequence token。
 
 ---
 
-<!-- layout: figure -->
+<!-- layout: comparison -->
 
 ## Full AttnRes 检索 depth source
 
-![一个 token 沿 depth 轴读取 embedding 与所有历史 branch source，sequence token 之间不连边](./assets/attnres-full-depth-retrieval.svg)
+![Full AttnRes 保存并检索所有历史 depth source](./assets/attnres-fig1-overview.png)
+![论文报告的 learned depth-routing heatmap](./assets/attnres-fig8-routing.png)
 
 source stack 为 $[J,B,T,d]$，logits 与 weights 为 $[J,B,T]$；不同 token 可以选择不同 depth source。
 
-> [Attention Residuals](https://arxiv.org/abs/2603.15031v1)，Fig. 1、Eq. 3–4
+> **Reported** · Attention Residuals, arXiv:2603.15031v1, Fig. 1/8, PDF p.1/13；Eq. 3–4
 
 <!-- notes:
 2 分钟。三 source 手算：standard 得 [4,4]，uniform AttnRes 得 [4/3,4/3]，自然引到初始化边界。
@@ -360,9 +394,11 @@ source stack 为 $[J,B,T,d]$，logits 与 weights 为 $[J,B,T]$；不同 token �
 
 ---
 
-<!-- layout: comparison -->
+<!-- layout: figure -->
 
 ## zero query 恢复 uniform average
+
+![Standard Residuals 与 Full AttnRes 的结构对照](./assets/attnres-fig1-overview.png)
 
 | 标准 residual | $w_l=0$ 的 AttnRes |
 |---|---|
@@ -372,7 +408,7 @@ source stack 为 $[J,B,T,d]$，logits 与 weights 为 $[J,B,T]$；不同 token �
 
 RMSNorm 可能减弱统一 scale 的影响，但不能推出函数与 Jacobian 完全等价。
 
-> 由 [Attention Residuals](https://arxiv.org/abs/2603.15031v1)，Eq. 3–4 直接推得
+> **Derived** · 由 Attention Residuals, arXiv:2603.15031v1, Fig. 1, PDF p.1；Eq. 3–4 直接推得
 
 <!-- notes:
 1.5 分钟。zero query 是明确定义的 special case，不是 baseline-preserving identity initialization。
@@ -387,11 +423,13 @@ RMSNorm 可能减弱统一 scale 的影响，但不能推出函数与 Jacobian �
 
 ## Block AttnRes 用结构约束压缩历史
 
-![Full AttnRes 的长 source list 被折叠为 embedding、completed block summaries 与 current partial](./assets/attnres-block-compression.svg)
+![Full 与 Block Attention Residuals 的 source 结构对照](./assets/attnres-fig1-overview.png)
 
 completed block 保存 $\sum_{j\in B_n}f_j(h_j)$；当前 block 的 branch output 则累加到可变 partial。
 
-> [Attention Residuals](https://arxiv.org/abs/2603.15031v1)，Eq. 5–6、Fig. 2
+`all layer sources` → `embedding + completed block summaries + current partial`
+
+> **Reported** · Attention Residuals, arXiv:2603.15031v1, Fig. 1(c), PDF p.1；Eq. 5–6
 
 <!-- notes:
 2 分钟。把 Block 解释为 depth mixing columns 的 block tying；它是结构化压缩，不是无损压缩。
@@ -406,11 +444,20 @@ completed block 保存 $\sum_{j\in B_n}f_j(h_j)$；当前 block 的 branch outpu
 
 ## two-phase 是精确执行，PP cache 是状态协议
 
-![历史 source 的预计算统计与当前 partial 的在线统计通过 online softmax 精确合并，并由 pipeline cache 维护 ownership](./assets/attnres-two-phase-merge.svg)
+![Block AttnRes 的 pipeline cache 传递](./assets/attnres-fig3-pp-cache.png)
 
-在固定 source semantics 与 reduction contract 下，两个 $(m,s,n)$ 统计可精确合并；跨 stage 正确性还要求 cache key 包含 microbatch、virtual stage、block 与方向。
+$$
+m=\max(m_h,m_c),\qquad
+s=e^{m_h-m}s_h+e^{m_c-m}s_c
+$$
 
-> [Attention Residuals](https://arxiv.org/abs/2603.15031v1)，Algorithm 1、Appendix B
+$$
+n=e^{m_h-m}n_h+e^{m_c-m}n_c,\qquad y=n/s
+$$
+
+cache key 至少包含 microbatch、virtual stage、block 与方向。
+
+> **Reported** · Attention Residuals, arXiv:2603.15031v1, Fig. 3, PDF p.6；Algorithm 1、Appendix B
 
 <!-- notes:
 1.5 分钟。算法精确等价不等于系统无开销。作者报告 PP training overhead <4%，但配置不足以跨系统外推。
@@ -426,11 +473,17 @@ completed block 保存 $\sum_{j\in B_n}f_j(h_j)$；当前 block 的 branch outpu
 
 ## Block 版本保留了大部分 scaling 收益
 
-![五个 activated-parameter 规模下 Baseline、Block AttnRes 与 Full AttnRes 的 validation loss](./assets/attnres-scaling-evidence.svg)
+![Baseline、Full 与 Block AttnRes 的五点 scaling-law fit](./assets/attnres-fig4-scaling.png)
 
-最大点为 baseline $1.719$、Block $1.693$、Full $1.692$；约 1.25× 是 fitted compute-equivalence，**不是实测 speedup**。
+| 最大 activated 点 | validation loss |
+|---|---:|
+| Baseline | 1.719 |
+| Block | 1.693 |
+| Full | 1.692 |
 
-> [Attention Residuals](https://arxiv.org/abs/2603.15031v1)，Table 2
+**1.25× 是 fitted compute-equivalence，不是实测 speedup。**
+
+> **Reported** · Attention Residuals, arXiv:2603.15031v1, Fig. 4, PDF p.9。single run；无 fit uncertainty、多 seed 或公开验证数据。
 
 <!-- notes:
 2 分钟。五个报告点均优于对应 baseline；无多 seed、fit uncertainty、公开数据或 validation protocol。
@@ -441,26 +494,16 @@ completed block 保存 $\sum_{j\in B_n}f_j(h_j)$；当前 block 的 branch outpu
 
 ---
 
-<!-- layout: split -->
+<!-- layout: comparison -->
 
 ## xHC 从 mHC 的 large-N 饱和出发
 
-同一个 branch output 通过不同 scalar 写入 $N$ 条 streams：
+![mHC 与 xHC 随 expansion rate N 的 loss 与 FLOPs 变化](./assets/xhc-fig1-expansion-efficiency.png)
+![xHC Figure 3：从 mHC write bottleneck 到 expanded hyper-connections](./assets/xhc-fig3-overview.png)
 
-$$
-\Delta X_i=b_i\,y \quad\Rightarrow\quad
-\operatorname{span}\{\Delta X_i\}\subseteq\operatorname{span}\{y\}.
-$$
+`one write direction` 是有实验支持的 mechanism hypothesis；`NC × N² = O(N³C)` 是明确的 generator scaling。
 
-从 $NC$ 状态生成 $N^2$ 个 mapping logits：
-
-$$
-(NC)\times N^2=O(N^3C).
-$$
-
-前者是 **information-supply hypothesis**，后者是明确的 generator scaling。
-
-> [xHC](https://arxiv.org/abs/2607.14530v1)，§3
+> **Reported** · xHC, arXiv:2607.14530v1, Fig. 1/3, PDF p.1/4；§3
 
 <!-- notes:
 1.5 分钟。不要把信息供给不足说成已证明的容量定理；论文用 ablation 支持这个诊断。
@@ -475,11 +518,13 @@ $$
 
 ## Temporal augmentation 扩展写回
 
-![一次 MLP 输出分叉为 original 与三个不同 kernel size 的 causal depthwise convolution components](./assets/xhc-temporal-augmentation.svg)
+![xHC Figure 3(c)：temporal feature augmentation 与多分量写回](./assets/xhc-fig3-overview.png)
 
 默认 kernel sizes 为 $\{4,8,12\}$，得到 $K_r=4$ 个 write-back components；新增的是 $24C$ depthwise-conv 参数，不是四次大 MLP。
 
-> [xHC](https://arxiv.org/abs/2607.14530v1)，Eq. 7–10
+`original` · `DWConv-4` · `DWConv-8` · `DWConv-12`
+
+> **Reported** · xHC, arXiv:2607.14530v1, Fig. 3(c), PDF p.4；Eq. 7–10
 
 <!-- notes:
 1.5 分钟。components 仍线性来自同一 sequence；局部正交化不保证语义独立或 unit norm。
@@ -494,11 +539,11 @@ $$
 
 ## Dense read 解耦 $N$ 与 $k$
 
-![全部 16 条 streams 参与 dense read，固定两条加路由 Top-2 组成四条 active streams，只有 active streams 被更新](./assets/xhc-dense-read-sparse-mutation.svg)
+![xHC Figure 3(c)：全部 streams 参与 read，active subset 执行 mutation](./assets/xhc-fig3-overview.png)
 
-$N=16$ 控制 persistent memory capacity；$k=4$ 控制每层 mutation budget；inactive streams exact carry。
+$N=16$ 控制 persistent memory capacity；fixed-2 + routed Top-2 组成 $k=4$ active streams；inactive streams exact carry。
 
-> [xHC](https://arxiv.org/abs/2607.14530v1)，Algorithm 1
+> **Reported** · xHC, arXiv:2607.14530v1, Fig. 3(c), PDF p.4；Algorithm 1。只更新四条 ≠ 只读取四条。
 
 <!-- notes:
 2 分钟。只更新四条不等于只使用四条。hard Top-k indices 不可微；本次只有 selected routed scores 收到 routing gradient。
@@ -509,15 +554,16 @@ $N=16$ 控制 persistent memory capacity；$k=4$ 控制每层 mutation budget；
 
 ---
 
-<!-- layout: figure -->
+<!-- layout: comparison -->
 
 ## ablation 分开了质量与成本角色
 
-![10B MoE ablation 中 mHC N16、加 Temporal Augmentation 与完整 xHC 的 validation loss 和训练 FLOPs overhead](./assets/xhc-ablation-quality-cost.svg)
+![xHC 的 10B MoE ablation 与 information-bottleneck 曲线](./assets/xhc-table2-fig5-ablation.png)
+![xHC 的 18B 训练与下游主结果](./assets/xhc-fig2-main-results.png)
 
-第一步主要移动 quality，第二步主要回收 cost；FLOPs 是论文 counting boundary，不等于 wall-clock。
+`mHC N=16: 1.998 / 18.8%` → `+TempAug: 1.984 / 20.1%` → `xHC: 1.983 / 3.3%`
 
-> [xHC](https://arxiv.org/abs/2607.14530v1)，Table 2、12
+> **Reported** · xHC, arXiv:2607.14530v1, Table 2 & Fig. 5, PDF p.10；Fig. 2, PDF p.2。FLOPs counting ≠ wall-clock。
 
 <!-- notes:
 2 分钟。mHC N16：1.998/18.8%；+TempAug：1.984/20.1%；xHC：1.983/3.3%。单一设置、无多 seed。
@@ -528,9 +574,11 @@ $N=16$ 控制 persistent memory capacity；$k=4$ 控制每层 mutation budget；
 
 ---
 
-<!-- layout: comparison -->
+<!-- layout: figure -->
 
 ## xHC-Flash 局部精确，整体是近似架构
+
+![xHC、xHC-Flash 与 Flash-4sub 的 validation loss 和静态 residual-side I/O](./assets/xhc-table5-flash.png)
 
 固定 routing / pre-mapping window 内：
 
@@ -545,7 +593,7 @@ $$
 | 固定 window 内代数等价 | pre-mapping 依赖状态改变 |
 | reduction contract 可对照 | residual mixing 位置改变 |
 
-> [xHC](https://arxiv.org/abs/2607.14530v1)，§4、Table 4
+> **Reported + Derived** · xHC, arXiv:2607.14530v1, Table 5, PDF p.14；§4。I/O 是抽象 element traffic。
 
 <!-- notes:
 1.5 分钟。静态 accounting 从 full xHC 73.5C 降到 Flash-4sub 40C；不是实际 HBM bytes 或 speedup。
@@ -620,7 +668,14 @@ $$
 }
 $$
 
+![Hyper-Connections](./assets/hc-fig2-overview.png)
+![mHC](./assets/mhc-fig1-overview.png)
+![Attention Residuals](./assets/attnres-fig1-overview.png)
+![xHC](./assets/xhc-fig3-overview.png)
+
 连接方法的核心不是多加一个算子，而是重新定义信息沿 depth 的**保存、访问、变换与消亡方式**。
+
+> **Synthesis** · HC Fig. 2 · mHC Fig. 1 · Attention Residuals Fig. 1 · xHC Fig. 3
 
 <!-- notes:
 1.5 分钟。回收三点：先写 operational contract；稳定性与 stream/source 有效性分开；activation、I/O、通信和数值边界都是方法定义。进入 Q&A。
@@ -631,9 +686,11 @@ $$
 
 ---
 
-<!-- layout: comparison -->
+<!-- layout: figure -->
 
 ## Appendix A｜双随机为何 non-expansive
+
+![mHC 的 residual transport 结构锚点](./assets/mhc-fig1-overview.png)
 
 对精确双随机矩阵 $H\ge0$：
 
@@ -713,6 +770,9 @@ dtype 是 correctness-first 建议；并非每一项都是论文规定。
 <!-- layout: comparison -->
 
 ## Appendix D｜系统成本数字不可直接横比
+
+![HC 的端到端训练显存测量](./assets/hc-table9-memory.png)
+![xHC 的静态 residual-side I/O accounting](./assets/xhc-table5-flash.png)
 
 | 类型 | 数字示例 | counting boundary |
 |---|---|---|
