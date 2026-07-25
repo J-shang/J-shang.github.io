@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">四种 residual topology 的问题驱动演化</title>
+  <desc id="desc">Standard PreNorm 分别通向 HC 与 AttnRes，HC 通向 mHC，mHC 通向 xHC。</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1258ff"/></marker><style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.n{fill:#fffdf8;stroke:#171816;stroke-width:2}.b{fill:#e6edff;stroke:#1258ff;stroke-width:3}.g{fill:#e5f0e7;stroke:#3f7750;stroke-width:3}.w{fill:#fff3cf;stroke:#9a7611;stroke-width:3}.r{fill:#f7e6e1;stroke:#b44c35;stroke-width:3}.a{fill:none;stroke:#1258ff;stroke-width:3;marker-end:url(#a)}</style></defs>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <rect x="55" y="225" width="220" height="110" class="n"/><text x="165" y="267" class="t" font-size="26" text-anchor="middle" font-weight="700">Standard PreNorm</text><text x="165" y="305" class="m" font-size="20" text-anchor="middle">fixed single stream</text>
+  <rect x="360" y="95" width="220" height="110" class="b"/><text x="470" y="137" class="t" font-size="28" text-anchor="middle" font-weight="700">HC / DHC</text><text x="470" y="175" class="m" font-size="20" text-anchor="middle">learn topology</text>
+  <rect x="690" y="95" width="220" height="110" class="g"/><text x="800" y="137" class="t" font-size="28" text-anchor="middle" font-weight="700">mHC</text><text x="800" y="175" class="m" font-size="20" text-anchor="middle">stable transport</text>
+  <rect x="690" y="355" width="220" height="110" class="w"/><text x="800" y="397" class="t" font-size="28" text-anchor="middle" font-weight="700">xHC</text><text x="800" y="435" class="m" font-size="20" text-anchor="middle">sparse mutation</text>
+  <rect x="360" y="355" width="220" height="110" class="r"/><text x="470" y="397" class="t" font-size="28" text-anchor="middle" font-weight="700">AttnRes</text><text x="470" y="435" class="m" font-size="20" text-anchor="middle">depth retrieval</text>
+  <path d="M275 250L360 185" class="a"/><text x="300" y="187" class="m" font-size="18">state capacity</text>
+  <path d="M580 150H690" class="a"/><text x="635" y="128" class="m" font-size="18" text-anchor="middle">product stability</text>
+  <path d="M275 310L360 375" class="a"/><text x="300" y="380" class="m" font-size="18" text-anchor="end">source retrieval</text>
+  <path d="M800 205V355" class="a"/><text x="823" y="285" class="m" font-size="18">large-N cost</text>
+  <path d="M580 410H690" fill="none" stroke="#777" stroke-width="2" stroke-dasharray="8 7" marker-end="url(#a)"/><text x="635" y="445" class="m" font-size="17" text-anchor="middle">shared depth-memory lens</text>
+  <text x="1040" y="270" class="t" font-size="24" text-anchor="middle">不是发表时间线</text><text x="1040" y="307" class="m" font-size="19" text-anchor="middle">arrows = design pressure</text>
+</svg>

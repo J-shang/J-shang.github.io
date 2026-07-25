@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">xHC ablation quality and cost roles</title>
+  <desc id="desc">mHC N16 到加 Temporal Augmentation 主要降低 validation loss，再到 xHC 主要降低训练 FLOPs overhead。</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1258ff"/></marker><style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.grid{stroke:#d7d5cd;stroke-width:2}.p1{fill:#565a55}.p2{fill:#ef6c36}.p3{fill:#1258ff}.a{stroke:#1258ff;stroke-width:4;fill:none;marker-end:url(#a)}.card{fill:#fffdf8;stroke:#aaa99f;stroke-width:2}</style></defs>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <text x="65" y="58" class="m" font-size="22">10B MoE ABLATION · LOWER LOSS / LOWER OVERHEAD IS BETTER</text>
+  <line x1="100" y1="440" x2="760" y2="440" class="grid"/><line x1="100" y1="440" x2="100" y2="100" class="grid"/>
+  <g class="m" font-size="17"><text x="100" y="470">0%</text><text x="395" y="470">10%</text><text x="690" y="470">20%</text><text x="50" y="420">2.000</text><text x="50" y="240">1.990</text><text x="50" y="130">1.983</text></g>
+  <circle cx="655" cy="385" r="14" class="p1"/><circle cx="692" cy="145" r="14" class="p2"/><circle cx="197" cy="128" r="14" class="p3"/>
+  <path d="M655 370C670 300 685 220 690 160" class="a"/><path d="M675 145C520 138 345 132 215 129" class="a"/>
+  <text x="585" y="305" class="t" font-size="22" fill="#ef6c36">+ TempAug</text><text x="585" y="334" class="m" font-size="17">quality move</text>
+  <text x="430" y="105" class="t" font-size="22" fill="#1258ff">+ sparse architecture</text><text x="430" y="132" class="m" font-size="17">cost recovery</text>
+  <g class="card"><rect x="820" y="105" width="320" height="100"/><rect x="820" y="230" width="320" height="100"/><rect x="820" y="355" width="320" height="100"/></g>
+  <text x="850" y="140" class="t" font-size="22" font-weight="700">mHC N=16</text><text x="850" y="177" class="m" font-size="19">loss 1.998 · FLOPs +18.8%</text>
+  <text x="850" y="265" class="t" font-size="22" font-weight="700">+ Temporal Augmentation</text><text x="850" y="302" class="m" font-size="19">loss 1.984 · FLOPs +20.1%</text>
+  <text x="850" y="390" class="t" font-size="22" font-weight="700">full xHC</text><text x="850" y="427" class="m" font-size="19">loss 1.983 · FLOPs +3.3%</text>
+</svg>

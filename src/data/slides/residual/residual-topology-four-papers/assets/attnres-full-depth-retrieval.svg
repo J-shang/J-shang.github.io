@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">Full AttnRes depth retrieval</title>
+  <desc id="desc">同一 token 在 depth 轴上读取 embedding 与历史 branch source，不连接其他 sequence token。</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1258ff"/></marker><style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.src{fill:#e6edff;stroke:#1258ff;stroke-width:3}.out{fill:#fff3cf;stroke:#9a7611;stroke-width:3}.muted{fill:#f5f3ed;stroke:#d7d5cd;stroke-width:2}.a{fill:none;stroke:#1258ff;stroke-width:3;marker-end:url(#a)}</style></defs>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <text x="65" y="58" class="m" font-size="22">ONE TOKEN · SOFTMAX OVER SOURCE AXIS J</text>
+  <g class="src"><rect x="80" y="100" width="270" height="70"/><rect x="80" y="205" width="270" height="70"/><rect x="80" y="310" width="270" height="70"/><rect x="80" y="415" width="270" height="70"/></g>
+  <g class="t" font-size="23"><text x="110" y="143">v₀ · embedding</text><text x="110" y="248">v₁ · branch delta</text><text x="110" y="353">v₂ · branch delta</text><text x="110" y="458">… · vⱼ</text></g>
+  <g class="a"><path d="M350 135C560 135 580 210 760 265"/><path d="M350 240C550 240 600 255 760 275"/><path d="M350 345C550 345 600 300 760 285"/><path d="M350 450C560 450 600 340 760 295"/></g>
+  <rect x="760" y="205" width="360" height="150" class="out"/><text x="940" y="255" class="t" font-size="29" font-weight="700" text-anchor="middle">hₗ = Σᵢ αᵢ→ₗ vᵢ</text><text x="940" y="302" class="m" font-size="21" text-anchor="middle">source stack [J,B,T,d]</text><text x="940" y="333" class="m" font-size="18" text-anchor="middle">weights [J,B,T]</text>
+  <g class="muted"><rect x="455" y="80" width="220" height="60"/><rect x="455" y="420" width="220" height="60"/></g><text x="565" y="117" class="m" font-size="18" text-anchor="middle">token t−1 · no edge</text><text x="565" y="457" class="m" font-size="18" text-anchor="middle">token t+1 · no edge</text>
+</svg>

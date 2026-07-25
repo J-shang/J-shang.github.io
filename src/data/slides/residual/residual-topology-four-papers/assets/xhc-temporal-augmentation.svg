@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">xHC temporal feature augmentation</title>
+  <desc id="desc">一次 MLP 输出分为原始分量和三个因果 depthwise convolution 分量，kernel size 分别为四、八、十二。</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1258ff"/></marker><style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.branch{fill:#e5f0e7;stroke:#3f7750;stroke-width:3}.route{fill:#e6edff;stroke:#1258ff;stroke-width:3}.out{fill:#fff3cf;stroke:#9a7611;stroke-width:3}.a{fill:none;stroke:#1258ff;stroke-width:3;marker-end:url(#a)}</style></defs>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <rect x="55" y="200" width="220" height="130" class="branch"/><text x="165" y="250" class="t" font-size="29" font-weight="700" text-anchor="middle">one MLP</text><text x="165" y="292" class="m" font-size="22" text-anchor="middle">output y</text>
+  <path d="M275 265H410" class="a"/>
+  <g class="route"><rect x="410" y="70" width="330" height="80"/><rect x="410" y="180" width="330" height="80"/><rect x="410" y="290" width="330" height="80"/><rect x="410" y="400" width="330" height="80"/></g>
+  <g class="t" font-size="24"><text x="450" y="120">component 0 · original</text><text x="450" y="230">component 1 · causal DWConv-4</text><text x="450" y="340">component 2 · causal DWConv-8</text><text x="450" y="450">component 3 · causal DWConv-12</text></g>
+  <g class="a"><path d="M740 110L915 220"/><path d="M740 220L915 250"/><path d="M740 330L915 280"/><path d="M740 440L915 310"/></g>
+  <rect x="915" y="190" width="240" height="155" class="out"/><text x="1035" y="239" class="t" font-size="28" font-weight="700" text-anchor="middle">Kᵣ = 4</text><text x="1035" y="282" class="t" font-size="23" text-anchor="middle">write-back basis</text><text x="1035" y="317" class="m" font-size="19" text-anchor="middle">+24C parameters</text>
+  <text x="600" y="505" class="m" font-size="18" text-anchor="middle">richer linear components · not four large MLP evaluations</text>
+</svg>

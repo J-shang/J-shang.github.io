@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">AttnRes scaling evidence</title>
+  <desc id="desc">194M 到 528M activated parameters 的五个点上，Block 与 Full AttnRes validation loss 都低于 baseline。</desc>
+  <style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.grid{stroke:#d7d5cd;stroke-width:2}.base{fill:none;stroke:#565a55;stroke-width:4}.block{fill:none;stroke:#1258ff;stroke-width:4}.full{fill:none;stroke:#ef6c36;stroke-width:4}.dotb{fill:#1258ff}.dotf{fill:#ef6c36}.dotx{fill:#565a55}.card{fill:#e6edff;stroke:#1258ff;stroke-width:2}</style>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <text x="60" y="58" class="m" font-size="22">VALIDATION LOSS · FIVE REPORTED SCALE POINTS</text>
+  <g class="grid"><line x1="95" y1="420" x2="760" y2="420"/><line x1="95" y1="330" x2="760" y2="330"/><line x1="95" y1="240" x2="760" y2="240"/><line x1="95" y1="150" x2="760" y2="150"/><line x1="95" y1="100" x2="95" y2="445"/></g>
+  <polyline points="120,135 260,185 400,270 560,350 720,418" class="base"/><polyline points="120,175 260,222 400,306 560,386 720,458" class="block"/><polyline points="120,190 260,224 400,316 560,402 720,460" class="full"/>
+  <g class="dotx"><circle cx="120" cy="135" r="7"/><circle cx="260" cy="185" r="7"/><circle cx="400" cy="270" r="7"/><circle cx="560" cy="350" r="7"/><circle cx="720" cy="418" r="7"/></g><g class="dotb"><circle cx="120" cy="175" r="7"/><circle cx="260" cy="222" r="7"/><circle cx="400" cy="306" r="7"/><circle cx="560" cy="386" r="7"/><circle cx="720" cy="458" r="7"/></g><g class="dotf"><circle cx="120" cy="190" r="7"/><circle cx="260" cy="224" r="7"/><circle cx="400" cy="316" r="7"/><circle cx="560" cy="402" r="7"/><circle cx="720" cy="460" r="7"/></g>
+  <g class="m" font-size="17" text-anchor="middle"><text x="120" y="482">194M</text><text x="260" y="482">241M</text><text x="400" y="482">296M</text><text x="560" y="482">436M</text><text x="720" y="482">528M</text></g>
+  <g class="m" font-size="18"><text x="120" y="95">Baseline</text><text x="260" y="255" fill="#1258ff">Block</text><text x="400" y="350" fill="#ef6c36">Full</text></g>
+  <rect x="830" y="120" width="315" height="245" class="card"/><text x="987" y="165" class="m" font-size="18" text-anchor="middle">528M ACTIVATED</text><text x="987" y="215" class="t" font-size="26" text-anchor="middle">Baseline  1.719</text><text x="987" y="258" class="t" font-size="26" text-anchor="middle">Block  1.693</text><text x="987" y="301" class="t" font-size="26" text-anchor="middle">Full  1.692</text><text x="987" y="342" class="m" font-size="17" text-anchor="middle">Block ↔ Full gap: 0.001</text>
+  <text x="987" y="425" class="t" font-size="22" text-anchor="middle">1.25× fit estimate</text><text x="987" y="458" class="m" font-size="18" text-anchor="middle">≠ measured speedup</text>
+</svg>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 520" role="img" aria-labelledby="title desc">
+  <title id="title">固定 causal depth mixing</title>
+  <desc id="desc">下三角可见位置全部为一，表示每层固定汇总全部过去 source。</desc>
+  <style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.one{fill:#dce6ff;stroke:#1258ff;stroke-width:2}.zero{fill:#f5f3ed;stroke:#d7d5cd;stroke-width:2}</style>
+  <rect width="760" height="520" fill="#fffdf8"/>
+  <text x="70" y="58" class="m" font-size="23">CAUSAL DEPTH MIXING MATRIX</text>
+  <g transform="translate(165 96)">
+    <text x="-55" y="36" class="m" font-size="18">h₁</text><text x="-55" y="106" class="m" font-size="18">h₂</text><text x="-55" y="176" class="m" font-size="18">h₃</text><text x="-55" y="246" class="m" font-size="18">h₄</text><text x="-55" y="316" class="m" font-size="18">h₅</text>
+    <text x="27" y="-20" class="m" font-size="18">v₀</text><text x="97" y="-20" class="m" font-size="18">v₁</text><text x="167" y="-20" class="m" font-size="18">v₂</text><text x="237" y="-20" class="m" font-size="18">v₃</text><text x="307" y="-20" class="m" font-size="18">v₄</text>
+    <g>
+      <rect x="0" y="0" width="58" height="58" class="one"/><rect x="70" y="0" width="58" height="58" class="zero"/><rect x="140" y="0" width="58" height="58" class="zero"/><rect x="210" y="0" width="58" height="58" class="zero"/><rect x="280" y="0" width="58" height="58" class="zero"/>
+      <rect x="0" y="70" width="58" height="58" class="one"/><rect x="70" y="70" width="58" height="58" class="one"/><rect x="140" y="70" width="58" height="58" class="zero"/><rect x="210" y="70" width="58" height="58" class="zero"/><rect x="280" y="70" width="58" height="58" class="zero"/>
+      <rect x="0" y="140" width="58" height="58" class="one"/><rect x="70" y="140" width="58" height="58" class="one"/><rect x="140" y="140" width="58" height="58" class="one"/><rect x="210" y="140" width="58" height="58" class="zero"/><rect x="280" y="140" width="58" height="58" class="zero"/>
+      <rect x="0" y="210" width="58" height="58" class="one"/><rect x="70" y="210" width="58" height="58" class="one"/><rect x="140" y="210" width="58" height="58" class="one"/><rect x="210" y="210" width="58" height="58" class="one"/><rect x="280" y="210" width="58" height="58" class="zero"/>
+      <rect x="0" y="280" width="58" height="58" class="one"/><rect x="70" y="280" width="58" height="58" class="one"/><rect x="140" y="280" width="58" height="58" class="one"/><rect x="210" y="280" width="58" height="58" class="one"/><rect x="280" y="280" width="58" height="58" class="one"/>
+      <g class="t" font-size="23" text-anchor="middle"><text x="29" y="38">1</text><text x="29" y="108">1</text><text x="99" y="108">1</text><text x="29" y="178">1</text><text x="99" y="178">1</text><text x="169" y="178">1</text><text x="29" y="248">1</text><text x="99" y="248">1</text><text x="169" y="248">1</text><text x="239" y="248">1</text><text x="29" y="318">1</text><text x="99" y="318">1</text><text x="169" y="318">1</text><text x="239" y="318">1</text><text x="309" y="318">1</text></g>
+    </g>
+  </g>
+  <text x="380" y="474" class="t" font-size="23" text-anchor="middle">可见历史全部进入 read；权重永远固定为 1</text>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">深层 transport 乘积风险</title>
+  <desc id="desc">多层 A_r 矩阵连续相乘，forward signal 与 backward gradient 可能共同放大或收缩。</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1258ff"/></marker><style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.n{fill:#e6edff;stroke:#1258ff;stroke-width:3}.risk{fill:#f7e6e1;stroke:#b44c35;stroke-width:3}.a{fill:none;stroke:#1258ff;stroke-width:4;marker-end:url(#a)}</style></defs>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <text x="65" y="62" class="m" font-size="22">UNCONSTRAINED DEPTH COMPOSITION</text>
+  <g class="n"><rect x="65" y="205" width="150" height="120"/><rect x="285" y="190" width="150" height="150"/><rect x="505" y="170" width="150" height="190"/><rect x="725" y="135" width="150" height="260"/></g>
+  <g class="t" font-size="26" font-weight="700" text-anchor="middle"><text x="140" y="270">Aᵣ,₁</text><text x="360" y="270">Aᵣ,₂</text><text x="580" y="270">…</text><text x="800" y="270">Aᵣ,ₗ</text></g>
+  <g class="a"><path d="M215 265H285"/><path d="M435 265H505"/><path d="M655 265H725"/></g>
+  <rect x="960" y="105" width="190" height="140" class="risk"/><text x="1055" y="155" class="t" font-size="26" font-weight="700" text-anchor="middle">amplify</text><text x="1055" y="203" class="m" font-size="22" text-anchor="middle">gain ≫ 1</text>
+  <rect x="960" y="315" width="190" height="140" class="risk"/><text x="1055" y="365" class="t" font-size="26" font-weight="700" text-anchor="middle">contract</text><text x="1055" y="413" class="m" font-size="22" text-anchor="middle">gain ≪ 1</text>
+  <path d="M875 230L960 175" class="a"/><path d="M875 320L960 385" class="a"/>
+  <text x="450" y="448" class="m" font-size="23" text-anchor="middle">forward: ∏ Aᵣ,ₗᵀ</text><text x="450" y="492" class="m" font-size="23" text-anchor="middle">backward: transposed product in reverse</text>
+</svg>

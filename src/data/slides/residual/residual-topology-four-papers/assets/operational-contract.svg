@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">连接方法 operational contract</title>
+  <desc id="desc">中心状态机周围是 state、read、write、transport、weight granularity、initialization、deep composition 和 system cost 八个字段。</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1258ff"/></marker><style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.node{fill:#fffdf8;stroke:#aaa99f;stroke-width:2}.core{fill:#dce6ff;stroke:#1258ff;stroke-width:3}.line{stroke:#1258ff;stroke-width:3;fill:none;marker-end:url(#a)}</style></defs>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <rect x="380" y="225" width="440" height="105" class="core"/><text x="600" y="270" class="t" font-size="28" font-weight="700" text-anchor="middle">state → read → branch → write → next state</text><text x="600" y="306" class="m" font-size="20" text-anchor="middle">one executable numerical contract</text>
+  <g class="node">
+    <rect x="50" y="50" width="230" height="76"/><rect x="340" y="50" width="230" height="76"/><rect x="630" y="50" width="230" height="76"/><rect x="920" y="50" width="230" height="76"/>
+    <rect x="50" y="434" width="230" height="76"/><rect x="340" y="434" width="230" height="76"/><rect x="630" y="434" width="230" height="76"/><rect x="920" y="434" width="230" height="76"/>
+  </g>
+  <g class="t" font-size="24" text-anchor="middle"><text x="165" y="97">stored state</text><text x="455" y="97">read rule</text><text x="745" y="97">transport</text><text x="1035" y="97">write rule</text><text x="165" y="481">weight granularity</text><text x="455" y="481">initialization</text><text x="745" y="481">deep composition</text><text x="1035" y="481">system cost</text></g>
+  <g stroke="#aaa99f" stroke-width="2" fill="none"><path d="M165 126L420 225"/><path d="M455 126L515 225"/><path d="M745 126L685 225"/><path d="M1035 126L780 225"/><path d="M165 434L420 330"/><path d="M455 434L515 330"/><path d="M745 434L685 330"/><path d="M1035 434L780 330"/></g>
+  <path d="M470 350H730" class="line"/>
+</svg>

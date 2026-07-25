@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">标准 residual 的 memory policy</title>
+  <desc id="desc">Embedding 与历史 branch delta 以固定系数一写入一条累计 state，下一层只能整体读取。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1258ff"/></marker>
+    <style>
+      .t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}
+      .s{fill:#fff3cf;stroke:#9a7611;stroke-width:3}.b{fill:#e6edff;stroke:#1258ff;stroke-width:3}.g{fill:#e5f0e7;stroke:#3f7750;stroke-width:3}
+      .a{fill:none;stroke:#1258ff;stroke-width:4;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <text x="70" y="62" class="m" font-size="24">FIXED WRITE · SINGLE STORED STATE · FIXED READ</text>
+  <rect x="70" y="105" width="225" height="70" class="b"/><text x="182" y="148" class="t" font-size="26" text-anchor="middle">Embedding  v₀</text>
+  <rect x="70" y="225" width="225" height="70" class="g"/><text x="182" y="268" class="t" font-size="26" text-anchor="middle">Layer delta  v₁</text>
+  <rect x="70" y="345" width="225" height="70" class="g"/><text x="182" y="388" class="t" font-size="26" text-anchor="middle">…  vₗ₋₁</text>
+  <path d="M295 140H455" class="a"/><path d="M295 260H455" class="a"/><path d="M295 380H455" class="a"/>
+  <text x="365" y="126" class="m" font-size="21">× 1</text><text x="365" y="246" class="m" font-size="21">× 1</text><text x="365" y="366" class="m" font-size="21">× 1</text>
+  <rect x="455" y="150" width="330" height="250" class="s"/>
+  <text x="620" y="235" class="t" font-size="34" text-anchor="middle" font-weight="700">Residual state  hₗ</text>
+  <text x="620" y="290" class="m" font-size="28" text-anchor="middle">hₗ = Σᵢ&lt;ₗ vᵢ</text>
+  <text x="620" y="342" class="t" font-size="23" text-anchor="middle">所有历史压进一个 d-vector</text>
+  <path d="M785 275H930" class="a"/>
+  <rect x="930" y="215" width="205" height="120" class="b"/>
+  <text x="1032" y="264" class="t" font-size="25" text-anchor="middle">Next branch</text>
+  <text x="1032" y="303" class="m" font-size="20" text-anchor="middle">read whole state</text>
+  <path d="M860 430H1128" stroke="#777" stroke-width="2" stroke-dasharray="8 7"/>
+  <text x="994" y="468" class="m" font-size="21" text-anchor="middle">no source-level retrieval</text>
+</svg>

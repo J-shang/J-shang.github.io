@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">HC read mix write state machine</title>
+  <desc id="desc">多流 state 经 A_m read 得到 branch input，同时经 A_r transport；branch output 经 B 写回，两路相加为 next state。</desc>
+  <defs><marker id="ab" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1258ff"/></marker><marker id="aw" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#ef6c36"/></marker><style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.state{fill:#fff3cf;stroke:#9a7611;stroke-width:3}.route{fill:#e6edff;stroke:#1258ff;stroke-width:3}.branch{fill:#e5f0e7;stroke:#3f7750;stroke-width:3}.blue{fill:none;stroke:#1258ff;stroke-width:4;marker-end:url(#ab)}.warm{fill:none;stroke:#ef6c36;stroke-width:4;marker-end:url(#aw)}</style></defs>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <rect x="55" y="205" width="220" height="130" class="state"/><text x="165" y="252" class="t" font-size="27" font-weight="700" text-anchor="middle">stored state Hₗ</text><text x="165" y="296" class="m" font-size="22" text-anchor="middle">[B,S,n,d]</text>
+  <path d="M275 235C355 180 380 135 450 135" class="blue"/><text x="340" y="170" class="m" font-size="21">Aₘ read n→1</text>
+  <rect x="450" y="82" width="250" height="105" class="branch"/><text x="575" y="125" class="t" font-size="26" font-weight="700" text-anchor="middle">Norm + Fₗ</text><text x="575" y="159" class="m" font-size="20" text-anchor="middle">branch d→d</text>
+  <path d="M700 135C785 135 805 180 850 215" class="warm"/><text x="795" y="125" class="m" font-size="21">B write 1→n</text>
+  <path d="M275 305C445 420 660 420 850 325" class="blue"/><text x="565" y="452" class="m" font-size="21" text-anchor="middle">Aᵣ transport n→n</text>
+  <circle cx="890" cy="270" r="40" class="route"/><text x="890" y="282" class="t" font-size="36" text-anchor="middle">+</text>
+  <path d="M930 270H1015" class="blue"/>
+  <rect x="1015" y="205" width="150" height="130" class="state"/><text x="1090" y="252" class="t" font-size="25" font-weight="700" text-anchor="middle">Hₗ₊₁</text><text x="1090" y="294" class="m" font-size="20" text-anchor="middle">n streams</text>
+  <g class="m" font-size="18"><text x="455" y="237">read = blue arrow</text><text x="455" y="270">transport = blue lower path</text><text x="455" y="303">write = orange arrow</text></g>
+</svg>

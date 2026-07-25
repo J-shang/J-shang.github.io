@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">mHC stability evidence</title>
+  <desc id="desc">HC 与 mHC 在 27B MoE 单次运行中的 approximate composite Amax gain 对比，并显示 gain、gradient、loss 的时间对齐链。</desc>
+  <style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.blue{fill:#1258ff}.warm{fill:#ef6c36}.line{stroke:#d7d5cd;stroke-width:2}.card{fill:#fffdf8;stroke:#aaa99f;stroke-width:2}</style>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <text x="60" y="58" class="m" font-size="22">27B MoE · APPROXIMATE COMPOSITE Amax COMMON-MODE GAIN</text>
+  <line x1="90" y1="420" x2="650" y2="420" class="line"/><line x1="90" y1="420" x2="90" y2="105" class="line"/>
+  <g class="m" font-size="17"><text x="80" y="425" text-anchor="end">1</text><text x="80" y="325" text-anchor="end">10</text><text x="80" y="225" text-anchor="end">100</text><text x="80" y="125" text-anchor="end">1000+</text></g>
+  <rect x="190" y="112" width="150" height="308" class="warm"/><text x="265" y="95" class="t" font-size="34" font-weight="700" text-anchor="middle">≈ 3000</text><text x="265" y="461" class="m" font-size="21" text-anchor="middle">HC</text>
+  <rect x="450" y="382" width="150" height="38" class="blue"/><text x="525" y="365" class="t" font-size="34" font-weight="700" text-anchor="middle">≈ 1.6</text><text x="525" y="461" class="m" font-size="21" text-anchor="middle">mHC</text>
+  <text x="360" y="508" class="m" font-size="17" text-anchor="middle">log-like visual scale · values read approximately from figures</text>
+  <g class="card"><rect x="730" y="105" width="400" height="88"/><rect x="730" y="232" width="400" height="88"/><rect x="730" y="359" width="400" height="88"/></g>
+  <text x="770" y="143" class="m" font-size="18">01 · GAIN</text><text x="890" y="155" class="t" font-size="24">HC product drifts</text>
+  <text x="770" y="270" class="m" font-size="18">02 · GRADIENT</text><text x="930" y="282" class="t" font-size="24">spike near ~12k steps</text>
+  <text x="770" y="397" class="m" font-size="18">03 · LOSS</text><text x="905" y="409" class="t" font-size="24">surge aligns in time</text>
+  <path d="M930 193V232M930 320V359" stroke="#1258ff" stroke-width="4"/>
+  <text x="930" y="500" class="m" font-size="18" text-anchor="middle">single-run evidence · not full spectral norm</text>
+</svg>

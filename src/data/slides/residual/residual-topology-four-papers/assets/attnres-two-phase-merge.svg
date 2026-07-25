@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">AttnRes two-phase online softmax merge</title>
+  <desc id="desc">历史 blocks 与当前 partial 分别产生 max、exp-sum、numerator 统计，再精确合并；下方给出 pipeline cache key。</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1258ff"/></marker><style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.src{fill:#e6edff;stroke:#1258ff;stroke-width:3}.live{fill:#fff3cf;stroke:#9a7611;stroke-width:3}.merge{fill:#e5f0e7;stroke:#3f7750;stroke-width:3}.cache{fill:#f5f3ed;stroke:#aaa99f;stroke-width:2}.a{fill:none;stroke:#1258ff;stroke-width:4;marker-end:url(#a)}</style></defs>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <rect x="65" y="75" width="340" height="130" class="src"/><text x="235" y="120" class="t" font-size="26" font-weight="700" text-anchor="middle">historical blocks</text><text x="235" y="162" class="m" font-size="20" text-anchor="middle">(m₁, s₁, n₁) precomputed</text>
+  <rect x="65" y="245" width="340" height="130" class="live"/><text x="235" y="290" class="t" font-size="26" font-weight="700" text-anchor="middle">current partial</text><text x="235" y="332" class="m" font-size="20" text-anchor="middle">(m₂, s₂, n₂) online</text>
+  <g class="a"><path d="M405 140L610 220"/><path d="M405 310L610 230"/></g>
+  <rect x="610" y="140" width="310" height="175" class="merge"/><text x="765" y="187" class="t" font-size="26" font-weight="700" text-anchor="middle">online-softmax merge</text><text x="765" y="232" class="m" font-size="20" text-anchor="middle">m = max(m₁,m₂)</text><text x="765" y="268" class="m" font-size="18" text-anchor="middle">rescale s,n into shared frame</text>
+  <path d="M920 227H1095" class="a"/><text x="990" y="178" class="m" font-size="16" text-anchor="middle">exact in contract</text>
+  <circle cx="1100" cy="227" r="58" class="merge"/><text x="1100" y="236" class="t" font-size="22" font-weight="700" text-anchor="middle">read</text>
+  <rect x="180" y="435" width="840" height="76" class="cache"/><text x="600" y="468" class="m" font-size="20" text-anchor="middle">cache key = microbatch × virtual stage × block × direction</text><text x="600" y="496" class="t" font-size="18" text-anchor="middle">numerical equivalence depends on state ownership and lifetime</text>
+</svg>

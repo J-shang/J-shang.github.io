@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">HC quality and memory evidence</title>
+  <desc id="desc">左侧是 7B dense matched setting 的 validation loss 与 downstream average 改善，右侧是三种模型设置的训练显存增幅。</desc>
+  <style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.blue{fill:#1258ff}.warm{fill:#ef6c36}.line{stroke:#d7d5cd;stroke-width:2}.card{fill:#fffdf8;stroke:#aaa99f;stroke-width:2}</style>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <text x="55" y="58" class="m" font-size="22">MATCHED QUALITY · OLMo-7B DENSE · 500B TOKENS</text>
+  <g class="card"><rect x="55" y="90" width="210" height="145"/><rect x="280" y="90" width="210" height="145"/><rect x="505" y="90" width="210" height="145"/></g>
+  <text x="160" y="132" class="m" font-size="18" text-anchor="middle">V2 LOSS</text><text x="160" y="184" class="t" font-size="28" font-weight="700" text-anchor="middle">2.581 → 2.559</text><text x="385" y="132" class="m" font-size="18" text-anchor="middle">V3 LOSS</text><text x="385" y="184" class="t" font-size="28" font-weight="700" text-anchor="middle">2.322 → 2.304</text><text x="610" y="132" class="m" font-size="18" text-anchor="middle">DOWNSTREAM AVG</text><text x="610" y="184" class="t" font-size="28" font-weight="700" text-anchor="middle">70.1 → 71.0</text>
+  <text x="55" y="302" class="m" font-size="22">TRAINING MEMORY · BASELINE → DHC×4</text>
+  <line x1="55" y1="468" x2="1140" y2="468" class="line"/>
+  <g class="warm"><rect x="110" y="344" width="120" height="124"/><rect x="370" y="328" width="120" height="140"/><rect x="630" y="422" width="120" height="46"/></g>
+  <g class="t" font-size="23" font-weight="700" text-anchor="middle"><text x="170" y="333">+26.1%</text><text x="430" y="317">+28.3%</text><text x="690" y="411">+9.7%</text></g>
+  <g class="m" font-size="18" text-anchor="middle"><text x="170" y="503">1B · 41.11→51.86 GB</text><text x="430" y="503">7B · 26.27→33.70 GB</text><text x="690" y="503">MoE · 31.59→34.65 GB</text></g>
+  <rect x="820" y="310" width="320" height="158" fill="#e6edff" stroke="#1258ff" stroke-width="2"/>
+  <text x="980" y="355" class="t" font-size="25" font-weight="700" text-anchor="middle">FLOPs/token</text><text x="980" y="405" class="t" font-size="36" text-anchor="middle">13.36 → 13.38 G</text><text x="980" y="446" class="m" font-size="18" text-anchor="middle">small arithmetic ≠ small state</text>
+</svg>

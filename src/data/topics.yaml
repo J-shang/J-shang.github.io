@@ -127,3 +127,35 @@
       title: 国际模型家族
       description: 按共同字段审计国际模型家族的公开数据证据与未知项。
       order: 11
+
+- id: residual
+  title: Residual Path
+  shortTitle: 残差连接
+  heroTitle: Residual
+  heroAccent: Path
+  symbol: ↯
+  description: 把 residual connection 视为沿网络深度运行的 memory policy，比较 HC、mHC、AttnRes 与 xHC 的状态、读取、传输、写回和系统成本。
+  kicker: Depth memory systems
+  scope:
+    - 状态
+    - 路由
+    - 稳定性
+    - 系统
+  order: 3
+  featured: false
+  status: published
+  cutoff: 2026-07-25
+  repository: https://github.com/J-shang/residual
+  sections:
+    - id: foundations
+      title: 残差与深度记忆
+      description: 从标准 PreNorm residual 建立统一的 state/read/write/transport 视角。
+      order: 1
+    - id: methods
+      title: 可学习连接方法
+      description: 对齐 HC、mHC、AttnRes 与 xHC 的机制、证据和边界。
+      order: 2
+    - id: systems
+      title: 正确性与系统合同
+      description: 固定 shape、数值、深层组合、缓存、通信和成本口径。
+      order: 3

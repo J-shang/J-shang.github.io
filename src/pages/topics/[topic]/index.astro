@@ -75,22 +75,24 @@ const fmt = (value: Date) => new Intl.DateTimeFormat('zh-CN').format(value);
     </section>
   )}
 
-  <section class="reading-path shell">
-    <div class="section-heading"><h2>推荐阅读路径</h2><span>{groups.length} LAYERS / {topicNotes.length - (guide ? 1 : 0)} NOTES</span></div>
-    <div class="path-list">
-      {groups.map((group, groupIndex) => (
-        <section class="path-group">
-          <header><span>{String(groupIndex + 1).padStart(2, '0')}</span><h3>{group.section.title}</h3><b>{group.notes.length}</b></header>
-          <div class="path-notes">
-            {group.notes.map((note) => (
-              <a href={noteHref(note)}><span>{note.data.title}</span><small>{note.data.readtime ? `${note.data.readtime} MIN` : 'NOTE'}</small><i>↗</i></a>
-            ))}
-            {group.notes.length === 0 && <p class="path-empty">内容准备中</p>}
-          </div>
-        </section>
-      ))}
-    </div>
-  </section>
+  {topicNotes.length > 0 && (
+    <section class="reading-path shell">
+      <div class="section-heading"><h2>推荐阅读路径</h2><span>{groups.length} LAYERS / {topicNotes.length - (guide ? 1 : 0)} NOTES</span></div>
+      <div class="path-list">
+        {groups.map((group, groupIndex) => (
+          <section class="path-group">
+            <header><span>{String(groupIndex + 1).padStart(2, '0')}</span><h3>{group.section.title}</h3><b>{group.notes.length}</b></header>
+            <div class="path-notes">
+              {group.notes.map((note) => (
+                <a href={noteHref(note)}><span>{note.data.title}</span><small>{note.data.readtime ? `${note.data.readtime} MIN` : 'NOTE'}</small><i>↗</i></a>
+              ))}
+              {group.notes.length === 0 && <p class="path-empty">内容准备中</p>}
+            </div>
+          </section>
+        ))}
+      </div>
+    </section>
+  )}
 </BaseLayout>
 
 <style>

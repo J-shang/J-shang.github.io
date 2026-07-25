@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">HC residual state expansion</title>
+  <desc id="desc">单流状态扩为多流状态，主 branch 仍为 d 到 d。</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1258ff"/></marker><style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.state{fill:#fff3cf;stroke:#9a7611;stroke-width:3}.route{fill:#e6edff;stroke:#1258ff;stroke-width:3}.branch{fill:#e5f0e7;stroke:#3f7750;stroke-width:3}.a{stroke:#1258ff;stroke-width:4;fill:none;marker-end:url(#a)}</style></defs>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <text x="75" y="72" class="m" font-size="23">STANDARD</text>
+  <rect x="75" y="130" width="270" height="120" class="state"/><text x="210" y="180" class="t" font-size="27" font-weight="700" text-anchor="middle">single residual state</text><text x="210" y="220" class="m" font-size="24" text-anchor="middle">[B,S,d]</text>
+  <path d="M345 190H485" class="a"/>
+  <text x="565" y="72" class="m" font-size="23">HYPER-CONNECTION</text>
+  <g class="state"><rect x="485" y="105" width="275" height="60"/><rect x="485" y="180" width="275" height="60"/><rect x="485" y="255" width="275" height="60"/><rect x="485" y="330" width="275" height="60"/></g>
+  <g class="t" font-size="23"><text x="515" y="143">stream 1</text><text x="515" y="218">stream 2</text><text x="515" y="293">…</text><text x="515" y="368">stream n</text></g>
+  <text x="622" y="430" class="m" font-size="24" text-anchor="middle">stored state [B,S,n,d]</text>
+  <path d="M760 245H870" class="a"/>
+  <rect x="870" y="175" width="255" height="140" class="branch"/><text x="997" y="228" class="t" font-size="27" font-weight="700" text-anchor="middle">Attention / MLP</text><text x="997" y="274" class="m" font-size="26" text-anchor="middle">d → d</text>
+  <text x="997" y="370" class="t" font-size="24" text-anchor="middle">主变换不扩宽</text>
+  <path d="M840 455H1125" stroke="#b44c35" stroke-width="3"/><text x="982" y="493" class="m" font-size="20" text-anchor="middle">state capacity ↑ · branch width fixed</text>
+</svg>

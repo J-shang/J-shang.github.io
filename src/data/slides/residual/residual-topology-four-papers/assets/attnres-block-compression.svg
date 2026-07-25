@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">Block AttnRes structured compression</title>
+  <desc id="desc">Full AttnRes 的历史 source list 折叠成 embedding、completed block summaries 与 current partial。</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1258ff"/></marker><style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.src{fill:#e6edff;stroke:#1258ff;stroke-width:2}.sum{fill:#fff3cf;stroke:#9a7611;stroke-width:3}.partial{fill:#f7e6e1;stroke:#b44c35;stroke-width:3;stroke-dasharray:8 6}.a{fill:none;stroke:#1258ff;stroke-width:4;marker-end:url(#a)}</style></defs>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <text x="70" y="58" class="m" font-size="22">FULL: O(L) SOURCES</text><text x="690" y="58" class="m" font-size="22">BLOCK: O(NUM BLOCKS) SOURCES</text>
+  <g class="src"><rect x="70" y="100" width="210" height="52"/><rect x="70" y="170" width="210" height="52"/><rect x="70" y="240" width="210" height="52"/><rect x="70" y="310" width="210" height="52"/><rect x="70" y="380" width="210" height="52"/></g>
+  <g class="t" font-size="20"><text x="95" y="133">v₀ embedding</text><text x="95" y="203">v₁</text><text x="95" y="273">v₂</text><text x="95" y="343">v₃</text><text x="95" y="413">… vⱼ</text></g>
+  <path d="M310 270H520" class="a"/><text x="415" y="246" class="m" font-size="19" text-anchor="middle">sum within blocks</text>
+  <g class="sum"><rect x="650" y="100" width="260" height="72"/><rect x="650" y="200" width="260" height="72"/><rect x="650" y="300" width="260" height="72"/></g>
+  <rect x="650" y="400" width="260" height="72" class="partial"/>
+  <g class="t" font-size="22"><text x="680" y="143">b₀ embedding</text><text x="680" y="243">b₁ completed</text><text x="680" y="343">b₂ completed</text><text x="680" y="443">current partial</text></g>
+  <g class="a"><path d="M910 136L1080 250"/><path d="M910 236L1080 260"/><path d="M910 336L1080 270"/><path d="M910 436L1080 280"/></g>
+  <circle cx="1100" cy="265" r="65" class="src"/><text x="1100" y="256" class="t" font-size="22" font-weight="700" text-anchor="middle">depth</text><text x="1100" y="287" class="t" font-size="22" font-weight="700" text-anchor="middle">softmax</text>
+  <text x="775" y="515" class="m" font-size="18" text-anchor="middle">structured tying · not lossless compression</text>
+</svg>

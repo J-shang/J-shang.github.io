@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">mHC Sinkhorn transport</title>
+  <desc id="desc">自由 logits 经指数和二十次交替行列归一化后成为近似双随机 transport，主 branch 保持 d 到 d。</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1258ff"/></marker><style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.free{fill:#f7e6e1;stroke:#b44c35;stroke-width:3}.proc{fill:#e6edff;stroke:#1258ff;stroke-width:3}.stable{fill:#e5f0e7;stroke:#3f7750;stroke-width:3}.branch{fill:#fff3cf;stroke:#9a7611;stroke-width:3}.a{stroke:#1258ff;stroke-width:4;fill:none;marker-end:url(#a)}</style></defs>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <rect x="55" y="185" width="200" height="135" class="free"/><text x="155" y="235" class="t" font-size="27" font-weight="700" text-anchor="middle">free logits</text><text x="155" y="278" class="m" font-size="21" text-anchor="middle">per token</text>
+  <path d="M255 252H350" class="a"/>
+  <rect x="350" y="185" width="180" height="135" class="proc"/><text x="440" y="237" class="t" font-size="29" font-weight="700" text-anchor="middle">exp</text><text x="440" y="278" class="m" font-size="20" text-anchor="middle">positive</text>
+  <path d="M530 252H625" class="a"/>
+  <rect x="625" y="155" width="250" height="195" class="proc"/><text x="750" y="211" class="t" font-size="27" font-weight="700" text-anchor="middle">20-step Sinkhorn</text><text x="750" y="258" class="m" font-size="17" text-anchor="middle">row norm ↔ column norm</text><text x="750" y="304" class="m" font-size="18" text-anchor="middle">finite projection</text>
+  <path d="M875 252H970" class="a"/>
+  <rect x="970" y="165" width="180" height="175" class="stable"/><text x="1060" y="218" class="t" font-size="25" font-weight="700" text-anchor="middle">Hᵣₑₛ ≈ Bₙ</text><text x="1060" y="261" class="m" font-size="18" text-anchor="middle">row sum ≈ 1</text><text x="1060" y="296" class="m" font-size="18" text-anchor="middle">col sum ≈ 1</text>
+  <rect x="400" y="425" width="400" height="80" class="branch"/><text x="600" y="476" class="t" font-size="25" text-anchor="middle">Attention / MLP branch remains d → d</text>
+  <path d="M750 350V425" stroke="#777" stroke-width="2" stroke-dasharray="8 7"/>
+</svg>

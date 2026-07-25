@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">Residual topology system cost</title>
+  <desc id="desc">成本由参数与 FLOPs、HBM I/O、activation 和 pipeline payload 四层构成，后两层最容易成为多流方法瓶颈。</desc>
+  <style>.t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}.m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}.b1{fill:#e6edff;stroke:#1258ff;stroke-width:2}.b2{fill:#cbd9ff;stroke:#1258ff;stroke-width:2}.w1{fill:#ffe0cc;stroke:#ef6c36;stroke-width:3}.w2{fill:#ffc4a6;stroke:#ef6c36;stroke-width:3}</style>
+  <rect width="1200" height="560" fill="#fffdf8"/>
+  <text x="70" y="58" class="m" font-size="22">COST STACK · COUNT EVERY BOUNDARY</text>
+  <rect x="140" y="410" width="920" height="90" class="w2"/><text x="600" y="450" class="t" font-size="29" font-weight="700" text-anchor="middle">PIPELINE PAYLOAD / CACHE OWNERSHIP</text><text x="600" y="483" class="m" font-size="18" text-anchor="middle">full n-stream state can approach n× boundary payload</text>
+  <rect x="220" y="310" width="760" height="80" class="w1"/><text x="600" y="348" class="t" font-size="27" font-weight="700" text-anchor="middle">ACTIVATION RESIDENCY</text><text x="600" y="376" class="m" font-size="18" text-anchor="middle">save-all · recompute · microbatch lifetime</text>
+  <rect x="300" y="220" width="600" height="70" class="b2"/><text x="600" y="256" class="t" font-size="26" font-weight="700" text-anchor="middle">HBM I/O / FUSION</text><text x="600" y="280" class="m" font-size="17" text-anchor="middle">mapping application often dominates residual-side traffic</text>
+  <rect x="380" y="140" width="440" height="60" class="b1"/><text x="600" y="177" class="t" font-size="25" font-weight="700" text-anchor="middle">PARAMETERS / FLOPs</text>
+  <text x="600" y="95" class="t" font-size="23" text-anchor="middle">“small arithmetic overhead”只覆盖最上层</text>
+</svg>
