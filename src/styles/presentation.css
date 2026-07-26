@@ -395,6 +395,28 @@
 .slide__copy > :last-child { margin-bottom: 0; }
 
 @media (min-width: 901px) {
+  #slide-03 .slide__surface > p:has(> img + img) {
+    grid-template-columns: minmax(11.5rem, 14rem) minmax(24rem, 32rem);
+    justify-content: center;
+    gap: clamp(.9rem, 1.8vw, 1.3rem);
+    margin: .85rem 0 1.15rem;
+  }
+  #slide-03 .slide__surface > p:has(> img + img) img {
+    height: min(41svh, 300px);
+    max-height: none;
+  }
+  #slide-05 .slide__surface > p:has(> img:only-child) img {
+    width: min(100%, 830px);
+    max-height: none;
+  }
+  #slide-26 .slide__surface,
+  #slide-27 .slide__surface,
+  #slide-30 .slide__surface,
+  #slide-31 .slide__surface {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
   .slide--figure-compact .slide__figure-grid {
     grid-template-columns: minmax(0, 1.06fr) minmax(18rem, .94fr);
     gap: clamp(1.2rem, 2.7vw, 2.4rem);
@@ -545,6 +567,28 @@ html[data-js='true'] .slide__surface {
   .slide__surface { padding: clamp(1.35rem, 4vw, 2.5rem); }
   .slide h2 { font-size: clamp(1.8rem, 4.6vw, 2.55rem); }
   .slide--statement h2 { font-size: clamp(2.2rem, 5.8vw, 3.5rem); }
+  #slide-05 .slide__surface > p:has(> img:only-child) {
+    overflow-x: auto;
+    text-align: left;
+  }
+  #slide-05 .slide__surface > p:has(> img:only-child) img {
+    width: 720px;
+    max-width: none;
+    max-height: none;
+  }
+}
+
+@media (min-width: 661px) and (max-width: 900px) {
+  #slide-03 .slide__surface > p:has(> img + img) {
+    grid-template-columns: minmax(10rem, 12rem) minmax(20rem, 28rem);
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  #slide-03 .slide__surface > p:has(> img + img) img {
+    height: min(36svh, 260px);
+    max-height: none;
+  }
 }
 
 @media (max-width: 660px) {
@@ -566,6 +610,13 @@ html[data-js='true'] .slide__surface {
   .slide .katex-display { font-size: .88rem; }
   .slide img { max-height: 45svh; }
   .slide p:has(> img + img) { grid-template-columns: 1fr; }
+  #slide-03 .slide__surface > p:has(> img + img) { justify-items: center; }
+  #slide-03 .slide__surface > p:has(> img + img) img {
+    width: min(100%, 520px);
+    height: auto;
+    max-height: none;
+  }
+  #slide-03 .slide__surface > p:has(> img + img) img:first-child { width: min(100%, 220px); }
   .slide--title p:has(> img + img) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .slide--title p:has(> img + img) img { max-height: 15svh; }
   .slide--split .slide__surface { display: block; }

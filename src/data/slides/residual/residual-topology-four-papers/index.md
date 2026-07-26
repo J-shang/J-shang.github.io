@@ -15,7 +15,7 @@ source:
   url: "https://github.com/J-shang/J-shang.github.io/blob/main/src/data/slides/residual/residual-topology-four-papers/index.md"
   revision: "main"
   syncedAt: "2026-07-26"
-  contentHash: "sha256:b8a736def0ec0c19c607774d45cc3bc55e23f784233133bd4f41c7117f287a08"
+  contentHash: "sha256:7695155f11c713e1c416352145adfe8351d90b0a16f2adf884bf5d54183f2317"
   manifest: "local-residual-slides"
   dirty: false
   managed: false
@@ -96,7 +96,7 @@ direct path 帮助信息与梯度跨层传播；同一个固定权重也限制�
 
 ## 用 operational contract 比较连接方法
 
-![连接方法的八字段 operational contract：state、read、branch、transport、write、granularity、initialization、system cost](./assets/operational-contract.svg)
+![连接方法的八字段 operational contract：state、read、branch、transport、write、granularity、initialization、system cost](./assets/operational-contract-fit.svg)
 
 同一张 contract 必须能落到 reference code、correctness test 与 distributed layout。
 
@@ -113,14 +113,7 @@ direct path 帮助信息与梯度跨层传播；同一个固定权重也限制�
 
 ## 四篇论文回应四类设计压力
 
-![Hyper-Connections：打开多流 topology](./assets/hc-fig2-overview.png)
-![mHC：约束深层 transport](./assets/mhc-fig1-overview.png)
-![Attention Residuals：检索 depth source](./assets/attnres-fig1-overview.png)
-![xHC：扩大 capacity、稀疏 mutation](./assets/xhc-fig3-overview.png)
-
-| HC | mHC | AttnRes | xHC |
-|---|---|---|---|
-| topology | stability | retrieval | large-state cost |
+![四篇论文沿 state capacity、product stability、source retrieval 与 large-N cost 四类设计压力展开](./assets/residual-design-pressure-map.svg)
 
 > **Derived** · HC Fig. 2 · mHC Fig. 1 · Attention Residuals Fig. 1 · xHC Fig. 3
 
