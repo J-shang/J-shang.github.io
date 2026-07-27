@@ -1,6 +1,7 @@
 const layoutPattern = /^<!--\s*layout:\s*([a-z-]+)\s*-->$/;
 const notesPattern = /^<!--\s*notes:\s*([\s\S]*?)\s*-->$/;
 const incrementalPattern = /^<!--\s*incremental\s*-->$/;
+const sectionHeaderPattern = /^<!--\s*section-header:\s*([a-z-]+)\s*\|\|\s*(.*?)\s*\|\|\s*(.*?)\s*-->$/;
 const allowedLayouts = new Set(['title', 'statement', 'split', 'figure', 'code', 'comparison']);
 
 function isRawComment(node) {
@@ -139,6 +140,7 @@ function slideTraits(layout, children, heading) {
 function normalizeSlide(nodes) {
   let layout = 'default';
   let incremental = false;
+  let sectionHeader;
   const children = [];
   const notes = [];
 
@@ -155,6 +157,33 @@ function normalizeSlide(nodes) {
       }
       if (incrementalPattern.test(value)) {
         incremental = true;
+        continue;
+      }
+      const sectionHeaderMatch = value.match(sectionHeaderPattern);
+      if (sectionHeaderMatch) {
+        const [, tone, label, page] = sectionHeaderMatch;
+        sectionHeader = {
+          type: 'element',
+          tagName: 'div',
+          properties: {
+            className: ['slide__section-header', `slide__section-header--${tone}`],
+            'aria-label': `${label}，${page}`,
+          },
+          children: [
+            {
+              type: 'element',
+              tagName: 'span',
+              properties: { className: ['slide__section-label'] },
+              children: [{ type: 'text', value: label }],
+            },
+            {
+              type: 'element',
+              tagName: 'span',
+              properties: { className: ['slide__section-page'] },
+              children: [{ type: 'text', value: page }],
+            },
+          ],
+        };
         continue;
       }
       const notesMatch = value.match(notesPattern);
@@ -176,7 +205,7 @@ function normalizeSlide(nodes) {
     children.push(node);
   }
 
-  return { layout, children, notes };
+  return { layout, children, notes, sectionHeader };
 }
 
 function slideId(index, total) {
@@ -213,7 +242,7 @@ export default function rehypeSlides() {
     const total = groups.length;
 
     tree.children = groups.map((group, index) => {
-      const { layout, children, notes } = normalizeSlide(group);
+      const { layout, children, notes, sectionHeader } = normalizeSlide(group);
       const id = slideId(index, total);
       const numberId = `${id}-number`;
       const heading = children.find((node) => (
@@ -261,7 +290,10 @@ export default function rehypeSlides() {
             type: 'element',
             tagName: 'div',
             properties: { className: ['slide__surface'] },
-            children: figure.children,
+            children: [
+              ...(sectionHeader ? [sectionHeader] : []),
+              ...figure.children,
+            ],
           },
           ...notes,
         ],
