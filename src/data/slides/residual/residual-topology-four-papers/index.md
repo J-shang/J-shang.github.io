@@ -1,891 +1,200 @@
 ---
-title: "从固定加法到深度记忆"
+title: "从固定加法到深度记忆：HC、mHC、xHC 与 Attention Residuals"
 slug: "residual-topology-four-papers"
-description: "把 residual path 视为 depth memory，以统一 operational contract 比较 HC、mHC、AttnRes 与 xHC 的状态、检索、稳定性和系统成本。"
+description: "从一次 PreNorm residual add 出发，用统一二维例子推导 HC、mHC、xHC 与 Attention Residuals 的状态、读写、深层组合和系统成本。"
 topic: "residual"
 status: "published"
 date: "2026-07-25"
 updated: "2026-07-27"
-cutoff: "2026-07-25"
+cutoff: "2026-07-27"
 audience: "熟悉 Transformer、PreNorm、Attention/MLP block 与基本线性代数的研究和工程同学"
-duration: 60
-slideCount: 35
+duration: 130
+slideCount: 64
 source:
   repository: "J-shang/J-shang.github.io"
   path: "src/data/slides/residual/residual-topology-four-papers/index.md"
   url: "https://github.com/J-shang/J-shang.github.io/blob/main/src/data/slides/residual/residual-topology-four-papers/index.md"
   revision: "main"
   syncedAt: "2026-07-27"
-  contentHash: "sha256:59ff0700c117a366f31d9cb07a6ecd70af832db3631f75aeee9aca8cc3c5d1d3"
-  manifest: "local-residual-slides"
+  contentHash: "sha256:dc0b1c2618923569aae331e9e62b49502a7f0bb04f2924ce5536e4e3f33b153e"
+  manifest: "local-residual-slides-v2"
   dirty: false
   managed: false
 ---
 
 <!-- layout: title -->
-<!-- section-header: cover || ACADEMIC SHARING · 60 MIN || 01 / 31 -->
+<!-- section-header: cover || ACADEMIC SHARING · 130 MIN || 01 / 64 -->
 
 # 从固定加法到深度记忆
 
-Hyper-Connections · Manifold-Constrained HC · Attention Residuals · Expanded HC
+HC · mHC · xHC · Attention Residuals
 
-![Hyper-Connections 机制总览](./assets/hc-fig2-overview.png)
-![mHC 机制总览](./assets/mhc-fig1-overview.png)
-![Attention Residuals 机制总览](./assets/attnres-fig1-overview.png)
-![xHC 机制总览](./assets/xhc-fig3-overview.png)
-
-<!-- notes:
-0.5 分钟。只报题目、四篇论文与分享目标：把 residual connection 当作沿 depth 运行的 memory policy。
-
-[Sources]
-- https://arxiv.org/abs/2409.19606v3
-- https://arxiv.org/abs/2512.24880v2
-- https://arxiv.org/abs/2603.15031v1
-- https://arxiv.org/abs/2607.14530v1
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: depth || 01 · 深度记忆 / DEPTH MEMORY | MEMORY POLICY · 1/4 || 02 / 31 -->
-
-## 一次加法其实规定了 memory policy
-
-令 $v_0=h_1,\ v_i=f_i(h_i)$：
-
-$$
-h_l=\sum_{i=0}^{l-1}v_i
-$$
-
-<div class="slide-cards slide-cards--2">
-  <div class="slide-card slide-card--state"><strong>state</strong>一条累计 hidden state</div>
-  <div class="slide-card slide-card--read"><strong>read</strong>下一层只能读取整条 state</div>
-  <div class="slide-card slide-card--write"><strong>write</strong>加上 Attention/MLP 新增量</div>
-  <div class="slide-card slide-card--caveat"><strong>forget</strong>没有显式遗忘或 source retrieval</div>
-</div>
-
-![Standard Residuals 把 embedding 与历史 branch delta 累加到同一条 residual path](./assets/attnres-fig1-standard.png)
-
-> **Derived** · Attention Residuals, arXiv:2603.15031v1, Fig. 1(a), PDF p.1；Eq. 1–2
-
-<!-- notes:
-1.5 分钟。先问“如果 residual 是 memory，它的 eviction policy 是什么？”答案是没有显式 eviction，也不能单独检索 source。
-
-[Sources]
-- https://arxiv.org/abs/2603.15031v1
-- https://github.com/J-shang/residual
--->
-
----
-
-<!-- layout: comparison -->
-<!-- section-header: depth || 01 · 深度记忆 / DEPTH MEMORY | FIXED DEPTH MIXING · 2/4 || 03 / 31 -->
-
-## 标准 residual 是固定 depth mixing
-
-![Attention Residuals 论文中的 Standard Residuals 基线](./assets/attnres-fig1-standard.png)
-![标准 residual 的 causal depth mixing 矩阵在可见区域全部使用固定系数 1](./assets/fixed-depth-mixing.svg)
-
-$$
-h_l=\sum_{i=0}^{l-1}\color{#1258ff}{1}\cdot v_i
-$$
-
-`1 = 每层以相同权重读取该历史 source`。direct path 帮助信息与梯度跨层传播，也限制了按内容选择历史 source 的能力。
-
-> **Reported + Derived** · Attention Residuals, arXiv:2603.15031v1, Fig. 1(a), PDF p.1；Eq. 1–2
-
-<!-- notes:
-1.5 分钟。identity path、identity initialization 和训练后学成 identity 是三件事；本页只建立共同起点。
-
-[Sources]
-- https://arxiv.org/abs/2603.15031v1
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: depth || 01 · 深度记忆 / DEPTH MEMORY | OPERATIONAL CONTRACT · 3/4 || 04 / 31 -->
-
-## 比较方法前，先统一 operational contract
-
-![连接方法的八字段 operational contract：state、read、branch、transport、write、granularity、initialization、system cost](./assets/operational-contract-fit.svg)
-
-<div class="slide-flow" aria-label="连接方法的运行流程">
-  <span class="slide-flow__step">stored state</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">read</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">branch</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">write</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">next state</span>
-</div>
-
-同一张 contract 必须能落到 reference code、correctness test 与 distributed layout。
-
-<!-- notes:
-1.5 分钟。后续每种方法都回答同一组问题：state、read、write、transport、granularity、initialization、composition、cost。
-
-[Sources]
-- https://github.com/J-shang/residual
--->
-
----
-
-<!-- layout: comparison -->
-<!-- section-header: depth || 01 · 深度记忆 / DEPTH MEMORY | RESEARCH MAP · 4/4 || 05 / 31 -->
-
-## 四篇论文回应四种设计压力
-
-<div class="slide-pressure-map" aria-label="四篇论文的问题驱动关系，不是发表时间线">
-  <div class="slide-pressure-card slide-pressure-card--baseline"><strong>Standard residual</strong>固定单流累计 state</div>
-  <span class="slide-pressure-arrow slide-pressure-arrow--hc">→</span>
-  <div class="slide-pressure-card slide-pressure-card--hc"><strong>HC</strong>怎样扩大 state topology？</div>
-  <span class="slide-pressure-arrow slide-pressure-arrow--mhc">→</span>
-  <div class="slide-pressure-card slide-pressure-card--mhc"><strong>mHC</strong>怎样让深层 transport 稳定？</div>
-  <span class="slide-pressure-arrow slide-pressure-arrow--xhc">→</span>
-  <div class="slide-pressure-card slide-pressure-card--xhc"><strong>xHC</strong>怎样扩大 N 而不让更新成本失控？</div>
-  <span class="slide-pressure-arrow slide-pressure-arrow--attnres">↘</span>
-  <div class="slide-pressure-card slide-pressure-card--attnres"><strong>AttnRes</strong>怎样检索指定历史 source？</div>
-</div>
-
-<div class="slide-boundary">AttnRes 是 baseline 的另一条问题分支；这里表达设计压力关系，不是代码继承或发表时间线。</div>
-
-> **Derived** · HC Fig. 2 · mHC Fig. 1 · Attention Residuals Fig. 1 · xHC Fig. 3
-
-<!-- notes:
-0.5 分钟。快速预告四个章节，告诉听众后面始终回到同一个 contract。
-
-[Sources]
-- https://arxiv.org/abs/2409.19606v3
-- https://arxiv.org/abs/2512.24880v2
-- https://arxiv.org/abs/2603.15031v1
-- https://arxiv.org/abs/2607.14530v1
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: hc || 02 · HC / MULTI-STREAM | STATE EXPANSION · 1/6 || 06 / 31 -->
-
-## HC 扩张的是 residual state
-
-![Hyper-Connections Figure 2：从标准 residual 到 hyper-connections](./assets/hc-fig2-overview.png)
-
-$$
-[B,S,d]\longrightarrow[B,S,n,d],
-\qquad \text{branch}:d\to d
-$$
-
-`B=batch` · `S=sequence` · `n=streams` · `d=hidden size`
-
-> **Reported** · Hyper-Connections, arXiv:2409.19606v3, Fig. 2, PDF p.2；§2
-
-<!-- notes:
-2 分钟。用 n=2 的最小例子说明：扩的是跨 depth 持久 state，不是 FFN hidden size。
-
-[Sources]
-- https://arxiv.org/abs/2409.19606v3
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: hc || 02 · HC / MULTI-STREAM | LAYER UPDATE · 2/6 || 07 / 31 -->
-
-## HC 一层依次完成读取、变换与状态更新
-
-![Hyper-Connections Figure 2(b)：两流 read、transport 与 write](./assets/hc-fig2b-hyper-connections.png)
-
-<div class="slide-flow" aria-label="HC 一层状态更新时间顺序">
-  <span class="slide-flow__step">① read</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">② Attention / MLP</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">③ transport + write</span>
-</div>
-
-<div class="slide-cards slide-cards--1 slide-cards--compact">
-  <div class="slide-card slide-card--read"><strong><code>A_m:n→1</code> · read</strong><code>u_l=H_l^⊤A_m</code></div>
-  <div class="slide-card slide-card--branch"><strong><code>d→d</code> · branch</strong><code>y_l=F_l(Norm(u_l))</code></div>
-  <div class="slide-card slide-card--transport"><strong><code>A_r:n→n</code> + <code>B:1→n</code></strong><code>H′=A_r^⊤H+B^⊤y^⊤</code></div>
-</div>
-
-`h′ⱼ = Σᵢ A_r[i,j]hᵢ + B[1,j]y` · `A_r[i,j] = source i → target j`
-
-> **Reported** · Hyper-Connections, arXiv:2409.19606v3, Fig. 2(b), PDF p.2；Eq. 1–8
-
-<!-- notes:
-2 分钟。先沿原图走 read→branch→transport+write，再解释 shape 与 source→target 方向。转置来自本页把每条 stream 存成一行；代码 convention 可以不同，operational role 不变。
-
-[Sources]
-- https://arxiv.org/abs/2409.19606v3
--->
-
----
-
-<!-- layout: comparison -->
-<!-- section-header: hc || 02 · HC / MULTI-STREAM | WEIGHT GRANULARITY · 3/6 || 08 / 31 -->
-
-## DHC 让同一套更新随 token 改变
-
-<div class="slide-cards slide-cards--2 slide-cards--mapping">
-  <div class="slide-card slide-card--neutral">
-    <strong>Static HC / SHC</strong>
-    <code>A_m:[n,1]</code> · <code>A_r:[n,n]</code> · <code>B:[1,n]</code><br>
-    每层一组 learned parameters；同层所有 batch / token 共用
+<div class="slide-route" aria-label="Residual connection 的两条改造路线">
+  <div class="slide-route__root">Standard PreNorm residual</div>
+  <div class="slide-route__branch slide-route__branch--streams">
+    <span>persistent recurrent state</span>
+    <strong>HC</strong><i>→</i><strong>mHC</strong><i>→</i><strong>xHC</strong>
   </div>
-  <div class="slide-card slide-card--read">
-    <strong>Dynamic HC / DHC</strong>
-    当前 token 的 <code>H[b,t]</code> → route norm → projection + tanh → <code>ΔA_m,ΔA_r,ΔB</code><br>
-    runtime mapping = per-layer base + per-token delta
+  <div class="slide-route__branch slide-route__branch--sources">
+    <span>named historical sources</span>
+    <strong>Attention Residuals</strong>
   </div>
 </div>
 
-$$
-A_r(H_{b,t})=A_r^{\mathrm{base}}+\Delta A_r(H_{b,t})
-$$
-
-<div class="slide-flow" aria-label="Static HC 和 DHC 不变的状态更新">
-  <span class="slide-flow__step">read</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">Attention / MLP branch</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">transport + write</span>
-</div>
-
-<div class="slide-boundary"><code>static</code> 表示 input-independent，不表示 frozen；optimizer 更新 base、projection 与 scale，forward 再生成 token-dependent mappings。</div>
-
-> **Reported** · Hyper-Connections, arXiv:2409.19606v3, §2.2, Eq. 8–13
-
 <!-- notes:
-2 分钟。SHC 与 DHC 执行同一套 S07 state update；差别只在 coefficient granularity。DHC 的运行时 shapes 是 A_m:[B,T,n,1]、A_r:[B,T,n,n]、B:[B,T,1,n]，不是把这些 runtime tensors 直接存进 optimizer。
-
-[Sources]
-- https://arxiv.org/abs/2409.19606v3
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: hc || 02 · HC / MULTI-STREAM | INITIALIZATION · 4/6 || 09 / 31 -->
-
-## DHC 初始化先关闭动态修正
-
-![Dynamic Hyper-Connections 的两流结构锚点](./assets/hc-fig2b-hyper-connections.png)
-
-`DHC = per-layer base + per-token delta`；初始化先令 `token delta = 0`。
-
-<div class="slide-flow slide-flow--init" aria-label="DHC 的四步初始化">
-  <span class="slide-flow__step"><code>W_m,W_r,W_β=0</code><small>无动态修正</small></span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step"><code>A_r=I</code><small>旧 stream 原样 carry</small></span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step"><code>A_m=e_(l mod n)</code><small>本层轮换读一条</small></span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step"><code>B=1</code><small>写入所有 streams</small></span>
-</div>
-
-<div class="slide-boundary">训练后：主任务 loss 反传 → base / projection / scale 更新 → 不同 token 生成不同 mapping。完整 PreNorm-compatible 起点还依赖最终 stream sum 与 branch-output scale。</div>
-
-> **Reported** · Hyper-Connections, arXiv:2409.19606v3, Fig. 2(b), PDF p.2；§2 与 Appendix
-
-<!-- notes:
-1.5 分钟。S08 已经定义 DHC，本页只回答“从哪里开始训练”。不能只凭 A_r=I 就宣称每层 hidden 与普通 PreNorm 完全相同。
-
-[Sources]
-- https://arxiv.org/abs/2409.19606v3
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: hc || 02 · HC / MULTI-STREAM | QUALITY & MEMORY · 5/6 || 10 / 31 -->
-
-## HC 的算术很轻，状态并不轻
-
-![HC 论文报告的 Training Loss 与 C4 validation loss](./assets/hc-fig1-loss-panels.png)
-
-`Micro Batch Size (tokens per GPU) = 每张 GPU 在一个 microbatch 中处理的 token positions`
-
-<div class="slide-cards slide-cards--3">
-  <div class="slide-card slide-card--state"><strong>1B · DHC×4</strong>41.11→51.86 GB · <code>+26.1%</code><br><code>16,384 tokens / GPU</code></div>
-  <div class="slide-card slide-card--state"><strong>7B · DHC×4</strong>26.27→33.70 GB · <code>+28.28%</code><br><code>2,048 tokens / GPU</code></div>
-  <div class="slide-card slide-card--state"><strong>MoE · DHC×4</strong>31.59→34.65 GB · <code>+9.7%</code><br><code>4,096 tokens / GPU</code></div>
-</div>
-
-7B dense DHC×4：V2 loss `2.581 → 2.559`，下游平均 `70.1 → 71.0`。
-
-> **Reported** · Hyper-Connections, arXiv:2409.19606v3, Fig. 1(a–b), PDF p.1；Table 9, PDF p.16。横轴是 tokens；token efficiency ≠ wall-clock speedup。
-
-<!-- notes:
-2 分钟。三张显存卡的模型和 microbatch 设置不同，不能画进同一 Pareto curve。“1.8× faster convergence”是达到同 loss 的 token efficiency。
-
-[Sources]
-- https://arxiv.org/abs/2409.19606v3
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: hc || 02 · HC / MULTI-STREAM | DEEP PRODUCT RISK · 6/6 || 11 / 31 -->
-
-## HC 的深层风险来自 transport 连乘
-
-![HC 的 composite forward 和 backward Amax gain 随深度放大](./assets/mhc-fig3b-composite-instability.png)
-
-<div class="slide-boundary"><strong>记号桥：</strong>本页统一写 <code>T_l</code>；HC 中 <code>T_l=A_r,l^⊤</code>，mHC 把同一 transport role 写作 <code>H_l^res</code>。它不是 hidden state，也不是 read mapping <code>A_m</code>。</div>
-
-<div class="slide-flow" aria-label="深层 transport 风险的机制链">
-  <span class="slide-flow__step">旧 state 绕过 branch<br><code>X′=T_lX</code></span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">深度有序乘积<br><code>P=T_(L-1)…T_l</code></span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">forward <code>P</code> / backward <code>P^⊤</code><br>共同放大或衰减</span>
-</div>
-
-$$
-P_{l\to L}=T_{L-1}\cdots T_l,
-\qquad (1.02)^{60}\approx3.28,\quad(0.98)^{60}\approx0.30
-$$
-
-`direct path = 不经过 Attention/MLP、只搬运旧 state`。Amax 是最大绝对行和/列和的 propagation diagnostic；右图是现象证据，乘积才是原因解释。
-
-> **Reported + Derived** · mHC, arXiv:2512.24880v2, Fig. 3(b), PDF p.7
-
-<!-- notes:
-1.5 分钟。先解决记号冲突：HC 的 A_r^T 与 mHC 的 H_res 承担同一旧-state transport role。再用标量特例建立直觉；上界不代表每次都取等号。
-
-[Sources]
-- https://arxiv.org/abs/2409.19606v3
-- https://arxiv.org/abs/2512.24880v2
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT | SINKHORN · 1/4 || 12 / 31 -->
-
-## mHC 用 Sinkhorn 约束 transport
-
-<div class="slide-flow slide-flow--timing" aria-label="mHC 中 Sinkhorn 的执行时序">
-  <span class="slide-flow__step"><strong>FORWARD</strong>state → logits <code>Z</code> → Sinkhorn(20) → <code>H_res</code> → state update</span>
-  <span class="slide-flow__step"><strong>BACKWARD</strong>autograd 穿过 exp + normalization；不是 backward 后再投影一次</span>
-</div>
-
-<div class="slide-flow" aria-label="mHC 的 Sinkhorn 生成流程">
-  <span class="slide-flow__step">free logits <code>Z</code></span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step"><code>M⁽⁰⁾ = exp(Z) &gt; 0</code></span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">column norm</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">row norm</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">repeat 20</span>
-</div>
-
-$$
-\begin{aligned}
-T_c(M)_{ij}&=\frac{M_{ij}}{\sum_r M_{rj}},&
-T_r(M)_{ij}&=\frac{M_{ij}}{\sum_s M_{is}},\\
-M^{(t)}&=T_r\!\left(T_c(M^{(t-1)})\right)
-\end{aligned}
-$$
-
-<div class="slide-cards slide-cards--3">
-  <div class="slide-card slide-card--state"><strong>起点</strong><code>M⁽⁰⁾ = [[4,1],[2,3]]</code></div>
-  <div class="slide-card slide-card--read"><strong>列归一化</strong><code>[[2/3,1/4],[1/3,3/4]]</code></div>
-  <div class="slide-card slide-card--transport"><strong>再做行归一化</strong><code>[[8/11,3/11],[4/13,9/13]]</code></div>
-</div>
-
-<div class="slide-boundary">第一轮后 row sums = 1，但 column sums ≈ 1.035 / 0.965，所以继续迭代。目标 doubly stochastic = 元素非负且每行/每列和为 1；finite 20-step 只近似满足。</div>
-
-> **Reported + Derived** · mHC, arXiv:2512.24880v2, Eq. 8–9。$H_{pre}=\sigma(\cdot)$，$H_{post}=2\sigma(\cdot)$；Sinkhorn 是可微重参数化，不是额外 loss。
-
-<!-- notes:
-2.5 分钟。每个 forward 都从当前 state 生成 logits、现场跑 20 轮 Sinkhorn，再用 H_res 更新 state；backward 对这条计算图求导。它不是 optimizer step 后的独立 projection。再逐步口算第一轮；Birkhoff polytope 是双随机矩阵形成的凸多面体。
-
-[Sources]
-- https://arxiv.org/abs/2512.24880v2
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT | GUARANTEES · 2/4 || 13 / 31 -->
-
-## 双随机约束保的是共同模式与均值
-
-![mHC Figure 1(c)：受约束的 pre、res 与 post mappings](./assets/mhc-fig1c-constrained.png)
-
-<div class="slide-cards slide-cards--3">
-  <div class="slide-card slide-card--transport"><strong><code>H1 = 1</code></strong>所有 streams 相同的 common mode 不变</div>
-  <div class="slide-card slide-card--state"><strong><code>1ᵀH = 1ᵀ</code></strong>stream 总和与均值不漂移</div>
-  <div class="slide-card slide-card--read"><strong><code>||H||₂ ≤ 1</code> + closure</strong>2-norm 不放大，乘积仍双随机</div>
-</div>
-
-<div class="slide-boundary">没有保证 <code>H = I</code>；stream differences 可以收缩；finite Sinkhorn 只近似满足约束。</div>
-
-> **Derived** · mHC, arXiv:2512.24880v2, Fig. 1(c), PDF p.1；Eq. 6–9
-
-<!-- notes:
-2 分钟。用 common mode 和 stream mean 两个最小向量例子解释，不只读公式。non-expansive 的证明放在备份页。
-
-[Sources]
-- https://arxiv.org/abs/2512.24880v2
--->
-
----
-
-<!-- layout: comparison -->
-<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT | PROPAGATION EVIDENCE · 3/4 || 14 / 31 -->
-
-## mHC 将深层 Amax 从约 3000 压到约 1.6
-
-![HC 的 composite Amax gain 接近 3000，使用 log y-axis](./assets/mhc-fig3b-composite-instability.png)
-![mHC 的 composite Amax gain 约维持在 1–1.6，使用 linear y-axis](./assets/mhc-fig7b-composite-stability.png)
-
-<div class="slide-cards slide-cards--3">
-  <div class="slide-card slide-card--transport"><strong>composite Amax</strong>约 <code>3000 → 1.6</code></div>
-  <div class="slide-card slide-card--read"><strong>final loss gap</strong><code>-0.021</code> vs baseline</div>
-  <div class="slide-card slide-card--branch"><strong>reported tasks</strong><code>8 / 8</code> 提高</div>
-</div>
-
-<div class="slide-boundary">左图是 log y-axis；右图是 0–2 linear y-axis。Amax 不是完整 operator norm；结果来自作者的单次 27B MoE 运行。</div>
-
-> **Reported** · mHC, arXiv:2512.24880v2, Fig. 3(b), 5, 7(b), PDF p.7/12/14
-
-<!-- notes:
-2 分钟。先定义 Amax，再提醒两图 y 轴不同，最后比较各自报告的绝对峰值。单次运行不建立统计显著性。
-
-[Sources]
-- https://arxiv.org/abs/2512.24880v2
--->
-
----
-
-<!-- layout: comparison -->
-<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT | PIPELINE SCHEDULE · 4/4 || 15 / 31 -->
-
-## mHC 用 DualPipe 重叠 mapping 与通信
-
-<div class="slide-boundary"><strong>目标：</strong>把 mHC residual-side kernels 放进已有 compute / communication 空隙，而不是证明某个单 kernel 更快。横轴是同一 pipeline rank 的 wall-clock；F/B/W 来自不同在途 microbatches。</div>
-
-![mHC 的 communication–computation overlap schedule](./assets/mhc-fig4-system-overlap.png)
-
-<div class="slide-lanes" aria-label="mHC Figure 4 三条执行 lane 的读法">
-  <div><strong>Normal compute</strong><span>主 Attention/MLP + 所有 <code>𝓕_pre</code> + Attention <code>𝓕_post,res</code></span></div>
-  <div><strong>Communication</strong><span>MoE DISPATCH/COMBINE + PP Send/Recv</span></div>
-  <div><strong>High priority</strong><span>只放 MLP <code>𝓕_post,res(F/B)</code>；这是 latency-critical subset，不是完整 kernel list</span></div>
-</div>
-
-`F/B/W = forward / activation-backward / weight-gradient` · `𝓕_pre = branch 前 read` · `𝓕_post,res = transport + write + merge` · `block length = 仅示意`
-
-> **Reported + Derived** · mHC, arXiv:2512.24880v2, Fig. 4, PDF p.12；DeepSeek TileKernels commit `36d9e45`
-
-<!-- notes:
-2.5 分钟。较早 microbatch 已进入 backward，较晚 microbatch 仍在 forward，所以 timeline 可以先出现 ATTN(B) 再出现 ATTN(F)；任一单独 microbatch 内仍然先 forward 后 backward。High-priority lane 的两块分别是 MLP post/res 的 forward 与 backward。论文没有标 microbatch ID，不能从色块宽度反推出真实时长。
-
-[Sources]
-- https://arxiv.org/abs/2512.24880v2
-- https://github.com/deepseek-ai/TileKernels/tree/36d9e45d38e204ebb87e6f6e833821eee0482fe5
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | ROUTE SWITCH · 1/7 || 16 / 31 -->
-
-## AttnRes 把固定求和改成 depth softmax
-
-![Attention Residuals Figure 1：Standard、Full 与 Block residual structures](./assets/attnres-fig1-overview.png)
-
-<div class="slide-cards slide-cards--2">
-  <div class="slide-card slide-card--transport"><strong>HC / mHC</strong>携带不断混合的多流 state</div>
-  <div class="slide-card slide-card--read"><strong>AttnRes</strong>保留有名字的历史 sources</div>
-</div>
-
-$$
-\begin{aligned}
-h_l &= \sum_i \alpha_{i\to l}v_i,\\
-\alpha_{\cdot\to l} &= \operatorname{softmax}_i(s_{i,l}),\\
-s_{i,l} &= w_l^\top\operatorname{RMSNorm}(v_i)
-\end{aligned}
-$$
-
-softmax 轴是 **historical depth/source**，不是 sequence token。
-
-> **Reported** · Attention Residuals, arXiv:2603.15031v1, Fig. 1, PDF p.1；Eq. 1–4
-
-<!-- notes:
-1.5 分钟。query 是 layer-specific parameter；key/value 来自输入相关历史 source。同一 token 的 channels 默认共享 source 权重。
-
-[Sources]
-- https://arxiv.org/abs/2603.15031v1
--->
-
----
-
-<!-- layout: comparison -->
-<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | FULL RETRIEVAL · 2/7 || 17 / 31 -->
-
-## Full AttnRes 让每层直接检索历史 source
-
-`[embedding v₀, layer-1 output v₁, layer-2 output v₂] -- α₀,α₁,α₂ --> current read`
-
-<div class="slide-shape-chain"><code>V,K:[J,B,T,d]</code> → dot <code>w_l</code> over <code>d</code> → logits <code>s:[J,B,T]</code> → softmax over <code>J</code> → weights <code>α:[J,B,T]</code> → read <code>h:[B,T,d]</code></div>
-
-![Full Attention Residuals 保存并检索逐层 source](./assets/attnres-fig1b-full.png)
-![论文报告的 learned depth-routing heatmap](./assets/attnres-fig8-routing.png)
-
-<div class="slide-boundary"><code>J=历史 sources</code> · <code>B=batch</code> · <code>T=token position</code> · <code>d=hidden width</code>。<code>s/α</code> 属于 AttnRes depth router，不是 token self-attention 的 <code>T×T</code> score，也不是 MoE gate。</div>
-
-> **Reported** · Attention Residuals, arXiv:2603.15031v1, Fig. 1(b)/8, PDF p.1/13；Eq. 3–4
-
-<!-- notes:
-2 分钟。先指明 embedding 和每个历史 branch output 都是可单独寻址的 source，再用三个 source 手算。
-
-[Sources]
-- https://arxiv.org/abs/2603.15031v1
--->
-
----
-
-<!-- layout: comparison -->
-<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | INITIALIZATION · 3/7 || 18 / 31 -->
-
-## AttnRes 从均匀 depth read 开始训练
-
-`每个 sublayer 新增 pseudo-query w_l；怎样初始化？论文设 w_l=0。`
-
-<div class="slide-flow slide-flow--init" aria-label="AttnRes 从 zero query 得到均匀读取">
-  <span class="slide-flow__step"><code>w_l=0</code></span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">all logits <code>s_i=0</code></span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step"><code>α_i=1/J</code></span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step"><code>h_l=(1/J)Σ_i v_i</code></span>
-</div>
-
-![Standard Residuals 使用单位权重求和](./assets/attnres-fig1-standard.png)
-![Full AttnRes 使用 depth softmax](./assets/attnres-fig1b-full.png)
-
-<div class="slide-cards slide-cards--2">
-  <div class="slide-card slide-card--state"><strong>forward</strong><code>Σvᵢ</code> vs <code>(1/J)Σvᵢ</code></div>
-  <div class="slide-card slide-card--read"><strong>direct gradient</strong><code>I</code> vs <code>αᵢI = (1/J)I</code></div>
-</div>
-
-<div class="slide-boundary"><strong>Reported：</strong>zero init 避免 training volatility。<code>J</code> 是当前可读 source 数；RMSNorm 可能减弱统一 scale 的影响，但不能推出函数与 Jacobian 完全等价。</div>
-
-> **Derived** · Attention Residuals, arXiv:2603.15031v1, Fig. 1(a–b), PDF p.1；Eq. 3–4
-
-<!-- notes:
-1.5 分钟。zero 是新增 pseudo-query 的初始化选择，不是把 activation 置零。它恢复 equal-weight normalized aggregation，不是 baseline-preserving identity initialization。
-
-[Sources]
-- https://arxiv.org/abs/2603.15031v1
--->
-
----
-
-<!-- layout: comparison -->
-<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | BLOCK COMPRESSION · 4/7 || 19 / 31 -->
-
-## Block AttnRes 把历史压成 block 摘要
-
-`假设每 4 个 sublayers 分一组：4 个 layer sources → 1 个 completed-block summary；当前 block 另保留 partial`
-
-![Full AttnRes 保存所有 layer sources](./assets/attnres-fig1b-full.png)
-![Block AttnRes 保存 completed blocks 与 current partial](./assets/attnres-fig1c-block.png)
-
-`all layer sources → embedding + completed block summaries + current partial`
-
-<div class="slide-boundary">这是 depth mixing columns 的结构化压缩，不宣称无损；实际 block size 以论文配置为准。</div>
-
-> **Reported** · Attention Residuals, arXiv:2603.15031v1, Fig. 1(b–c), PDF p.1；Eq. 5–6
-
-<!-- notes:
-2 分钟。completed block 保存 branch delta 的和；当前 block 的 branch output 累加到 partial。
-
-[Sources]
-- https://arxiv.org/abs/2603.15031v1
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | TWO-PHASE EXECUTION · 5/7 || 20 / 31 -->
-
-## Two-phase 是同一次 softmax 的精确拆分
-
-$$
-h=
-\frac{\underbrace{e^{a_0}b_0+e^{a_1}b_1}_{\text{fixed history}}
-+\underbrace{e^{a_p}p}_{\text{current partial}}}
-{\underbrace{e^{a_0}+e^{a_1}}_{\text{fixed history}}
-+\underbrace{e^{a_p}}_{\text{current partial}}}
-$$
-
-<div class="slide-cards slide-cards--2">
-  <div class="slide-card slide-card--read"><strong>Phase 1 · once per block</strong><code>S</code> 个 layer queries × fixed <code>[b₀,b₁]</code><br>→ 各自的 <code>N_hist,D_hist</code></div>
-  <div class="slide-card slide-card--write"><strong>Phase 2 · per layer in order</strong><code>l₁:p=empty</code> · <code>l₂:p=f₁</code> · <code>l₃:p=f₁+f₂</code><br>→ <code>N_part,D_part</code></div>
-</div>
-
-$$
-h=\frac{N_{\mathrm{hist}}+N_{\mathrm{part}}}{D_{\mathrm{hist}}+D_{\mathrm{part}}}
-$$
-
-<div class="slide-boundary"><strong>exact same softmax</strong>：two-phase 是一次 depth softmax 的 source partition，不是两个训练阶段，也不是两个 attention outputs 取平均。<code>m/o/ℓ</code> 只是在实现中做 max-shift 稳定化。</div>
-
-> **Reported + Derived** · Attention Residuals, arXiv:2603.15031v1, Algorithm 1, PDF p.7；Appendix B
-
-<!-- notes:
-2.5 分钟。先用 b0/b1/p 口算分子和分母的拆分。Phase 1 可批量，因为 history 在 block 内固定；Phase 2 必须顺序，因为 partial 等待前一层 branch output。实际实现用 m/ℓ/o 做数值稳定合并，与页面的分子分母加法同义。
-
-[Sources]
-- https://arxiv.org/abs/2603.15031v1
-- https://github.com/MoonshotAI/Attention-Residuals/tree/85e22310fe5ee860b4a023de312d791de8a5a5e6
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | PIPELINE CACHE · 6/7 || 21 / 31 -->
-
-## PP cache 只传接收方缺少的 history
-
-![Block AttnRes 在四个 physical ranks、两个 virtual-stage chunks 之间传递并缓存 block history](./assets/attnres-fig3-pp-cache.png)
-
-<div class="slide-cards slide-cards--3">
-  <div class="slide-card slide-card--transport"><strong>二维坐标</strong>固定 VS 后仍是 <code>R0→R1→R2→R3</code>；每个 physical rank 各有 VS0 / VS1 chunks</div>
-  <div class="slide-card slide-card--state"><strong>[复原读法]</strong>左括号 = 本 rank 收到/补齐的 history；右括号 = 本 chunk 新完成的 block；<code>[ ]</code> = 没有 boundary</div>
-  <div class="slide-card slide-card--read"><strong>receiver-relative increment</strong><code>+[b₁,b₂]</code> 只发送该接收方尚未缓存的 completed blocks</div>
-</div>
-
-`VS0/R0: [b₀]+[ ] → R1` · `VS0/R1: [b₀]+[b₁] → R2` · `VS0/R3 → VS1/R0`
-
-<div class="slide-boundary">Rank 通常对应一台 GPU 上的逻辑进程，但本质是 physical PP rank；PP cache ≠ token-attention KV cache。<strong>Reported + Derived</strong> · Attention Residuals, Fig. 3, PDF p.6</div>
-
-<!-- notes:
-2 分钟。先说 cache 的目的：下游 receiver 保留已经收到的 blocks，后续只补它尚缺的 history。再解释 virtual stage 是每个 rank 所持 model chunk 的编号轴，不是一台设备；Rank3/VS0 完成后回绕 Rank0/VS1。
-
-[Sources]
-- https://arxiv.org/abs/2603.15031v1
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | SCALING EVIDENCE · 7/7 || 22 / 31 -->
-
-## Block 版本保留了大部分 scaling 收益
-
-![Baseline、Full 与 Block AttnRes 的五点 scaling-law fit](./assets/attnres-fig4-scaling.png)
-
-<div class="slide-card slide-card--neutral"><strong>experiment contract</strong>同一 size 固定 Kimi Linear-style MoE backbone、tokens、depth/width、expert/MLP 与 baseline-selected hyperparameters；唯一改变 residual mechanism。</div>
-
-<div class="slide-metric-table" role="table" aria-label="528M activated 模型的 validation loss">
-  <div role="row"><strong role="columnheader">528M activated · 119B tokens</strong><strong role="columnheader">Val. Loss ↓</strong></div>
-  <div role="row"><span role="cell">Baseline</span><code role="cell">1.719</code></div>
-  <div role="row"><span role="cell">Block AttnRes</span><code role="cell">1.693</code></div>
-  <div role="row"><span role="cell">Full AttnRes</span><code role="cell">1.692</code></div>
-</div>
-
-`五个 size：Full 与 Block 均低于 matched baseline` · `1.25× = 五点 scaling fit 的 compute-equivalence estimate，不是实测 speedup`
-
-<div class="slide-boundary">17 Transformer blocks = 34 sublayers · context 8192 · activated params 排除 embedding · single run · no fit uncertainty · data / validation protocol not public</div>
-
-> **Reported** · Attention Residuals, arXiv:2603.15031v1, Fig. 4 & Table 2, PDF p.9
-
-<!-- notes:
-2.5 分钟。baseline 是五个规模各自对应的 standard PreNorm run，不是一个固定尺寸模型。先读同规模 loss，再解释 activated params 与 fitted compute-equivalence 的边界。
-
-[Sources]
-- https://arxiv.org/abs/2603.15031v1
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: xhc || 05 · xHC / LARGE-N | TWO BOTTLENECKS · 1/6 || 23 / 31 -->
-
-## 回到多流路线：大 N 有两个瓶颈
-
-![mHC 与 xHC 的 loss 和 training FLOPs 随 expansion rate N 的变化](./assets/xhc-fig1-expansion-efficiency.png)
-
-<div class="slide-cards slide-cards--2">
-  <div class="slide-card slide-card--write"><strong>write-back information supply</strong>同一个 branch output 只能提供一个新方向</div>
-  <div class="slide-card slide-card--transport"><strong>mapping generator cost</strong>从 <code>NC</code> state 生成 <code>N²</code> logits，规模 <code>O(N³C)</code></div>
-</div>
-
-`N = persistent stream 数`。信息供给不足是有实验支持的 mechanism hypothesis，不是已证明的容量定理。
-
-> **Reported** · xHC, arXiv:2607.14530v1, Fig. 1, PDF p.1；§3
-
-<!-- notes:
-1.5 分钟。先指出 N>4 后 mHC 收益趋缓，再解释两个候选机制。
-
-[Sources]
-- https://arxiv.org/abs/2607.14530v1
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: xhc || 05 · xHC / LARGE-N | RICHER WRITE · 2/6 || 24 / 31 -->
-
-## xHC 用一次 MLP 构造多个写回方向
-
-![xHC Figure 3(c)：dense read、sparse update 与 temporal feature augmentation](./assets/xhc-fig3c-expanded.png)
-
-<div class="slide-flow" aria-label="xHC 的四个 temporal write candidates">
-  <span class="slide-flow__step">one MLP output sequence</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">current</span>
-  <span class="slide-flow__step">DWConv-4</span>
-  <span class="slide-flow__step">DWConv-8</span>
-  <span class="slide-flow__step">DWConv-12</span>
-</div>
-
-默认 kernel sizes 为 $\{4,8,12\}$，得到 $K_r=4$ 个 write candidates；新增的是 $24C$ depthwise-conv 参数，**不是计算 4 次 MLP**。
-
-<div class="slide-boundary">causal convolution 沿 token sequence，只使用当前位置及更早 token；不混合 channel，也不是 token self-attention。</div>
-
-> **Reported** · xHC, arXiv:2607.14530v1, Fig. 3(c), PDF p.4；Eq. 7–10
-
-<!-- notes:
-1.5 分钟。components 仍来自同一 sequence；Gram–Schmidt 只消除局部共线，不保证语义独立或 unit norm。
-
-[Sources]
-- https://arxiv.org/abs/2607.14530v1
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: xhc || 05 · xHC / LARGE-N | DENSE READ · SPARSE UPDATE · 3/6 || 25 / 31 -->
-
-## xHC 让全部 $N$ 条可读、每层只改 $k$ 条
-
-![xHC Figure 3(c)：全部 streams 参与 read，active subset 执行 mutation](./assets/xhc-fig3c-expanded.png)
-
-<div class="slide-cards slide-cards--2">
-  <div class="slide-card slide-card--read"><strong>① dense read</strong>全部 <code>N=16</code> streams 都影响 branch input</div>
-  <div class="slide-card slide-card--write"><strong>② sparse mutation</strong>fixed-2 + routed Top-2 只更新 <code>k=4</code> streams</div>
-</div>
-
-`N = memory capacity` · `k = mutation budget` · `inactive streams = exact carry`
-
-> **Reported** · xHC, arXiv:2607.14530v1, Fig. 3(c), PDF p.4；Algorithm 1。只更新四条 ≠ 只读取四条。
-
-<!-- notes:
-2 分钟。hard Top-k 的 indices 不可微，只有 selected routed scores 收到本次 routing gradient。
-
-[Sources]
-- https://arxiv.org/abs/2607.14530v1
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: xhc || 05 · xHC / LARGE-N | ABLATION · 4/6 || 26 / 31 -->
-
-## TempAug 改善质量，稀疏更新回收成本
-
-![xHC Table 2 前五行与 Figure 5 的聚焦裁切](./assets/xhc-table2-fig5-ablation-focus.png)
-
-<div class="slide-flow" aria-label="xHC 核心 ablation">
-  <span class="slide-flow__step">mHC N=16<br>1.998 · +18.8%</span><span class="slide-flow__arrow">→ quality</span>
-  <span class="slide-flow__step">+ TempAug<br>1.984 · +20.1%</span><span class="slide-flow__arrow">→ cost</span>
-  <span class="slide-flow__step">full xHC<br>1.983 · +3.3%</span>
-</div>
-
-第一段主要改善 validation loss；第二段主要回收 dense large-N 的额外 FLOPs。
-
-<div class="slide-boundary">Val. Loss 越低越好；括号为论文 counting boundary 下的 training FLOPs overhead，不等于 wall-clock。</div>
-
-> **Reported** · xHC, arXiv:2607.14530v1, Table 2 & Fig. 5, PDF p.10
-
-<!-- notes:
-2 分钟。沿三行一次只比较一个新增组件；单一 in-house setting、无多 seed。
-
-[Sources]
-- https://arxiv.org/abs/2607.14530v1
--->
-
----
-
-<!-- layout: comparison -->
-<!-- section-header: xhc || 05 · xHC / LARGE-N | I/O ACCOUNTING · 5/6 || 27 / 31 -->
-
-## 稀疏更新降低 FLOPs，却留下 73.5C I/O
-
-`R = read elements` · `W = write elements` · `C = 一个 token 的 hidden-vector 元素数`
-
-![xHC Table 4：mHC、full xHC 与 xHC-Flash 的逐操作 read/write accounting](./assets/xhc-table4-io.png)
-
-<!-- notes:
-2.5 分钟。从 vanilla merge 的 2C reads + C write = 3C 开始，再读 Table 4：mHC N=4 为 21C+13C=34C；full xHC N=16,k=4 为 55C+18.5C=73.5C。headline 省略 coefficient-sized 小项，不是实测 HBM bytes。
-
-[Sources]
-- https://arxiv.org/abs/2607.14530v1
--->
-
----
-
-<!-- layout: figure -->
-<!-- section-header: xhc || 05 · xHC / LARGE-N | FLASH AMORTIZATION · 6/6 || 28 / 31 -->
-
-## xHC-Flash 用跨 sublayer 分摊降低 I/O
-
-![xHC、xHC-Flash 与 Flash-4sub 的 validation loss 和静态 residual-side I/O](./assets/xhc-table5-flash.png)
-
-`Table 4 中带 * 的 full-state work → once per 2-sublayer block / once per 4-sublayer window`
-
-<div class="slide-cards slide-cards--2">
-  <div class="slide-card slide-card--read"><strong>Flash · 2 sublayers</strong><code>36C R + 15C W = 51C</code><br>共享 routing / joint pre-read；Attention 不做 <code>H_res</code>，用 exact input correction</div>
-  <div class="slide-card slide-card--transport"><strong>Flash-4sub · 4 sublayers</strong><code>26.5C R + 13.5C W = 40C</code><br>四层共享；residual mixing / scatter 推迟到最后 MLP</div>
-</div>
-
-<div class="slide-boundary">correction 在固定 window contract 内精确；相对每个 sublayer 重新 routing 的 full xHC，routing / pre-mapping / mixing schedule 已改变，因此整体仍是架构近似。<strong>Reported + Derived</strong> · xHC Table 5, PDF p.14</div>
-
-<!-- notes:
-1.5 分钟。带星号的 full-state work 在 window 内共享，但 active mapping、write-back、merge/correction 并未全部消失，所以 73.5C 不能机械除以 2 或 4。Table 5 同一 10B setup 下 full/Flash/4sub loss 为 1.983/1.983/1.984。
-
-[Sources]
-- https://arxiv.org/abs/2607.14530v1
--->
-
----
-
-<!-- layout: comparison -->
-<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION | METHOD CHOICE · 1/3 || 29 / 31 -->
-
-## 没有一种方法在所有设计轴上都占优
-
-| 方法 | 能保存多少并行 state？ | 能否直接选择历史 source？ | 深层 transport 有何约束？ | 主要系统负担在哪里？ |
-|---|---|---|---|---|
-| HC | 中：$n$ streams | 低 | 低：unconstrained | activation / 深层乘积 |
-| mHC | 中：$n$ streams | 低 | 高：near doubly stochastic | I/O / Sinkhorn / PP |
-| AttnRes | 高：历史 sources | 高：depth softmax | 不适用：sources persist | history / cache |
-| xHC | 高：$N$ streams | 中：dense read | 中：active mixing | persistent state / routing |
-
-选择方法，本质是在 state capacity、retrieval expressivity、transport stability 与 system cost 上选 Pareto 点。
-
-<div class="slide-boundary">定性综合，不是统一实验排名；“低/中/高”只相对同一列的比较对象。</div>
-
-<!-- notes:
-2 分钟。逐列比较，不逐方法重讲一遍。要可组合多流 transport 看 mHC；要直接取历史看 AttnRes；要扩大 N 并限制 mutation 看 xHC。
+开场先给一个承诺：不从论文名和大公式开始，而从一次熟悉的 residual add 开始。目标是最后能亲手画出每种方法的一层状态更新。
 
 [Sources]
 - https://arxiv.org/abs/2409.19606v3
 - https://arxiv.org/abs/2512.24880v2
 - https://arxiv.org/abs/2603.15031v1
 - https://arxiv.org/abs/2607.14530v1
-- https://github.com/J-shang/residual
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: depth || 01 · 共同起点 / DEPTH MEMORY · 1/7 || 02 / 64 -->
+
+## 一次 residual add 是一次状态更新
+
+$$
+x_{l+1}=x_l+F_l(\operatorname{Norm}(x_l))
+$$
+
+<div class="slide-role-flow" aria-label="一次 PreNorm residual 的状态更新">
+  <span class="slide-role slide-role--state"><strong>state</strong><code>x_l</code></span>
+  <b>→</b>
+  <span class="slide-role slide-role--read"><strong>read</strong><code>x_l</code></span>
+  <b>→</b>
+  <span class="slide-role slide-role--branch"><strong>branch</strong><code>y_l</code></span>
+  <b>→</b>
+  <span class="slide-role slide-role--write"><strong>write</strong><code>x_l+y_l</code></span>
+</div>
+
+PreNorm 同时规定了：当前层读什么、branch 产生什么增量、下一层保存什么。
+
+<!-- notes:
+先暂时忘掉 skip connection 这个标签，只看运行时状态。进入这一层只有 x_l；branch 读取它，产生新方向，仍写回同一个容器。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
+- https://arxiv.org/abs/2409.19606v3
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: depth || 01 · 共同起点 / DEPTH MEMORY · 2/7 || 03 / 64 -->
+
+## 展开三层后，历史被压进一条累计状态
+
+<div class="slide-derivation">
+  <code>x₁ = v₀ + v₁</code>
+  <code>x₂ = v₀ + v₁ + v₂</code>
+  <code>x₃ = v₀ + v₁ + v₂ + v₃</code>
+  <strong>一般地：$x_l=\sum_{i=0}^{l-1}v_i$</strong>
+</div>
+
+<div class="slide-matrix-panel">
+  <div class="slide-matrix slide-matrix--causal" aria-label="固定 causal depth mixing 矩阵">
+    <span>1</span><span>0</span><span>0</span><span>0</span>
+    <span>1</span><span>1</span><span>0</span><span>0</span>
+    <span>1</span><span>1</span><span>1</span><span>0</span>
+    <span>1</span><span>1</span><span>1</span><span>1</span>
+  </div>
+  <small>row = current layer · column = historical source</small>
+</div>
+
+<!-- notes:
+逐行展开。每个 v_i 都是历史 sublayer 产生的新信息，但下一层只看见它们的固定系数求和。全 1 带来简单 direct path，也锁定了 depth mixing。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: depth || 01 · 共同起点 / DEPTH MEMORY · 3/7 || 04 / 64 -->
+
+## 单一累计 state 同时限制 capacity 与 addressability
+
+<div class="slide-pressure-split" aria-label="单一累计状态面对的两类设计压力">
+  <div>
+    <small>capacity / topology pressure</small>
+    <strong>只有一个 recurrent container</strong>
+    <span>每层持续复用同一个 <code>[B,T,d]</code> state；若希望跨 depth 保存多条并行路径，必须先改变 persistent topology。</span>
+  </div>
+  <div>
+    <small>source addressability pressure</small>
+    <strong>历史身份被固定求和压缩</strong>
+    <span><code>(v₁,v₂)</code> 与 <code>(v₁+δ,v₂−δ)</code> 得到同一累计 state，后层通常不能点名重读其中一个 source。</span>
+  </div>
+</div>
+
+> **复原推导** · one stored state creates two distinct design pressures
+
+<div class="slide-boundary">这不表示 hidden width 不足或 baseline 无法表达；问题只在于 residual path 选择了怎样的跨层 state 语义。</div>
+
+<!-- notes:
+不要把这页讲成 hidden dimension 不够，也不要宣称 baseline 无表达能力。这里只把两类压力分开：persistent containers 有多少，以及历史 source 能否被直接点名。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+- https://arxiv.org/abs/2603.15031v1
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: depth || 01 · 共同起点 / DEPTH MEMORY · 4/7 || 05 / 64 -->
+
+## 改造 depth memory 的两条路线
+
+<div class="slide-route slide-route--large" aria-label="多流状态与历史检索两条路线">
+  <div class="slide-route__root">Standard residual</div>
+  <div class="slide-route__branch slide-route__branch--streams">
+    <span>capacity / topology</span>
+    <strong>HC</strong><i>→</i><strong>mHC</strong><i>→</i><strong>xHC</strong>
+  </div>
+  <div class="slide-route__branch slide-route__branch--sources">
+    <span>source addressability</span>
+    <strong>Attention Residuals</strong>
+  </div>
+</div>
+
+<div class="slide-boundary">这是本次分享的统一问题空间：两条路线回应不同压力，不表示论文动机相同、代码继承、数学等价、发布时间或实验排名。</div>
+
+<!-- notes:
+HC、mHC、xHC 从 capacity/topology 压力出发，内部形成连续设计链；AttnRes 从 addressability 出发改变 stored-state semantics。统一的是讲述框架，不是作者动机。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+- https://arxiv.org/abs/2512.24880v2
+- https://arxiv.org/abs/2603.15031v1
+- https://arxiv.org/abs/2607.14530v1
 -->
 
 ---
 
 <!-- layout: comparison -->
-<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION | TEST AGENDA · 2/3 || 30 / 31 -->
+<!-- section-header: depth || 01 · 共同起点 / DEPTH MEMORY · 5/7 || 06 / 64 -->
 
-## 开放问题应该被写成测试
+## 全场只用一个可手算的 toy world
 
-**论文未闭合的问题，不用先训练大模型也能部分验证。**
+<div class="slide-vector-world">
+  <div class="slide-vector slide-vector--state"><small>h⁽¹⁾ / v₀</small><strong>[2, 0]</strong></div>
+  <div class="slide-vector slide-vector--state"><small>h⁽²⁾ / v₁</small><strong>[0, 3]</strong></div>
+  <div class="slide-vector slide-vector--write"><small>branch y / v₂</small><strong>[2, 1]</strong></div>
+</div>
 
-| 问题 | 最小 CPU check | later distributed check |
-|---|---|---|
-| 深层 transport 会不会漂移？ | compose 60 层，记录 singular values 与 row/column error | mixed precision + recompute |
-| 初始化是否等价？ | hand calculation + output/JVP + float64 gradcheck | checkpoint migration |
-| reference / fused 是否同一函数？ | direct/recompute/two-phase 对照 | fallback + determinism |
+<div class="slide-shape-chain">B = 1 · T = 1 · d = 2　|　HC/mHC: n = 2　|　xHC: N = 4, k = 2　|　AttnRes: J = 3</div>
 
-先固定 correctness contract，再进入 GPU scaling。
+压掉 batch 与 token 轴，只为盯住 stream/source 轴；每种方法的操作语义仍然保留。
 
 <!-- notes:
-1.5 分钟。逐行回指 S11、S18、S20–S21、S27–S28 的未闭合边界，把研究问题改写成可证伪测试。
+三个向量后面会反复出现。颜色固定：蓝色表示 persistent state/source，绿色 read，紫色 transport，橙色 write。
 
 [Sources]
 - https://github.com/J-shang/residual
@@ -894,38 +203,757 @@ $$
 ---
 
 <!-- layout: statement -->
-<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION | TAKEAWAY · 3/3 || 31 / 31 -->
+<!-- section-header: depth || 01 · 共同起点 / DEPTH MEMORY · 6/7 || 07 / 64 -->
 
-## Residual path 定义了 depth memory
+## 后续始终回答同一组 operational questions
 
-$$
-\boxed{
-\text{stored state}
-+\text{read}
-+\text{transport}
-+\text{write}
-+\text{system contract}
-}
-$$
-
-<div class="slide-cards slide-cards--4">
-  <div class="slide-card slide-card--read"><strong>HC</strong>multi-stream state</div>
-  <div class="slide-card slide-card--transport"><strong>mHC</strong>stable transport</div>
-  <div class="slide-card slide-card--state"><strong>AttnRes</strong>depth retrieval</div>
-  <div class="slide-card slide-card--write"><strong>xHC</strong>sparse mutation</div>
+<div class="slide-contract" aria-label="连接方法的八字段 operational contract">
+  <span><strong>state</strong>跨层保存什么？</span>
+  <span><strong>read</strong>当前 branch 看什么？</span>
+  <span><strong>transport</strong>旧信息怎样过层？</span>
+  <span><strong>write</strong>新信息写到哪里？</span>
+  <span><strong>granularity</strong>谁共享 routing？</span>
+  <span><strong>initialization</strong>从哪个 special case 开始？</span>
+  <span><strong>composition</strong>许多层之后怎样？</span>
+  <span><strong>cost</strong>state / I/O / communication 付出什么？</span>
 </div>
 
-连接方法的核心不是多加一个算子，而是重新定义信息沿 depth 的**保存、访问、变换与消亡方式**。
+<!-- notes:
+这八个问题是后面每章重复使用的框架。参数少不等于 state 便宜；初始化接近 identity 也不等于深层乘积受控。
 
-`Q&A · 5 MIN`
+[Sources]
+- https://github.com/J-shang/residual
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM · 1/12 || 08 / 64 -->
+
+## HC 让 residual topology 本身可学习
+
+![Hyper-Connections Figure 2：从单流 residual 到可学习的多流 topology](./assets/hc-fig2-overview.png)
+
+HC 把一条 residual path 扩成多条 persistent streams，并把 **read、旧 state transport、branch write** 都变成可学习连接。
+
+<div class="slide-boundary">主 Attention / MLP 仍然只处理一次 $d\!\to\!d$；增加的是跨层 state 容器与围绕 branch 的 topology。</div>
+
+> **论文报告** · Hyper-Connections, Fig. 2, PDF p.2
 
 <!-- notes:
-1.5 分钟。按公式五个字段回收全场，不再引入新术语。结束句：连接方法的核心不是多加一个算子，而是重新定义 depth 上的信息生命史。
+先讲教学模型，再把原 Figure 2 当结构锚点。核心不是复制 hidden state，而是让 residual path 的 topology 可学习。
 
 [Sources]
 - https://arxiv.org/abs/2409.19606v3
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM · 2/12 || 09 / 64 -->
+
+## 第二条 stream 首先提供的是保存选择
+
+<div class="slide-streams" aria-label="两条 residual streams 的保存选择">
+  <div class="slide-stream slide-stream--active"><strong>stream 1</strong><span>read</span><i>→</i><span>branch</span><i>→</i><span>write</span></div>
+  <div class="slide-stream slide-stream--carry"><strong>stream 2</strong><span>exact carry</span><i>────────────────→</i><span>unchanged</span></div>
+</div>
+
+若 read 第一条、transport 为 identity、write 仅第一条：
+
+$$
+h_1'=h_1+F(h_1),\qquad h_2'=h_2
+$$
+
+这只证明 topology **允许**保存分工，不宣称训练后一定形成固定语义。
+
+<!-- notes:
+先用 n=2 建立直觉，不引入矩阵符号。第二条 stream 可以暂时绕过当前 branch，保留未被改写的信息。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM · 3/12 || 10 / 64 -->
+
+## HC 扩 state，不扩主 branch
+
+<div class="slide-shape-flow" aria-label="HC 的 logical shape trace">
+  <span class="slide-role--state"><strong>[B,S,n,d]</strong><small>persistent state</small></span>
+  <b>— read n → 1 →</b>
+  <span class="slide-role--read"><strong>[B,S,d]</strong><small>branch input</small></span>
+  <b>— Attention / MLP →</b>
+  <span class="slide-role--write"><strong>[B,S,d]</strong><small>branch output</small></span>
+  <b>— write 1 → n →</b>
+  <span class="slide-role--state"><strong>[B,S,n,d]</strong><small>next state</small></span>
+</div>
+
+`n = stream axis`　·　`d = hidden width`
+
+<div class="slide-boundary">多流增加 persistent activation 与 mapping；主干算子仍处理一条 $d$ 维表示。</div>
+
+<!-- notes:
+纠正常见误解：扩的是跨深度持久 state，不是 FFN hidden size。后面所有 mapping 都只围绕 n 轴工作。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM · 4/12 || 11 / 64 -->
+
+## Read 决定当前 branch 看见哪种多流组合
+
+<div class="slide-stream-read" aria-label="两条 stream 汇聚成 branch input">
+  <span>h₁</span><i>↘ a₁</i>
+  <strong>u</strong>
+  <span>h₂</span><i>↗ a₂</i>
+</div>
+
+<div>
+
+$$
+u=H^\top A_m
+$$
+
+`H:[n,d]`　·　`A_m:[n,1]`　·　`u:[d]`
+
+- `[1,0]ᵀ`：读 stream 1
+- `[0,1]ᵀ`：读 stream 2
+- `[0.5,0.5]ᵀ`：读平均
+
+</div>
+
+<!-- notes:
+同一个 read coefficient 作用于整条 d-vector，不是在 channel 内做 attention。A_m 的职责只是从多流 state 得到 branch input。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM · 5/12 || 12 / 64 -->
+
+## Transport 决定旧 streams 怎样跨层存在
+
+<div class="slide-transport-grid" aria-label="二乘二 source-to-target transport">
+  <span class="source">old h₁</span><i>1.0 →</i><span class="target">next h₁</span>
+  <span class="source">old h₁</span><i>0.5 ↘</i><span class="target">next h₂</span>
+  <span class="source">old h₂</span><i>1.0 →</i><span class="target">next h₂</span>
+</div>
+
+<div>
+
+$$
+H'_{\mathrm{old}}=A_r^\top H
+$$
+
+在 row-stream convention 下：
+
+`A_r[i,j] = source stream i → target stream j`
+
+<div class="slide-boundary">转置位置可随代码 convention 改变；source-to-target 语义不能变。</div>
+
+</div>
+
+<!-- notes:
+这页只讲旧 state carry/mix，不讲 branch write。逐条指出 source 与 target，避免矩阵方向在实现里被悄悄转反。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM · 6/12 || 13 / 64 -->
+
+## Write 决定一个 branch output 注入哪些 streams
+
+<div class="slide-write-fan" aria-label="一个 branch output 写入多条 target streams">
+  <strong>branch y</strong>
+  <i>↗ b₁</i><span>target 1</span>
+  <i>↘ b₂</i><span>target 2</span>
+</div>
+
+<div>
+
+$$
+H'_{\mathrm{write}}=B^\top y^\top
+$$
+
+`B:[1,n]`　·　`y:[d]`
+
+`B=[1,0]`：只写 target 1；`B=[1,1]`：两条都写。
+
+每条新增量都位于 $\operatorname{span}\{y\}$。
+
+</div>
+
+<!-- notes:
+现在只建立 one-to-n write 语义。共线 write bottleneck 会在 xHC 章节成为设计压力。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM · 7/12 || 14 / 64 -->
+
+## 三个 mapping 合起来才是一层 HC
+
+![HC 一层完整执行 read、branch、transport 与 write](./assets/hc-read-mix-write.svg)
+
+$$
+u=H^\top A_m,\qquad
+y=F(\operatorname{Norm}(u)),\qquad
+H'=A_r^\top H+B^\top y^\top
+$$
+
+`A_m` 不保存 state　·　`A_r` 不经过主 branch　·　`B` 不生成新 features
+
+> **论文报告 + 复原推导** · Hyper-Connections, Eq. 1–8
+
+<!-- notes:
+沿图从左到右走一遍。三个矩阵角色不同，不能因为都叫 mapping 就在实现或解释里混在一起。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM · 8/12 || 15 / 64 -->
+
+## 一个 $n=2$ 数值例子足以检查矩阵方向
+
+<div class="slide-worked-input">
+
+$$
+H=\begin{bmatrix}2&0\\0&3\end{bmatrix},\quad
+A_m=\begin{bmatrix}1\\0\end{bmatrix}
+$$
+
+$$
+A_r=\begin{bmatrix}1&0.5\\0&1\end{bmatrix},\quad
+B=\begin{bmatrix}1&0\end{bmatrix},\quad y=[2,1]
+$$
+
+</div>
+
+<div class="slide-worked-result">
+  <span><strong>target 1</strong><code>old h₁ + y = [4,1]</code></span>
+  <span><strong>target 2</strong><code>0.5 old h₁ + h₂ = [1,3]</code></span>
+  <b>H′ = [[4,1], [1,3]]</b>
+</div>
+
+> **复原推导** · target-by-target calculation
+
+<!-- notes:
+按 target 一行一行读，不要求听众心算矩阵乘法。第二条接收 0.5 h1 和 h2，但不接收 branch write。
+
+[Sources]
+- https://github.com/J-shang/residual
+-->
+
+---
+
+<!-- layout: comparison -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM · 9/12 || 16 / 64 -->
+
+## SHC 学每层 topology，同层 token 共用
+
+<div class="slide-param-identity">
+  <div>
+    <small>token 1</small><small>token 2</small><small>token 3</small>
+  </div>
+  <b>→</b>
+  <strong>Aₘ · Aᵣ · B</strong>
+  <span>learned per layer<br>shared across batch / token</span>
+</div>
+
+<div class="slide-boundary"><strong>static = input-independent</strong>，不是 frozen；这些 mappings 仍由主任务 loss 端到端更新。</div>
+
+<!-- notes:
+这一页只定义 weight granularity。SHC 能学每层不同 topology，但同一层的两个 token 不能选择不同 routing。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM · 10/12 || 17 / 64 -->
+
+## DHC 为每个 token 生成 runtime routing
+
+<div class="slide-flow slide-flow--timing">
+  <span class="slide-flow__step"><strong>current H[b,t]</strong><small>runtime state</small></span>
+  <span class="slide-flow__arrow">→</span>
+  <span class="slide-flow__step"><strong>route norm</strong></span>
+  <span class="slide-flow__arrow">→</span>
+  <span class="slide-flow__step"><strong>projection + tanh</strong></span>
+  <span class="slide-flow__arrow">→</span>
+  <span class="slide-flow__step"><strong>ΔA(H)</strong></span>
+</div>
+
+<div>
+
+$$
+A_r(H)=A_r^{\mathrm{base}}+s_\alpha\tanh(\operatorname{Norm}_{route}(H)W_r)
+$$
+
+<div class="slide-lanes">
+  <div><strong>optimizer-owned</strong><span>base · projection · scale</span></div>
+  <div><strong>runtime tensors</strong><span>Aₘ(H) · Aᵣ(H) · B(H)</span></div>
+</div>
+
+</div>
+
+<!-- notes:
+运行时 mapping 不是 optimizer 直接维护的 parameter，而是当前 token forward 生成的 activation；完整 state update 仍沿用 S14。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM · 11/12 || 18 / 64 -->
+
+## 初始化先关闭动态修正，再恢复熟悉路径
+
+<div class="slide-role-flow slide-role-flow--init">
+  <span><strong>dynamic projection = 0</strong><small>关闭 token delta</small></span>
+  <b>→</b>
+  <span><strong>Aᵣ = I</strong><small>旧 state identity carry</small></span>
+  <b>→</b>
+  <span><strong>rotating one-hot Aₘ</strong><small>轮换 read</small></span>
+  <b>→</b>
+  <span><strong>B = 1</strong><small>全流 write</small></span>
+</div>
+
+<div class="slide-boundary">PreNorm compatibility 依赖完整的 read / write / final collapse contract，不是只看 $A_r=I$。</div>
+
+<!-- notes:
+避免说每个中间 state 都等于 standard PreNorm。兼容性来自轮换读取、全流写入、branch scale 与最终 collapse 的组合。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+-->
+
+---
+
+<!-- layout: comparison -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM · 12/12 || 19 / 64 -->
+
+## HC 证明多流 topology 有效，但 persistent state 并不免费
+
+<div class="slide-evidence-pair">
+  <div>
+    <strong>方法有效</strong>
+    <span>DHC 在论文多组语言与视觉实验中改善 loss / downstream metrics</span>
+  </div>
+  <div>
+    <strong>persistent state</strong>
+    <span>$d\to nd$；论文报告训练显存增加约 9.7%–28.3%</span>
+  </div>
+</div>
+
+![HC 论文的 loss 结果](./assets/hc-fig1-results.png)
+![HC 论文 Table 9 的训练显存结果](./assets/hc-table9-memory.png)
+
+<div class="slide-boundary">本页只确认 quality evidence 与 measured memory；transport product 的深层风险从下一页开始单独追踪。</div>
+
+<!-- notes:
+先肯定多流 topology 的经验价值，再报告 persistent state 的 measured memory。不要在本页提前画 transport product；它属于 mHC 的下一个设计压力。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT · 1/11 || 20 / 64 -->
+
+## 深层风险来自许多 transport 的有序乘积
+
+![无约束 residual transport 的深层有序乘积会放大或衰减不同方向](./assets/deep-transport-product.svg)
+
+$$
+P=T_{L-1}\cdots T_l,\qquad
+1.2^{60}\approx5.6\times10^4,\qquad
+0.8^{60}\approx1.5\times10^{-6}
+$$
+
+Forward 经过 $P$；backward 经过 $P^\top$，共享同一组 singular values。
+
+> **复原推导** · mHC 的设计压力
+
+<!-- notes:
+单层只稍微偏离 identity，也可能在很多层后指数放大或衰减。mHC 要控制的是可重复复合的集合，不只是初始化点。
+
+[Sources]
 - https://arxiv.org/abs/2512.24880v2
-- https://arxiv.org/abs/2603.15031v1
+-->
+
+---
+
+<!-- layout: comparison -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT · 2/11 || 21 / 64 -->
+
+## 论文在训练中观察到 propagation 失控
+
+![原始 HC 训练中的 loss 与 gradient spike](./assets/mhc-fig2-training-instability.png)
+![原始 HC composite transport 的 propagation instability](./assets/mhc-fig3b-composite-instability.png)
+
+`约 12k step：loss / gradient spike`　·　`composite Amax 峰值接近 3000`
+
+<div class="slide-boundary">这是现象证据；Amax 是 common-mode gain diagnostic，不是完整 operator norm，也不能单独证明因果。</div>
+
+> **论文报告** · mHC, Fig. 2–3
+
+<!-- notes:
+先读训练症状，再与上一页的 transport product 机制连接。相关性支持设计方向，但不把曲线本身讲成因果证明。
+
+[Sources]
+- https://arxiv.org/abs/2512.24880v2
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT · 3/11 || 22 / 64 -->
+
+## mHC 限制 transport，不禁止交换
+
+<div class="slide-set-map">
+  <span>all real matrices</span>
+  <div>
+    <strong>doubly stochastic</strong>
+    <small>identity · permutation · convex mixing</small>
+  </div>
+</div>
+
+<div>
+
+$$
+H\mathbf1=\mathbf1,\qquad
+\mathbf1^\top H=\mathbf1^\top,\qquad
+H\ge0
+$$
+
+mHC 缩小可选 transport 的集合，同时保留非平凡 stream exchange。
+
+<div class="slide-boundary">$H=I$ 很稳定，却会取消 HC 最重要的 cross-stream mixing。</div>
+
+</div>
+
+<!-- notes:
+设计目标是 stability 与 plasticity 的折中。双随机集合不是 identity 的同义词，而是一组对深层复合友好的 mixing matrices。
+
+[Sources]
+- https://arxiv.org/abs/2512.24880v2
+-->
+
+---
+
+<!-- layout: comparison -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT · 4/11 || 23 / 64 -->
+
+## Identity、swap 与 average 都属于稳定候选
+
+<div class="slide-matrix-examples">
+  <div><strong>identity</strong><code>[[1,0],[0,1]]</code><small>[2,0] · [0,3]</small></div>
+  <div><strong>swap</strong><code>[[0,1],[1,0]]</code><small>[0,3] · [2,0]</small></div>
+  <div><strong>average</strong><code>½[[1,1],[1,1]]</code><small>[1,1.5] · [1,1.5]</small></div>
+</div>
+
+三者都非负，且每行、每列的和为 1。
+
+<div class="slide-boundary">Uniform average 消除了 difference mode：双随机不保证 stream diversity。</div>
+
+<!-- notes:
+identity 不交换，swap 完全交换，average 做凸混合。稳定候选仍有丰富结构，不等于每层只能 identity carry。
+
+[Sources]
+- https://arxiv.org/abs/2512.24880v2
+- https://github.com/J-shang/residual
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT · 5/11 || 24 / 64 -->
+
+## Sinkhorn 在 forward 内生成 mapping
+
+![Sinkhorn 从 logits 得到近似双随机 residual transport](./assets/mhc-sinkhorn-transport.svg)
+
+<div class="slide-flow">
+  <span class="slide-flow__step">Z logits</span><span class="slide-flow__arrow">→</span>
+  <span class="slide-flow__step">exp(Z)</span><span class="slide-flow__arrow">→</span>
+  <span class="slide-flow__step">column norm</span><span class="slide-flow__arrow">→</span>
+  <span class="slide-flow__step">row norm</span><span class="slide-flow__arrow">→ ×20</span>
+</div>
+
+<div class="slide-boundary"><strong>forward 可微计算</strong>，不是 optimizer step 之后的独立 projection；有限迭代得到的是近似双随机 mapping。</div>
+
+> **论文报告** · mHC, Eq. 6–9
+
+<!-- notes:
+Backward 穿过 exp 与 normalization 计算图，optimizer 更新 generator；下一次 forward 再生成 mapping。最终 row/column error 应单独验证。
+
+[Sources]
+- https://arxiv.org/abs/2512.24880v2
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT · 6/11 || 25 / 64 -->
+
+## 双随机 transport 保住共同模式与均值
+
+<div class="slide-conservation">
+  <div>
+    <strong>common mode</strong>
+    <code>H(1zᵀ) = 1zᵀ</code>
+    <small>所有 streams 共享的分量保持不变</small>
+  </div>
+  <div>
+    <strong>stream mean</strong>
+    <code>(1/n)1ᵀHX = (1/n)1ᵀX</code>
+    <small>每个 feature channel 的 stream 平均保持</small>
+  </div>
+</div>
+
+<div>
+
+$H^\top$ 仍双随机，因此 backward 具有对应的共同模式与均值性质。
+
+<div class="slide-boundary">Common mode 可取等号；difference directions 仍可能被混合或收缩。</div>
+
+</div>
+
+<!-- notes:
+不要只念公式。共同模式是每条 stream 都相同的部分；stream mean 是不同 streams 在每个 channel 上的平均。
+
+[Sources]
+- https://arxiv.org/abs/2512.24880v2
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT · 7/11 || 26 / 64 -->
+
+## Non-expansiveness 与乘法闭包控制深层复合
+
+<div>
+
+$$
+H=\sum_k\lambda_kP_k
+\quad\Longrightarrow\quad
+\|H\|_2\le1
+$$
+
+双随机矩阵是 permutation matrices 的 convex combination，所以 exact transport 不会放大 operator 2-norm。
+
+</div>
+
+<div>
+
+$$
+H_1,H_2\in\mathcal B_n
+\quad\Longrightarrow\quad
+H_2H_1\in\mathcal B_n
+$$
+
+乘法闭包把单层约束提升成深层结构性质。
+
+<div class="slide-boundary">Non-expansion 不表示每个方向都保持 norm。</div>
+
+</div>
+
+<!-- notes:
+先给决定性证明锚点，不展开完整 appendix。实际 finite Sinkhorn 只有近似保证，仍需测 row/column error 与深层 product drift。
+
+[Sources]
+- https://arxiv.org/abs/2512.24880v2
+-->
+
+---
+
+<!-- layout: comparison -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT · 8/11 || 27 / 64 -->
+
+## 稳定集合仍不等于 identity 或 stream diversity
+
+<div class="slide-boundaries">
+  <div><strong>精确保证</strong><span>非负 · 行列和为 1 · common mode · mean · non-expansion · closure</span></div>
+  <div><strong>不保证</strong><span>每层等于 identity · 所有方向保 norm · streams 保持多样 · 总 state 永不增长</span></div>
+  <div><strong>实现边界</strong><span>finite Sinkhorn · clamp · mixed precision · branch write</span></div>
+</div>
+
+Uniform average 是最短反例：它双随机，却把两条 stream 的 difference mode 完全抹掉。
+
+<!-- notes:
+把 stability 与 stream effectiveness 分成两个研究问题。mHC 约束 residual transport，不自动解决 representation collapse 或 branch growth。
+
+[Sources]
+- https://arxiv.org/abs/2512.24880v2
+-->
+
+---
+
+<!-- layout: comparison -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT · 9/11 || 28 / 64 -->
+
+## 作者报告的 gain、gradient 与 loss 与约束方向一致
+
+![原始 HC 的 composite Amax instability](./assets/mhc-fig3b-composite-instability.png)
+![mHC 的 composite Amax stability](./assets/mhc-fig7b-composite-stability.png)
+
+`HC composite Amax ≈ 3000`　→　`mHC ≈ 1.6`
+
+<div class="slide-boundary">先读绝对值与 y-axis，再读视觉高度；单次大模型运行、无多 seed，不能由 Amax 一项证明完整机制。</div>
+
+> **论文报告** · mHC, Fig. 5, 7, 8
+
+<!-- notes:
+数学方向、diagnostic 与训练现象相互一致，但仍保留实验边界。接下来切换到系统问题：多流 state 的 bytes 还在。
+
+[Sources]
+- https://arxiv.org/abs/2512.24880v2
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT · 10/11 || 29 / 64 -->
+
+## 稳定约束不会消除多流 state 的系统成本
+
+<div class="slide-cost-formula">
+  <span><strong>activation</strong><code>B · S · n · C · bytes(dtype)</code></span>
+  <span><strong>per-layer movement</strong><code>read + mix + write full multi-stream state</code></span>
+  <span><strong>PP boundary</strong><code>payload ∝ nC</code></span>
+  <span><strong>mapping work</strong><code>generation + Sinkhorn + backward / recompute</code></span>
+</div>
+
+参数与主干 FLOPs 可以很小，persistent state 仍必须跨很多层保存和搬运。
+
+<!-- notes:
+这里只讲成本来源，不承诺 wall-clock 数字。实现还需明确 mapping 是否重算、用什么 dtype 累积、PP 是否传 full state。
+
+[Sources]
+- https://arxiv.org/abs/2512.24880v2
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT · 11/11 || 30 / 64 -->
+
+## Fusion、recompute 与 DualPipe 只是在隐藏新增成本
+
+<div class="slide-flow slide-flow--timing" aria-label="mHC 系统优化的目标">
+  <span class="slide-flow__step"><strong>新增工作</strong><small>mapping · Sinkhorn · 多流 I/O</small></span>
+  <span class="slide-flow__arrow">→ place into →</span>
+  <span class="slide-flow__step"><strong>已有 schedule</strong><small>compute · communication · pipeline bubbles</small></span>
+  <span class="slide-flow__arrow">→ reduce →</span>
+  <span class="slide-flow__step"><strong>critical path</strong><small>work 仍在资源账本中</small></span>
+</div>
+
+<div class="slide-lanes">
+  <div><strong>fusion</strong><span>减少中间 materialization 与 launch</span></div>
+  <div><strong>selective recompute</strong><span>以算力换 activation memory</span></div>
+  <div><strong>DualPipe overlap</strong><span>跨 microbatch 把新增工作移出 critical path</span></div>
+</div>
+
+![mHC Figure 4：在 DualPipe 时间线上 overlap mapping、主干计算与通信](./assets/mhc-fig4-system-overlap.png)
+
+<div class="slide-boundary">新增 state 与运算没有消失；当 $N$ 继续增大，generator 与 state traffic 仍快速增长。</div>
+
+> **论文报告** · mHC, Fig. 4
+
+<!-- notes:
+先说明图的目的，再读 ownership。横轴是 schedule time，不是 layer depth；固定一个 microbatch 追踪 F/B/W，再区分 normal compute、communication 与 latency-critical lanes。色块宽度不能直接当 kernel latency。
+
+[Sources]
+- https://arxiv.org/abs/2512.24880v2
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 1/14 || 31 / 64 -->
+
+## mHC 把 $N$ 增大后，收益与成本同时遇到瓶颈
+
+![xHC Figure 1：mHC 与 xHC 随 expansion rate N 的质量和 FLOPs 变化](./assets/xhc-fig1-expansion-efficiency.png)
+
+<div class="slide-evidence-pair">
+  <div><strong>information supply</strong><span>每层究竟提供了几个新方向？</span></div>
+  <div><strong>mapping generator</strong><span>谁在从 $NC$ state 生成 $N^2$ coefficients？</span></div>
+</div>
+
+<div class="slide-boundary">收益饱和是动机；两个 bottleneck 是论文支持的 mechanism hypotheses，不是已证明定理。</div>
+
+> **论文报告** · xHC, Fig. 1
+
+<!-- notes:
+先把 expansion sweep 当设计压力，不把曲线直接等同于机制已经证明。后面分别用 toy vectors 与 shape accounting 解释两项。
+
+[Sources]
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 2/14 || 32 / 64 -->
+
+## 多条 stream 写入不同倍数，仍可能只有一个新方向
+
+<div class="slide-collinear" aria-label="四个长度不同但方向相同的写入向量">
+  <span style="--scale:.2">0.2y</span>
+  <span style="--scale:.8">0.8y</span>
+  <span style="--scale:1.1">1.1y</span>
+  <span style="--scale:1.7">1.7y</span>
+</div>
+
+<div>
+
+$$
+y=[2,1]^\top,\qquad
+\{0.2y,0.8y,1.1y,1.7y\}\subset\operatorname{span}\{y\}
+$$
+
+<strong>different magnitude ≠ different direction</strong>
+
+新增方向的 rank 至多为 1；旧 state 与后续 mixing 仍可能让 streams 保持差异。
+
+</div>
+
+<!-- notes:
+这是 xHC 动机最关键的 toy example。它支持 information-supply diagnosis，但不是容量定理。
+
+[Sources]
 - https://arxiv.org/abs/2607.14530v1
 - https://github.com/J-shang/residual
 -->
@@ -933,111 +961,959 @@ $$
 ---
 
 <!-- layout: comparison -->
-<!-- section-header: backup || BACKUP / PROOF & IMPLEMENTATION | NON-EXPANSIVE PROOF · 1/4 || B1 / B4 -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 3/14 || 33 / 64 -->
 
-## 备份：双随机为何 non-expansive
+## Cubic cost 来自生成 mapping，不来自应用 mapping
 
-<div class="slide-cards slide-cards--3">
-  <div class="slide-card slide-card--transport"><strong>条件</strong><code>H ≥ 0, H1 = 1, 1ᵀH = 1ᵀ</code></div>
-  <div class="slide-card slide-card--state"><strong>induced norms</strong><code>||H||₁ = 1, ||H||∞ = 1</code></div>
-  <div class="slide-card slide-card--read"><strong>spectral bound</strong><code>||H||₂ ≤ √(||H||₁||H||∞) ≤ 1</code></div>
+<div class="slide-complexity">
+  <div>
+    <small>generate coefficients</small>
+    <strong>[NC] → [N²]</strong>
+    <code>[NC,N²] projection</code>
+    <b>O(N³C)</b>
+  </div>
+  <div>
+    <small>apply coefficients</small>
+    <strong>[N,N] @ [N,C]</strong>
+    <code>transport × state</code>
+    <b>O(N²C)</b>
+  </div>
 </div>
 
-<div class="slide-boundary">只做 row-stochastic 不足以得到相同结论；finite Sinkhorn 还需报告 row/column error 与深层 product drift。</div>
-
-> **Derived** · mHC, arXiv:2512.24880v2, Eq. 6–9
+“Cubic” 修饰 input-dependent coefficient generator，不是已有 mapping 的矩阵应用。
 
 <!-- notes:
-备份页。只在听众追问 mHC 的 norm guarantee 时展开；结论依赖非负、行和与列和同时成立。
+若只看到 H_res X，很容易误解复杂度来源。xHC 因此限制本层需要动态生成和应用的 active mapping 到 k×k。
 
 [Sources]
-- https://arxiv.org/abs/2512.24880v2
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 4/14 || 34 / 64 -->
+
+## xHC 把 memory capacity $N$ 与 mutation budget $k$ 分开
+
+<div class="slide-streams slide-streams--four" aria-label="xHC N=4 k=2 的 active set">
+  <div class="slide-stream slide-stream--active"><strong>stream 1</strong><span>fixed active</span></div>
+  <div class="slide-stream slide-stream--carry"><strong>stream 2</strong><span>inactive carry</span></div>
+  <div class="slide-stream slide-stream--active"><strong>stream 3</strong><span>routed active</span></div>
+  <div class="slide-stream slide-stream--carry"><strong>stream 4</strong><span>inactive carry</span></div>
+</div>
+
+<div class="slide-role-flow">
+  <span class="slide-role slide-role--state"><strong>memory capacity</strong><code>N = 4</code></span>
+  <span class="slide-role slide-role--write"><strong>mutation budget</strong><code>k = 2</code></span>
+  <span><strong>paper default</strong><code>N = 16, k = 4</code></span>
+</div>
+
+<div class="slide-operation-strip" aria-label="xHC 操作进度">
+  <span class="is-current">capacity N</span><i>→</i><span>dense read</span><i>→</i><span>active selection</span><i>→</i><span>active update</span><i>→</i><span>write candidates</span><i>→</i><span>de-correlation</span><i>→</i><span>full next state</span>
+</div>
+
+<!-- notes:
+N 决定跨层保存多少 persistent containers；k 决定本层 transport 和 write-back 的工作集。先分清变量，再看 read 与 update。
+
+[Sources]
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 5/14 || 35 / 64 -->
+
+## Dense read 让 inactive stream 仍能影响当前 branch
+
+<div class="slide-dense-read" aria-label="全部四条 streams 汇聚到 branch input">
+  <span>stream 1</span><i>↘</i>
+  <span>stream 2</span><i>→</i>
+  <strong>branch input</strong>
+  <span>stream 3</span><i>→</i>
+  <span>stream 4</span><i>↗</i>
+</div>
+
+$$
+u=\sum_{i=1}^{N}h_i^{\mathrm{pre}}x_i
+$$
+
+`只更新 k 条` ≠ `只读取 k 条`。Inactive stream 可以影响 branch，再通过 branch output 间接影响 active streams。
+
+<div class="slide-operation-strip" aria-label="xHC 操作进度">
+  <span class="is-done">capacity N</span><i>→</i><span class="is-current">dense read</span><i>→</i><span>active selection</span><i>→</i><span>active update</span><i>→</i><span>write candidates</span><i>→</i><span>de-correlation</span><i>→</i><span>full next state</span>
+</div>
+
+<!-- notes:
+强调 sparse mutation 与 sparse access 是两件事。代价是 dense read 及其 generator 仍保留 N 相关工作。
+
+[Sources]
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 6/14 || 36 / 64 -->
+
+## Fixed paths 加 Top-$k$ 决定本层 active set
+
+<div class="slide-router">
+  <div><strong>stream 1</strong><span>fixed</span></div>
+  <div><strong>stream 2</strong><span>score .31</span></div>
+  <div class="is-selected"><strong>stream 3</strong><span>score .84 · Top-1</span></div>
+  <div><strong>stream 4</strong><span>score .22</span></div>
+</div>
+
+<div>
+
+Toy：`1 fixed + Top-1 routed = k=2`；Default：`2 fixed + Top-2 routed = k=4`。
+
+<div class="slide-lanes">
+  <div><strong>hard indices</strong><span>不可微的离散选择</span></div>
+  <div><strong>selected scores</strong><span>参与本次 write gate 的梯度</span></div>
+</div>
+
+</div>
+
+<div class="slide-operation-strip" aria-label="xHC 操作进度">
+  <span class="is-done">capacity N</span><i>→</i><span class="is-done">dense read</span><i>→</i><span class="is-current">active selection</span><i>→</i><span>active update</span><i>→</i><span>write candidates</span><i>→</i><span>de-correlation</span><i>→</i><span>full next state</span>
+</div>
+
+<!-- notes:
+这里选的是 persistent residual streams，不与 MoE routing 完全同义。Fixed paths 提供连续活跃 anchors。
+
+[Sources]
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 7/14 || 37 / 64 -->
+
+## 只有 active subset 被 mixing 和 write-back
+
+<div class="slide-gather-flow" aria-label="xHC gather active streams 更新后 scatter">
+  <span><strong>full state</strong><code>{1,2,3,4}</code></span>
+  <b>— gather →</b>
+  <span class="is-active"><strong>active</strong><code>{1,3}</code></span>
+  <b>— 2×2 mix + write →</b>
+  <span class="is-active"><strong>active′</strong><code>{1′,3′}</code></span>
+  <b>— scatter →</b>
+  <span><strong>next state</strong><code>{1′,2,3′,4}</code></span>
+</div>
+
+$$
+X'_{I}=H_{\mathrm{res}}X_I+\Delta X_I,\qquad
+X'_i=X_i\ \text{for}\ i\notin I
+$$
+
+Inactive streams 是 exact carry；完整 persistent state 仍要长期保存。
+
+<div class="slide-operation-strip" aria-label="xHC 操作进度">
+  <span class="is-done">capacity N</span><i>→</i><span class="is-done">dense read</span><i>→</i><span class="is-done">active selection</span><i>→</i><span class="is-current">active update</span><i>→</i><span>write candidates</span><i>→</i><span>de-correlation</span><i>→</i><span>full next state</span>
+</div>
+
+<!-- notes:
+先走旧 state，再走新写入。Sparse mutation 把 active generator/update 从 N 缩到 k，但没有让 full state 消失。
+
+[Sources]
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 8/14 || 38 / 64 -->
+
+## 一次 MLP 可以构造多个 temporal write candidates
+
+![xHC 的 temporal feature augmentation：一次 MLP 输出生成多个 causal write candidates](./assets/xhc-temporal-augmentation.svg)
+
+<div class="slide-flow">
+  <span class="slide-flow__step">original</span>
+  <span class="slide-flow__step">DWConv-4</span>
+  <span class="slide-flow__step">DWConv-8</span>
+  <span class="slide-flow__step">DWConv-12</span>
+</div>
+
+默认 $K_r=4$；新增 $24C$ depthwise-conv parameters，**不是执行四次 MLP**。
+
+<div class="slide-boundary">卷积沿 token sequence 且 causal；不混 channel，也不是 token self-attention。</div>
+
+<div class="slide-operation-strip" aria-label="xHC 操作进度">
+  <span class="is-done">capacity N</span><i>→</i><span class="is-done">dense read</span><i>→</i><span class="is-done">active selection</span><i>→</i><span class="is-done">active update</span><i>→</i><span class="is-current">write candidates</span><i>→</i><span>de-correlation</span><i>→</i><span>full next state</span>
+</div>
+
+<!-- notes:
+Temporal augmentation 默认放在 MLP side，因为 MLP 本身逐 token。四个 candidates 仍来自同一 output sequence，不自动语义独立。
+
+[Sources]
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 9/14 || 39 / 64 -->
+
+## Gram–Schmidt 去除局部共线，但不创造语义独立
+
+<div class="slide-projection">
+  <span class="slide-projection__base">v₁</span>
+  <span class="slide-projection__raw">g₂</span>
+  <i>remove projection</i>
+  <strong>v₂</strong>
+</div>
+
+<div>
+
+$$
+v_{j+1}=g_j-\sum_i
+\frac{\langle g_j,v_i\rangle}{\langle v_i,v_i\rangle}v_i
+$$
+
+<div class="slide-boundaries slide-boundaries--compact">
+  <div><strong>做到</strong><span>当前 token 上消除已有方向的线性投影</span></div>
+  <div><strong>做不到</strong><span>unit norm · 跨 token 正交 · 稳定语义 · 从零创造信息</span></div>
+</div>
+
+</div>
+
+<div class="slide-operation-strip" aria-label="xHC 操作进度">
+  <span class="is-done">capacity N</span><i>→</i><span class="is-done">dense read</span><i>→</i><span class="is-done">active selection</span><i>→</i><span class="is-done">active update</span><i>→</i><span class="is-done">write candidates</span><i>→</i><span class="is-current">de-correlation</span><i>→</i><span>full next state</span>
+</div>
+
+<!-- notes:
+这是 supporting 页。实现还需验证近零向量时的数值策略；论文展示公式里没有额外 epsilon 项。
+
+[Sources]
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 10/14 || 40 / 64 -->
+
+## 一次完整 xHC 更新由 dense read 与 sparse mutation 组成
+
+![xHC 的完整更新：全部 streams 可读，仅 active subset 被修改](./assets/xhc-dense-read-sparse-mutation.svg)
+
+<div class="slide-shape-chain">full [B,S,N,C] → read/router [B,S,N] → active [B,S,k,C] → mix [B,S,k,k] + write [B,S,k,Kᵣ] → full [B,S,N,C]</div>
+
+<div class="slide-boundary">绿色路径决定 branch input；紫色/橙色路径决定 state mutation；inactive state 原样回到 next full state。</div>
+
+<div class="slide-operation-strip" aria-label="xHC 操作进度">
+  <span class="is-done">capacity N</span><i>→</i><span class="is-done">dense read</span><i>→</i><span class="is-done">active selection</span><i>→</i><span class="is-done">active update</span><i>→</i><span class="is-done">write candidates</span><i>→</i><span class="is-done">de-correlation</span><i>→</i><span class="is-current">full next state</span>
+</div>
+
+> **论文报告 + 复原推导** · xHC, Algorithm 1
+
+<!-- notes:
+只串联前面已经解释过的局部操作，不再引入新概念。最后检查输入输出 full-state shape 都是 [B,S,N,C]。
+
+[Sources]
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 11/14 || 41 / 64 -->
+
+## xHC 只近似继承 active-set 的稳定 contract
+
+<div class="slide-block-matrix" aria-label="active k 乘 k block 嵌入 N 乘 N transport">
+  <span class="is-active">H₁₁</span><span>0</span><span class="is-active">H₁₃</span><span>0</span>
+  <span>0</span><span>1</span><span>0</span><span>0</span>
+  <span class="is-active">H₃₁</span><span>0</span><span class="is-active">H₃₃</span><span>0</span>
+  <span>0</span><span>0</span><span>0</span><span>1</span>
+</div>
+
+<div>
+
+Ideal：active $k\times k$ 双随机 block + inactive identity → full $N\times N$ transport 仍双随机。
+
+Actual boundary：
+
+- finite Sinkhorn
+- row-sum clamp
+- token-dependent active set
+- baseline-equivalent initialization 未完整公开
+
+</div>
+
+<!-- notes:
+理想 exact block embedding 能继承 mHC 式 closure；实际实现只能作近似结论，不能替作者补齐 initialization。
+
+[Sources]
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 12/14 || 42 / 64 -->
+
+## Ablation 把 quality gain 与 cost recovery 分开归因
+
+![xHC Table 2 与 Figure 5 的核心 ablation](./assets/xhc-table2-fig5-ablation-focus.png)
+
+<div class="slide-flow slide-flow--timing">
+  <span class="slide-flow__step"><strong>mHC N=16</strong><small>1.998 · +18.8%</small></span>
+  <span class="slide-flow__arrow">→ quality</span>
+  <span class="slide-flow__step"><strong>+ TempAug</strong><small>1.984 · +20.1%</small></span>
+  <span class="slide-flow__arrow">→ cost</span>
+  <span class="slide-flow__step"><strong>full xHC</strong><small>1.983 · +3.3%</small></span>
+</div>
+
+第一步主要改善 loss；第二步基本保持 loss，同时回收 dense large-$N$ FLOPs。
+
+> **论文报告** · xHC, Table 2 & Fig. 5
+
+<!-- notes:
+只比较相邻两行。单一 in-house setup、无多 seed，因此 ablation 支持归因方向但不是严格因果证明。
+
+[Sources]
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 13/14 || 43 / 64 -->
+
+## Sparse FLOPs 之后仍留下 $73.5C$ residual-side I/O
+
+![xHC Table 4：逐操作 residual-side read 与 write accounting](./assets/xhc-table4-io.png)
+
+<div class="slide-metric-table" role="table" aria-label="Residual-side element traffic">
+  <div role="row"><strong role="columnheader">per token · per sublayer</strong><strong role="columnheader">R + W</strong></div>
+  <div role="row"><span role="cell">Vanilla residual merge</span><code role="cell">2C + C = 3C</code></div>
+  <div role="row"><span role="cell">mHC · N=4</span><code role="cell">21C + 13C = 34C</code></div>
+  <div role="row"><span role="cell">full xHC · N=16,k=4</span><code role="cell">55C + 18.5C = 73.5C</code></div>
+</div>
+
+<div class="slide-boundary">Abstract element traffic，不是实测 HBM bytes、Attention/MLP I/O 或 wall-clock。</div>
+
+<!-- notes:
+从 vanilla 的三次 element movement 算起。Headline C coefficient 省略小的 coefficient-sized terms。
+
+[Sources]
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: xhc || 04 · xHC / LARGE-N · 14/14 || 44 / 64 -->
+
+## Flash 在共享 window 内精确修正，但相对 full xHC 改变模型
+
+![xHC Table 5：full、Flash 与 Flash-4sub 的质量和 I/O](./assets/xhc-table5-flash.png)
+
+<div class="slide-metric-table" role="table" aria-label="xHC Flash I/O 与 validation loss">
+  <div role="row"><strong role="columnheader">variant</strong><strong role="columnheader">I/O · loss</strong></div>
+  <div role="row"><span role="cell">full xHC</span><code role="cell">73.5C · 1.983</code></div>
+  <div role="row"><span role="cell">Flash · 2 sublayers</span><code role="cell">51C · 1.983</code></div>
+  <div role="row"><span role="cell">Flash-4sub</span><code role="cell">40C · 1.984</code></div>
+</div>
+
+<div class="slide-boundary"><strong>Exact correction within shared routing</strong> ≠ identical to full xHC that reroutes every sublayer.</div>
+
+<!-- notes:
+聚焦共享 window 内哪些 full-state work 被分摊。Correction 在固定 contract 内精确，但相对 full xHC 的模型函数已改变。
+
+[Sources]
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: attnres || 05 · ATTNRES / DEPTH RETRIEVAL · 1/13 || 45 / 64 -->
+
+## AttnRes 不再扩多流 state，而是保留 named sources
+
+<div class="slide-state-semantics">
+  <div>
+    <small>HC family</small>
+    <strong>persistent streams</strong>
+    <span>每层反复 transport / mix / write</span>
+  </div>
+  <div>
+    <small>Attention Residuals</small>
+    <strong>named historical sources</strong>
+    <span>embedding + branch outputs 保留身份，未来层重新 read</span>
+  </div>
+</div>
+
+![Attention Residuals Figure 1：standard、Full 与 Block 的状态语义](./assets/attnres-fig1-overview.png)
+
+<div class="slide-boundary">AttnRes 不是 HC 上再加一个 router，也不是 token self-attention 的替代品。</div>
+
+<!-- notes:
+明确切换路线。它改变的是跨 depth 保存什么，而不是在多流 recurrent state 上继续加 transport。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
 -->
 
 ---
 
 <!-- layout: comparison -->
-<!-- section-header: backup || BACKUP / PROOF & IMPLEMENTATION | SHAPE & DTYPE · 2/4 || B2 / B4 -->
+<!-- section-header: attnres || 05 · ATTNRES / DEPTH RETRIEVAL · 2/13 || 46 / 64 -->
 
-## 备份：实现先固定 shape 与 dtype
+## 标准 residual 的固定系数 1 既稳定又不可选择
 
-`B=batch` · `S/T=sequence` · `n/N=streams` · `J=history sources` · `C/d=hidden size`
+![Standard Residuals 使用固定系数 1 读取全部历史 sources](./assets/attnres-fig1-standard.png)
+![固定 causal depth-mixing matrix 的有效区域全部为 1](./assets/fixed-depth-mixing.svg)
 
-| 方法 | logical state | read / weights | transport / cache | write / active state |
-|---|---|---|---|---|
-| HC | `[B,S,n,C]` | `A_m:[B,S,n,1]` | `A_r:[B,S,n,n]` | `B:[B,S,1,n]` |
-| mHC | `[B,S,n,C]` | `H_pre:[B,S,1,n]` | `H_res:[B,S,n,n]` | `H_post:[B,S,1,n]` |
-| AttnRes | `[J,B,T,d]` | weights `[J,B,T]` | cache owns source lifetime | read `[B,T,d]` |
-| xHC | `[B,S,N,C]` | dense read over `N` | active mix `[B,S,k,k]` | active `[B,S,k,C]` |
+$$
+h_l=\sum_{i<l}\color{#1258ff}{1}\cdot v_i
+$$
 
-correctness-first：Sinkhorn、softmax statistics、routing logits 与 direct-vs-optimized 对照先用 FP32 / float64 边界验证。
+Direct path 很明确；不同未来 sublayers 却无法对历史 source 表达不同偏好。
 
 <!-- notes:
-备份页。dtype 是 correctness-first 建议，不全部是论文规定；logical state、local shard、layout 与 ownership 要分开写。
+只重访 AttnRes 关心的一面：source weights 不能选择。不重复开场全部推导。
 
 [Sources]
-- https://arxiv.org/abs/2409.19606v3
-- https://arxiv.org/abs/2512.24880v2
 - https://arxiv.org/abs/2603.15031v1
-- https://arxiv.org/abs/2607.14530v1
-- https://github.com/deepseek-ai/TileKernels/tree/36d9e45d38e204ebb87e6f6e833821eee0482fe5
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: attnres || 05 · ATTNRES / DEPTH RETRIEVAL · 3/13 || 47 / 64 -->
+
+## Full AttnRes 保存 embedding 与所有历史 branch outputs
+
+<div class="slide-source-stack">
+  <span><strong>v₀</strong>embedding</span>
+  <span><strong>v₁</strong>branch output 1</span>
+  <span><strong>v₂</strong>branch output 2</span>
+  <span><strong>⋮</strong>named history</span>
+  <i>current layer reads all J sources →</i>
+</div>
+
+<div>
+
+$$
+v_0=h_1,\qquad v_i=f_i(h_i)
+$$
+
+Source stack：
+
+$$
+[J,B,T,d]\quad\text{with}\quad J=l
+$$
+
+`J = depth/source count`，不是 sequence length。
+
+</div>
+
+<!-- notes:
+Source 不是每层累计 hidden state，而是 embedding 加 branch outputs；这决定 Block summary、history bytes 与 gradient path 的解释。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
 -->
 
 ---
 
 <!-- layout: comparison -->
-<!-- section-header: backup || BACKUP / PROOF & IMPLEMENTATION | EVIDENCE AUDIT · 3/4 || B3 / B4 -->
+<!-- section-header: attnres || 05 · ATTNRES / DEPTH RETRIEVAL · 4/13 || 48 / 64 -->
 
-## 备份：四篇论文的证据成熟度不同
+## 三个二维 source 展示 sum、average 与 selective read
 
-`强 / 中 / 弱 = 当前公开材料的可审计程度，不是方法质量评分`
+<div class="slide-read-results">
+  <div><small>fixed sum</small><code>v₀+v₁+v₂</code><strong>[4, 4]</strong></div>
+  <div><small>uniform average</small><code>⅓(v₀+v₁+v₂)</code><strong>[4/3, 4/3]</strong></div>
+  <div><small>α = [.1,.7,.2]</small><code>.1v₀+.7v₁+.2v₂</code><strong>[0.6, 2.3]</strong></div>
+</div>
 
-| 来源 | method / math | quality | system | artifact | statistics |
-|---|---|---|---|---|---|
-| HC | 强 | 中 | 中 | 弱 | 弱 |
-| mHC | 强 | 中 | 中 | 中 | 弱 |
-| AttnRes | 强 | 中 | 弱 | 弱 | 弱 |
-| xHC | 强 | 中 | 弱 | 弱 | 弱 |
+`v₀=[2,0]`　·　`v₁=[0,3]`　·　`v₂=[2,1]`
 
-“弱”表示公开材料难以完整审计，**不表示方法无效**；四篇论文的大模型结果普遍缺多 seed 与 error bar。
+Selective read 不是从 `[4,4]` 中恢复历史；它成立是因为 source identity 从未丢失。
 
 <!-- notes:
-备份页。mHC 有后续 TileKernels artifact；AttnRes/xHC artifact 仍缺完整训练实现或 kernel。
+先比较三个结果的位置，再解释为什么可选。下一页才引入 logits 和 softmax。
 
 [Sources]
-- https://arxiv.org/abs/2409.19606v3
-- https://arxiv.org/abs/2512.24880v2
 - https://arxiv.org/abs/2603.15031v1
-- https://arxiv.org/abs/2607.14530v1
+- https://github.com/J-shang/residual
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: attnres || 05 · ATTNRES / DEPTH RETRIEVAL · 5/13 || 49 / 64 -->
+
+## Depth softmax 为每个 token 在 source 轴分配权重
+
+<div class="slide-shape-flow">
+  <span class="slide-role--state"><strong>[J,B,T,d]</strong><small>sources / keys</small></span>
+  <b>— dot over d →</b>
+  <span><strong>[J,B,T]</strong><small>logits</small></span>
+  <b>— softmax over J →</b>
+  <span class="slide-role--read"><strong>[J,B,T]</strong><small>α</small></span>
+  <b>— sum over J →</b>
+  <span><strong>[B,T,d]</strong><small>read result</small></span>
+</div>
+
+$$
+s_{jbt}=w_l^\top\operatorname{RMSNorm}(v_{jbt}),\qquad
+h_{lbt}=\sum_j\operatorname{softmax}_J(s)_{jbt}v_{jbt}
+$$
+
+<div class="slide-boundary">Depth/source routing，不是 $T\times T$ token attention，也不是 MoE expert gating。</div>
+
+<!-- notes:
+Query w_l 是 layer parameter；key/value 由输入产生，所以 logits 仍 input-dependent。默认同一 token 的 channels 共享 source weight。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: attnres || 05 · ATTNRES / DEPTH RETRIEVAL · 6/13 || 50 / 64 -->
+
+## Zero query 给出均匀 average，不是 residual sum
+
+<div class="slide-role-flow slide-role-flow--init">
+  <span><strong>wₗ = 0</strong></span><b>→</b>
+  <span><strong>all logits = 0</strong></span><b>→</b>
+  <span><strong>αⱼ = 1/J</strong></span><b>→</b>
+  <span><strong>uniform average</strong></span>
+</div>
+
+<div class="slide-read-results slide-read-results--two">
+  <div><small>standard sum</small><strong>[4, 4]</strong><code>direct term = I</code></div>
+  <div><small>zero-query average</small><strong>[4/3, 4/3]</strong><code>direct term = (1/J)I</code></div>
+</div>
+
+<div class="slide-boundary">Zero 初始化的是 pseudo-query，不是 activation；论文报告它可减少 training volatility，但不是 baseline-preserving identity。</div>
+
+<!-- notes:
+RMSNorm 可能弱化统一 scale 的影响，不能推出 forward 函数与 Jacobian 完全等价。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: attnres || 05 · ATTNRES / DEPTH RETRIEVAL · 7/13 || 51 / 64 -->
+
+## Full history 提供直接访问，也让状态随深度增长
+
+<div class="slide-history-growth">
+  <div><span>layer 1</span><b>1 source</b><i>•</i></div>
+  <div><span>layer 2</span><b>2 sources</b><i>••</i></div>
+  <div><span>layer 3</span><b>3 sources</b><i>•••</i></div>
+  <div><span>layer L</span><b>L sources</b><i>••••••••</i></div>
+</div>
+
+<div class="slide-cost-formula">
+  <span><strong>stored values</strong><code>O(Ld)</code></span>
+  <span><strong>source interactions</strong><code>≈ O(L²d)</code></span>
+  <span><strong>pipeline</strong><code>history / cache pressure</code></span>
+</div>
+
+这些是结构性增长，不等于精确 kernel wall-clock。
+
+<!-- notes:
+每层新增一个 source，未来很多层都可能再次访问。Block 版本压缩的是历史粒度，不是取消 retrieval。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
+-->
+
+---
+
+<!-- layout: comparison -->
+<!-- section-header: attnres || 05 · ATTNRES / DEPTH RETRIEVAL · 8/13 || 52 / 64 -->
+
+## Block AttnRes 把完成历史压成 block summaries
+
+![Full AttnRes 保存逐层 sources](./assets/attnres-fig1b-full.png)
+![Block AttnRes 保存 completed blocks 与 current partial](./assets/attnres-fig1c-block.png)
+
+$$
+b_n=\sum_{j\in\mathcal B_n}f_j(h_j),\qquad
+p_i=\sum_{j\le i}y_j
+$$
+
+Read sources = `embedding + completed blocks + current partial`
+
+<div class="slide-boundary">结构化压缩，不是无损：completed block 内部的逐层 source identity 不再单独可寻址。</div>
+
+<!-- notes:
+Full 的逐层 sources 被压成 additive block summary；当前 block 另维护随 sublayer 顺序增长的 partial。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: attnres || 05 · ATTNRES / DEPTH RETRIEVAL · 9/13 || 53 / 64 -->
+
+## 一个四层 block 足以跑通 read 与 write state machine
+
+<div class="slide-block-timeline">
+  <div><small>before l₁</small><strong>p₀ = ∅</strong><span>read history</span></div>
+  <div><small>after l₁</small><strong>p₁ = y₁</strong><span>history + partial</span></div>
+  <div><small>after l₂</small><strong>p₂ = y₁+y₂</strong><span>history + partial</span></div>
+  <div><small>after l₃</small><strong>p₃ = y₁+y₂+y₃</strong><span>history + partial</span></div>
+  <div><small>after l₄</small><strong>b₂ = p₄</strong><span>seal completed block</span></div>
+</div>
+
+第一层 partial 为空；之后每层 read 固定 history 加当前 partial，再把 branch output 写进 partial。
+
+<!-- notes:
+这页只跑 state machine，不讲 two-phase。完成 block 后，p4 成为未来层可读的 completed source。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: attnres || 05 · ATTNRES / DEPTH RETRIEVAL · 10/13 || 54 / 64 -->
+
+## Block 在作者五个 scaling 点保留了大部分收益
+
+![Baseline、Full 与 Block AttnRes 的五点 scaling-law fit](./assets/attnres-fig4-scaling.png)
+
+<div class="slide-metric-table" role="table" aria-label="528M activated 模型的 validation loss">
+  <div role="row"><strong role="columnheader">528M activated · 119B tokens</strong><strong role="columnheader">Val. Loss ↓</strong></div>
+  <div role="row"><span role="cell">Baseline</span><code role="cell">1.719</code></div>
+  <div role="row"><span role="cell">Block AttnRes</span><code role="cell">1.693</code></div>
+  <div role="row"><span role="cell">Full AttnRes</span><code role="cell">1.692</code></div>
+</div>
+
+<div class="slide-boundary">五个 matched sizes 中 Full 与 Block 均低于 baseline；约 1.25× 是 fitted compute-equivalence estimate，不是 wall-clock speedup。</div>
+
+> **论文报告** · Attention Residuals, Fig. 4 & Table 2
+
+<!-- notes:
+先定义 matched experiment：固定 backbone、tokens、depth/width、expert/MLP 与 baseline-selected hyperparameters，只改变 residual mechanism。Block 在最大点只比 Full 差 0.001；无公开多 seed 与 fit uncertainty。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: attnres || 05 · ATTNRES / DEPTH RETRIEVAL · 11/13 || 55 / 64 -->
+
+## Two-phase 只是同一次 softmax 的 source partition
+
+<div class="slide-two-phase">
+  <div><small>Phase 1 · fixed history</small><strong>N_hist / D_hist</strong><code>completed sources</code></div>
+  <b>+</b>
+  <div><small>Phase 2 · evolving partial</small><strong>N_part / D_part</strong><code>current block</code></div>
+  <b>→</b>
+  <div><small>exact merge</small><strong>same one-shot softmax</strong><code>(N_hist+N_part)/(D_hist+D_part)</code></div>
+</div>
+
+$$
+h=\frac{N_{\mathrm{hist}}+N_{\mathrm{part}}}
+{D_{\mathrm{hist}}+D_{\mathrm{part}}}
+$$
+
+<div class="slide-boundary">不是两个训练阶段，也不是两个 outputs 再平均；$m/\ell/o$ 只是 max-shift 的数值稳定实现。</div>
+
+<!-- notes:
+先写 one-shot numerator/denominator，再按 source set 拆成 history 与 partial。History 固定可对多个 layer queries 批量计算，partial 必须等待前一层 branch output。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: attnres || 05 · ATTNRES / DEPTH RETRIEVAL · 12/13 || 56 / 64 -->
+
+## PP cache 只传 receiver 尚未保存的 history
+
+<div class="slide-cache-trace" aria-label="三 rank 的增量 history cache">
+  <span><small>receiver cache</small><strong>[b₀, b₁]</strong></span>
+  <i>+</i>
+  <span class="is-new"><small>transition payload</small><strong>[b₂]</strong></span>
+  <i>→</i>
+  <span><small>next cache</small><strong>[b₀, b₁, b₂]</strong></span>
+</div>
+
+![Block AttnRes 在 physical ranks 与 virtual-stage chunks 间传递并缓存 block history](./assets/attnres-fig3-pp-cache.png)
+
+<div class="slide-boundary">方括号是 receiver 已拥有的 depth/block sources；payload 只写新增项。它不是 token-attention KV cache。</div>
+
+> **论文报告 + 复原读图** · Attention Residuals, Fig. 3
+
+<!-- notes:
+先用三-rank 简图固定 ownership，再读四个 physical ranks、每 rank 两个 virtual-stage chunks 的原图。固定一个 VS index 后，同一 microbatch 仍沿 physical ranks 前进；cache lifetime、dtype 与释放时机都属于实现 contract。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
 - https://github.com/MoonshotAI/Attention-Residuals/tree/85e22310fe5ee860b4a023de312d791de8a5a5e6
-- https://github.com/aHapBean/xHC/tree/7890266d5cd648811b6783029ee6b5031cd209db
+-->
+
+---
+
+<!-- layout: split -->
+<!-- section-header: attnres || 05 · ATTNRES / DEPTH RETRIEVAL · 13/13 || 57 / 64 -->
+
+## Learned routing 支持“会选择”，但还没有因果解释
+
+![Attention Residuals Figure 8：学习到的 depth routing patterns](./assets/attnres-fig8-routing.png)
+
+<div>
+
+Heatmap 可以支持：
+
+- 权重不再停留在 uniform
+- Pre-Attn 与 Pre-MLP pattern 不同
+- routing 随 layer / token 变化
+
+不能直接推出：
+
+- 某个 source 有稳定的人类语义
+- 大权重等于因果贡献
+- routing pattern 可跨模型复用
+
+</div>
+
+<!-- notes:
+更强证据需要 source ablation、weight intervention 或 counterfactual routing。到这里四篇论文都走完机制、初始化、证据和成本。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
 -->
 
 ---
 
 <!-- layout: comparison -->
-<!-- section-header: backup || BACKUP / PROOF & IMPLEMENTATION | COUNTING BOUNDARY · 4/4 || B4 / B4 -->
+<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION · 1/7 || 58 / 64 -->
 
-## 备份：系统成本数字不可直接横比
+## Runtime contract 决定一层究竟怎样更新 state
 
-`counting boundary = 一个数字具体统计了哪些 operation、bytes 或时间`
+| 方法 | Stored state | Read | Transport | Write |
+|---|---|---|---|---|
+| Standard | one cumulative `[B,S,d]` | current state | identity carry | branch delta 加回同一 state |
+| HC / DHC | $n$ persistent streams | $A_m:n\to1$ | free $A_r$ mixes all streams | one branch output $\to n$ targets |
+| mHC | $n$ persistent streams | positive dynamic $H_{pre}$ | ≈ doubly stochastic $H_{res}$ | positive dynamic $H_{post}$ |
+| xHC | $N$ persistent streams | dense read all $N$ | active $k$ mix；inactive exact carry | $K_r$ candidates $\to k$ active streams |
+| Full AttnRes | embedding + all branch sources | softmax over $J$ sources | named sources persist | branch output becomes new source |
+| Block AttnRes | completed blocks + partial | softmax over blocks + partial | blocks persist；partial accumulates | branch output adds into partial |
 
-| 类型 | 数字示例 | counting boundary |
-|---|---|---|
-| residual-side 静态 I/O | mHC $\approx34C$ | mapping generation / application |
-| residual-side 静态 I/O | AttnRes $24d / 5.5d$ | two-phase residual mechanism |
-| residual-side 静态 I/O | xHC $73.5C / 40C$ | 抽象 element traffic |
-| 端到端 memory | HC `+9.7%–28.3%` | 论文具体训练设置 |
-| 端到端 overhead | mHC `6.7%`、AttnRes `<4%` | 硬件与并行分解不完整 |
-
-当前公开证据不足以给出跨论文 wall-clock 排名。
+<div class="slide-boundary">若能从每一行重新画出 state machine，运行时 contract 就已完整；训练起点与系统代价留到下一页。</div>
 
 <!-- notes:
-备份页。每个成本数字必须保留 setup、是否实测、是否含 branch I/O，以及 resident cache/payload 的边界。
+按列走，不逐篇复述。Stored state 决定 ownership，read/transport/write 决定一层更新。AttnRes 没有同类 recurrent stream product；Block 的 write 是 current partial 的 additive accumulation。
 
 [Sources]
 - https://arxiv.org/abs/2409.19606v3
 - https://arxiv.org/abs/2512.24880v2
 - https://arxiv.org/abs/2603.15031v1
 - https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: comparison -->
+<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION · 2/7 || 59 / 64 -->
+
+## 训练与系统 contract 决定方法能否安全落地
+
+| 方法 | Weight granularity | Initialization | Deep composition | Dominant cost |
+|---|---|---|---|---|
+| Standard | fixed coefficient 1 | exact baseline | identity direct path + branch Jacobians | baseline activation / merge |
+| HC / DHC | SHC per-layer；DHC per-token | compatible special case needs full read/write/collapse | unconstrained $A_r$ product | persistent activation / I/O / PP |
+| mHC | per-token / sublayer | paper parameterization；$n=1$ special case | exact DS closed；finite Sinkhorn approximate | I/O / Sinkhorn / recompute / PP |
+| xHC | per-token + hard Top-$k$ | full baseline-equivalent init not fully specified | ideal active-block closure；actual approximate | $NC$ state / dense read / routing / PP |
+| Full AttnRes | per-token / source | zero query $\to$ average, not sum | convex read；direct term $\alpha_iI$ | $O(Ld)$ history / near-$L^2d$ read / cache |
+| Block AttnRes | per-token / block / partial | zero query $\to$ average over current set | block-tied depth mixing | $O(Nd)$ history / two-phase / cache lifetime |
+
+<div class="slide-boundary">Exact guarantee、special case 与 implementation approximation 必须分栏陈述；“动态”也不是统一的 weight granularity。</div>
+
+<!-- notes:
+先比较 runtime weights 由谁拥有，再比较初始化究竟恢复什么。Deep composition 只描述具体路径；成本只写 dominant source，不把不同 counting boundaries 拼成速度排名。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+- https://arxiv.org/abs/2512.24880v2
+- https://arxiv.org/abs/2603.15031v1
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION · 3/7 || 60 / 64 -->
+
+## Persistent capacity 与 source addressability 是两条不同轴
+
+<div class="slide-axis-map" aria-label="Persistent capacity 与 historical addressability 定性二维图">
+  <span class="slide-axis-map__y">historical source addressability ↑</span>
+  <span class="slide-axis-map__x">persistent recurrent capacity →</span>
+  <i class="point point--standard">Standard</i>
+  <i class="point point--hc">HC / mHC</i>
+  <i class="point point--xhc">xHC</i>
+  <i class="point point--block">Block AttnRes</i>
+  <i class="point point--full">Full AttnRes</i>
+</div>
+
+`N streams` 不等于 `N named historical layers`；`J sources` 也不等于 `J recurrent streams`。
+
+<div class="slide-boundary">定性 state-semantics 地图，不是质量、成本或实验排名。</div>
+
+<!-- notes:
+横轴是跨每个 sublayer 持续存在并被 transport 的并行 state；纵轴是未来层能否直接点名历史 source。xHC 的 N 与 Full AttnRes 的 J 不应互换解释。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+- https://arxiv.org/abs/2512.24880v2
+- https://arxiv.org/abs/2603.15031v1
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: comparison -->
+<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION · 4/7 || 61 / 64 -->
+
+## Deep composition 必须区分 transport product 与 convex read
+
+<div class="slide-composition">
+  <div>
+    <small>recurrent transport product</small>
+    <strong>HC → mHC → xHC</strong>
+    <span>free product → exact DS closure → ideal active-block closure</span>
+    <code>finite Sinkhorn / clamp / branch write remain</code>
+  </div>
+  <div>
+    <small>source retrieval</small>
+    <strong>Full / Block AttnRes</strong>
+    <span>each read is a convex combination of current sources</span>
+    <code>direct term αᵢI, not I; sources still come from nonlinear branches</code>
+  </div>
+</div>
+
+没有一个脱离路径、假设与实现细节的笼统“最稳定方法”。
+
+<!-- notes:
+AttnRes 单次 read 有 convex-hull 性质，不等于恢复 standard residual 的 identity direct term或得到全网络范数保证；mHC 的 transport 保证也不覆盖 branch write。
+
+[Sources]
+- https://arxiv.org/abs/2512.24880v2
+- https://arxiv.org/abs/2603.15031v1
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION · 5/7 || 62 / 64 -->
+
+## 系统成本必须在相同 counting boundary 下讨论
+
+![Residual connection 方法的参数、状态、I/O 与通信边界](./assets/residual-system-cost.svg)
+
+<div class="slide-cost-ladder">
+  <span>parameters</span><i>→</i><span>FLOPs</span><i>→</i><span>activation bytes</span><i>→</i><span>abstract I/O</span><i>→</i><span>PP payload</span><i>→</i><span>wall-clock</span>
+</div>
+
+<div class="slide-boundary">Static element traffic ≠ HBM bytes · token efficiency ≠ throughput · fitted compute-equivalence ≠ hardware speedup。</div>
+
+<!-- notes:
+任何“只增加很少成本”的说法都要追问：少的是哪一种成本？HC、mHC/xHC 与 AttnRes 报告的边界不同，不能拼成统一速度柱状图。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+- https://arxiv.org/abs/2512.24880v2
+- https://arxiv.org/abs/2603.15031v1
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: comparison -->
+<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION · 6/7 || 63 / 64 -->
+
+## 评审新连接方法时，先问八个可证伪问题
+
+<div class="slide-contract slide-contract--review" aria-label="八个可证伪的连接方法评审问题">
+  <span><strong>01 · state</strong>shape 与 ownership 是否明确？</span>
+  <span><strong>02 · operator</strong>read / transport / write 能否用最小 tensor 手算？</span>
+  <span><strong>03 · initialization</strong>恢复 exact function、special case 还是近似？</span>
+  <span><strong>04 · autograd</strong>float64 gradcheck 与 zero/nonzero assertions 是否通过？</span>
+  <span><strong>05 · depth</strong>composition claim 能否构造反例？</span>
+  <span><strong>06 · implementation</strong>direct 与 recompute 路径是否数值一致？</span>
+  <span><strong>07 · distributed</strong>PP boundary 到底传什么、谁缓存？</span>
+  <span><strong>08 · evidence</strong>是否固定 baseline、setup 与 counting boundary？</span>
+</div>
+
+先固定 correctness contract，再进入 fused kernel、GPU training 与 throughput。
+
+<!-- notes:
+这些问题不需要 GPU 就能开始证伪。Reference 与 fused/distributed path 必须共享同一 numerical contract；GPU scaling 后做，shape、初始化、autograd 与 ownership 现在就能检查。
+
+[Sources]
+- https://github.com/J-shang/residual
+-->
+
+---
+
+<!-- layout: statement -->
+<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION · 7/7 || 64 / 64 -->
+
+## Residual path 定义的是信息在 depth 上的生命史
+
+$$
+\boxed{
+\text{depth memory}
+=
+\text{stored state}
++
+\text{read}
++
+\text{transport}
++
+\text{write}
++
+\text{system contract}
+}
+$$
+
+<div class="slide-recap">
+  <span><strong>HC</strong>multi-stream topology</span>
+  <span><strong>mHC</strong>constrained transport</span>
+  <span><strong>xHC</strong>capacity / mutation separation</span>
+  <span><strong>AttnRes</strong>named-source retrieval</span>
+</div>
+
+连接方法的核心不是多加一个算子，而是重新定义信息在 depth 上如何保存、被谁读取、怎样搬运、何时改写。
+
+<!-- notes:
+按四个关键词各用一句话收束。回到开场承诺：现在应该能画出每种方法的一层更新，也能解释它为什么出现、保证了什么、付出了什么。
+
+[Sources]
+- https://arxiv.org/abs/2409.19606v3
+- https://arxiv.org/abs/2512.24880v2
+- https://arxiv.org/abs/2603.15031v1
+- https://arxiv.org/abs/2607.14530v1
+- https://github.com/J-shang/residual
 -->
