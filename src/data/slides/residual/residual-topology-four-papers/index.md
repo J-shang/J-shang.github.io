@@ -8,22 +8,22 @@ date: "2026-07-25"
 updated: "2026-07-27"
 cutoff: "2026-07-25"
 audience: "熟悉 Transformer、PreNorm、Attention/MLP block 与基本线性代数的研究和工程同学"
-duration: 50
-slideCount: 33
+duration: 60
+slideCount: 35
 source:
   repository: "J-shang/J-shang.github.io"
   path: "src/data/slides/residual/residual-topology-four-papers/index.md"
   url: "https://github.com/J-shang/J-shang.github.io/blob/main/src/data/slides/residual/residual-topology-four-papers/index.md"
   revision: "main"
   syncedAt: "2026-07-27"
-  contentHash: "sha256:101ad820ca872011818fb69576cf5ac72d5f9859830726753e692390635c6ea4"
+  contentHash: "sha256:86493ccb08b10651826a09c34c92435817082c52d8f8dd9b66d9ab65f2b361f5"
   manifest: "local-residual-slides"
   dirty: false
   managed: false
 ---
 
 <!-- layout: title -->
-<!-- section-header: cover || ACADEMIC SHARING · 60 MIN || 01 / 29 -->
+<!-- section-header: cover || ACADEMIC SHARING · 60 MIN || 01 / 31 -->
 
 # 从固定加法到深度记忆
 
@@ -47,7 +47,7 @@ Hyper-Connections · Manifold-Constrained HC · Attention Residuals · Expanded 
 ---
 
 <!-- layout: figure -->
-<!-- section-header: depth || 01 · 深度记忆 / DEPTH MEMORY | MEMORY POLICY · 1/4 || 02 / 29 -->
+<!-- section-header: depth || 01 · 深度记忆 / DEPTH MEMORY | MEMORY POLICY · 1/4 || 02 / 31 -->
 
 ## 一次加法其实规定了 memory policy
 
@@ -79,7 +79,7 @@ $$
 ---
 
 <!-- layout: comparison -->
-<!-- section-header: depth || 01 · 深度记忆 / DEPTH MEMORY | FIXED DEPTH MIXING · 2/4 || 03 / 29 -->
+<!-- section-header: depth || 01 · 深度记忆 / DEPTH MEMORY | FIXED DEPTH MIXING · 2/4 || 03 / 31 -->
 
 ## 标准 residual 是固定 depth mixing
 
@@ -104,7 +104,7 @@ $$
 ---
 
 <!-- layout: figure -->
-<!-- section-header: depth || 01 · 深度记忆 / DEPTH MEMORY | OPERATIONAL CONTRACT · 3/4 || 04 / 29 -->
+<!-- section-header: depth || 01 · 深度记忆 / DEPTH MEMORY | OPERATIONAL CONTRACT · 3/4 || 04 / 31 -->
 
 ## 用 operational contract 比较方法
 
@@ -130,7 +130,7 @@ $$
 ---
 
 <!-- layout: comparison -->
-<!-- section-header: depth || 01 · 深度记忆 / DEPTH MEMORY | RESEARCH MAP · 4/4 || 05 / 29 -->
+<!-- section-header: depth || 01 · 深度记忆 / DEPTH MEMORY | RESEARCH MAP · 4/4 || 05 / 31 -->
 
 ## 四篇论文是一条设计压力链
 
@@ -163,7 +163,7 @@ $$
 ---
 
 <!-- layout: figure -->
-<!-- section-header: hc || 02 · HC / MULTI-STREAM | STATE EXPANSION · 1/6 || 06 / 29 -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM | STATE EXPANSION · 1/6 || 06 / 31 -->
 
 ## HC 扩张的是 residual state
 
@@ -188,7 +188,7 @@ $$
 ---
 
 <!-- layout: figure -->
-<!-- section-header: hc || 02 · HC / MULTI-STREAM | READ · TRANSPORT · WRITE · 2/6 || 07 / 29 -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM | READ · TRANSPORT · WRITE · 2/6 || 07 / 31 -->
 
 ## 三个矩阵分别回答读、传输和写
 
@@ -219,7 +219,7 @@ $$
 ---
 
 <!-- layout: figure -->
-<!-- section-header: hc || 02 · HC / MULTI-STREAM | ONE-LAYER UPDATE · 3/6 || 08 / 29 -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM | ONE-LAYER UPDATE · 3/6 || 08 / 31 -->
 
 ## HC 的一层状态更新
 
@@ -253,7 +253,7 @@ $$
 ---
 
 <!-- layout: figure -->
-<!-- section-header: hc || 02 · HC / MULTI-STREAM | DYNAMIC ROUTING · 4/6 || 09 / 29 -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM | DYNAMIC ROUTING · 4/6 || 09 / 31 -->
 
 ## DHC 先恢复熟悉路径再学习 token 路由
 
@@ -280,7 +280,7 @@ $$
 ---
 
 <!-- layout: figure -->
-<!-- section-header: hc || 02 · HC / MULTI-STREAM | QUALITY & MEMORY · 5/6 || 10 / 29 -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM | QUALITY & MEMORY · 5/6 || 10 / 31 -->
 
 ## HC 的算术很轻，状态并不轻
 
@@ -306,7 +306,7 @@ $$
 ---
 
 <!-- layout: figure -->
-<!-- section-header: hc || 02 · HC / MULTI-STREAM | DEEP PRODUCT RISK · 6/6 || 11 / 29 -->
+<!-- section-header: hc || 02 · HC / MULTI-STREAM | DEEP PRODUCT RISK · 6/6 || 11 / 31 -->
 
 ## HC 的深层风险来自 transport 连乘
 
@@ -340,29 +340,38 @@ $$
 ---
 
 <!-- layout: figure -->
-<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT | CONSTRAINT · 1/4 || 12 / 29 -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT | SINKHORN · 1/4 || 12 / 31 -->
 
-## mHC 用双随机 transport 控制深层乘积
+## Sinkhorn 怎样得到双随机矩阵
 
-![mHC Figure 1：Residual、HC 与 manifold-constrained HC 的结构对照](./assets/mhc-fig1-overview.png)
-
-$$
-\mathcal B_n=\{H\ge0\mid H\mathbf1=\mathbf1,\ \mathbf1^\top H=\mathbf1^\top\}
-$$
-
-<div class="slide-flow" aria-label="mHC 运行时 mapping 的生成">
-  <span class="slide-flow__step">free logits</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">exp</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">20-step Sinkhorn</span><span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step">near <code>B_n</code></span>
+<div class="slide-flow" aria-label="mHC 的 Sinkhorn 生成流程">
+  <span class="slide-flow__step">free logits <code>Z</code></span><span class="slide-flow__arrow">→</span>
+  <span class="slide-flow__step"><code>M⁽⁰⁾ = exp(Z) &gt; 0</code></span><span class="slide-flow__arrow">→</span>
+  <span class="slide-flow__step">column norm</span><span class="slide-flow__arrow">→</span>
+  <span class="slide-flow__step">row norm</span><span class="slide-flow__arrow">→</span>
+  <span class="slide-flow__step">repeat 20</span>
 </div>
 
-`doubly stochastic = 元素非负，且每行、每列之和都是 1`
+$$
+\begin{aligned}
+T_c(M)_{ij}&=\frac{M_{ij}}{\sum_r M_{rj}},&
+T_r(M)_{ij}&=\frac{M_{ij}}{\sum_s M_{is}},\\
+M^{(t)}&=T_r\!\left(T_c(M^{(t-1)})\right)
+\end{aligned}
+$$
 
-> **Reported** · mHC, arXiv:2512.24880v2, Fig. 1, PDF p.1；Eq. 6–9。$\mathcal B_n$ 是所有 $n\times n$ 双随机矩阵形成的凸多面体。
+<div class="slide-cards slide-cards--3">
+  <div class="slide-card slide-card--state"><strong>起点</strong><code>M⁽⁰⁾ = [[4,1],[2,3]]</code></div>
+  <div class="slide-card slide-card--read"><strong>列归一化</strong><code>[[2/3,1/4],[1/3,3/4]]</code></div>
+  <div class="slide-card slide-card--transport"><strong>再做行归一化</strong><code>[[8/11,3/11],[4/13,9/13]]</code></div>
+</div>
+
+<div class="slide-boundary">第一轮后 row sums = 1，但 column sums ≈ 1.035 / 0.965，所以继续迭代。finite 20-step 只近似双随机；Sinkhorn 只用于 <code>H_res</code>。</div>
+
+> **Reported + Derived** · mHC, arXiv:2512.24880v2, Eq. 8–9。$H_{pre}=\sigma(\cdot)$，$H_{post}=2\sigma(\cdot)$；Sinkhorn 是可微重参数化，不是额外 loss。
 
 <!-- notes:
-2 分钟。沿用论文 mHC 名称，但不宣称 Birkhoff polytope 处处是光滑 manifold；20 次 Sinkhorn 也是有限步近似。
+2.5 分钟。逐步口算第一轮：column normalization 会改行和，row normalization 又会轻微改列和，所以需要交替迭代。Birkhoff polytope 是双随机矩阵形成的凸多面体；沿用 mHC 名称，但不宣称它处处是光滑 manifold。
 
 [Sources]
 - https://arxiv.org/abs/2512.24880v2
@@ -371,7 +380,7 @@ $$
 ---
 
 <!-- layout: figure -->
-<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT | GUARANTEES · 2/4 || 13 / 29 -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT | GUARANTEES · 2/4 || 13 / 31 -->
 
 ## 双随机约束保的是共同模式与均值
 
@@ -397,7 +406,7 @@ $$
 ---
 
 <!-- layout: comparison -->
-<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT | PROPAGATION EVIDENCE · 3/4 || 14 / 29 -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT | PROPAGATION EVIDENCE · 3/4 || 14 / 31 -->
 
 ## mHC 的强证据是稳定性链条
 
@@ -424,26 +433,26 @@ $$
 ---
 
 <!-- layout: figure -->
-<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT | SYSTEM CONTRACT · 4/4 || 15 / 29 -->
+<!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT | PIPELINE SCHEDULE · 4/4 || 15 / 31 -->
 
-## mHC 把系统优化变成方法的一部分
+## Fig. 4 不是单个 microbatch 的顺序
+
+<div class="slide-boundary"><strong>横轴 = 同一 pipeline rank 的 wall-clock。</strong>黄色 F、绿色 B、蓝色 W 来自不同在途 microbatches，不是单个样本的串行 trace。</div>
 
 ![mHC 的 communication–computation overlap schedule](./assets/mhc-fig4-system-overlap.png)
 
 <div class="slide-cards slide-cards--3">
-  <div class="slide-card slide-card--read"><strong>HBM I/O</strong><code>n=4</code> residual-side 静态 accounting 约 <code>34C</code></div>
-  <div class="slide-card slide-card--state"><strong>activation</strong>多流 state 需要保存或 recompute</div>
-  <div class="slide-card slide-card--transport"><strong>PP payload</strong>完整 state 跨 boundary 时近似 <code>n×</code></div>
+  <div class="slide-card slide-card--state"><strong>F / B / W</strong>forward / activation-backward / weight-gradient；DualPipe 把 B 与 W 拆开</div>
+  <div class="slide-card slide-card--read"><strong>A / M + communication</strong>Attention / MLP；DISPATCH/COMBINE 是 MoE 通信，PP Send Recv 是 pipeline 通信</div>
+  <div class="slide-card slide-card--transport"><strong>𝓕<sub>pre</sub> / 𝓕<sub>post,res</sub></strong>branch 前读；branch 后 transport + write + merge，不是再次调用 Attention/MLP</div>
 </div>
 
-`F/B/W = forward / backward / weight-gradient` · `A/M = Attention / MLP` · `PP = pipeline parallelism`
+`MLP post/res → high-priority stream` · `Whole Stage Recompute(B) → 只重建 mHC path` · `block length → 仅示意`
 
-<div class="slide-boundary">timeline block length 只作示意；作者报告 6.7% overhead，但未给完整硬件、并行布局与 tokens/s 分解。</div>
-
-> **Reported + Derived** · mHC, arXiv:2512.24880v2, Fig. 4, PDF p.12；Table 2
+> **Reported + Derived** · mHC, arXiv:2512.24880v2, Fig. 4, PDF p.12；DeepSeek TileKernels commit `36d9e45`
 
 <!-- notes:
-1.5 分钟。state 变宽先带来 bytes、activation 与 PP payload，fusion/recompute/overlap 是对这条因果链的响应。
+2.5 分钟。较早 microbatch 已进入 backward，较晚 microbatch 仍在 forward，所以 timeline 可以先出现 ATTN(B) 再出现 ATTN(F)；任一单独 microbatch 内仍然先 forward 后 backward。论文没有标 microbatch ID，不能从色块宽度反推出精确时长。
 
 [Sources]
 - https://arxiv.org/abs/2512.24880v2
@@ -453,7 +462,7 @@ $$
 ---
 
 <!-- layout: figure -->
-<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | ROUTE SWITCH · 1/6 || 16 / 29 -->
+<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | ROUTE SWITCH · 1/7 || 16 / 31 -->
 
 ## AttnRes 把固定求和改成 depth softmax
 
@@ -486,7 +495,7 @@ softmax 轴是 **historical depth/source**，不是 sequence token。
 ---
 
 <!-- layout: comparison -->
-<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | FULL RETRIEVAL · 2/6 || 17 / 29 -->
+<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | FULL RETRIEVAL · 2/7 || 17 / 31 -->
 
 ## Full AttnRes 检索 depth source
 
@@ -509,7 +518,7 @@ source stack 为 $[J,B,T,d]$，logits / weights 为 $[J,B,T]$，softmax 沿 $J$�
 ---
 
 <!-- layout: comparison -->
-<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | INITIALIZATION · 3/6 || 18 / 29 -->
+<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | INITIALIZATION · 3/7 || 18 / 31 -->
 
 ## zero query 恢复 uniform average
 
@@ -537,7 +546,7 @@ source stack 为 $[J,B,T,d]$，logits / weights 为 $[J,B,T]$，softmax 沿 $J$�
 ---
 
 <!-- layout: comparison -->
-<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | BLOCK COMPRESSION · 4/6 || 19 / 29 -->
+<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | BLOCK COMPRESSION · 4/7 || 19 / 31 -->
 
 ## Block AttnRes 用结构约束压缩历史
 
@@ -562,23 +571,37 @@ source stack 为 $[J,B,T,d]$，logits / weights 为 $[J,B,T]$，softmax 沿 $J$�
 ---
 
 <!-- layout: figure -->
-<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | EXACT EXECUTION & CACHE · 5/6 || 20 / 29 -->
+<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | TWO-PHASE EXECUTION · 5/7 || 20 / 31 -->
 
-## two-phase 是精确执行，PP cache 是状态协议
-
-![Block AttnRes 的 pipeline cache 传递](./assets/attnres-fig3-pp-cache.png)
+## two-phase：历史批量，partial 顺序
 
 <div class="slide-cards slide-cards--2">
-  <div class="slide-card slide-card--read"><strong>Math contract</strong>历史 blocks 与 current partial 的 softmax statistics 可精确 merge</div>
-  <div class="slide-card slide-card--transport"><strong>State contract</strong>cache key 至少包含 microbatch / virtual stage / block / direction</div>
+  <div class="slide-card slide-card--read"><strong>Phase 1 · fixed history</strong><code>S=3</code> 个 pseudo-queries 一次读取 <code>[b₀,b₁]</code>，各自保存 <code>(o_hist,m_hist,ℓ_hist)</code></div>
+  <div class="slide-card slide-card--write"><strong>Phase 2 · evolving partial</strong><code>l₁: empty</code> → <code>l₂: f₁</code> → <code>l₃: f₁+f₂</code>，必须顺序计算</div>
 </div>
 
-<div class="slide-boundary">数学等价 ≠ 系统状态自动正确；精确算法也不代表实现无开销。</div>
+<div class="slide-flow" aria-label="Block AttnRes 的 two-phase 执行顺序">
+  <span class="slide-flow__step">history numerator / max / exp-sum</span><span class="slide-flow__arrow">+</span>
+  <span class="slide-flow__step">partial numerator / max / exp-sum</span><span class="slide-flow__arrow">→</span>
+  <span class="slide-flow__step">共同 maximum 下重标定并合并</span>
+</div>
 
-> **Reported** · Attention Residuals, arXiv:2603.15031v1, Fig. 3, PDF p.6；Algorithm 1、Appendix B
+$$
+\begin{aligned}
+m&=\max(m_{\mathrm{hist}},m_{\mathrm{part}}),\\
+y&=\frac{e^{m_{\mathrm{hist}}-m}o_{\mathrm{hist}}+e^{m_{\mathrm{part}}-m}o_{\mathrm{part}}}
+{e^{m_{\mathrm{hist}}-m}\ell_{\mathrm{hist}}+e^{m_{\mathrm{part}}-m}\ell_{\mathrm{part}}}
+\end{aligned}
+$$
+
+`o = 未除 denominator 的 weighted-value numerator` · `m = maximum logit` · `ℓ = shifted exponential sum`
+
+<div class="slide-boundary">等价于对 <code>history ∪ partial</code> 一次做 softmax：这是 exact source-partition merge，不是两个 output 取平均。</div>
+
+> **Reported + Derived** · Attention Residuals, arXiv:2603.15031v1, Algorithm 1, PDF p.7；Appendix B
 
 <!-- notes:
-1.5 分钟。需要时口头解释 (max, exp-sum, numerator) 的 online-softmax merge；主页面只区分数学等价和状态 ownership。
+2.5 分钟。Phase 1 可批量，因为历史 blocks 在当前 block 内固定；Phase 2 不能并行，因为 current partial 依赖前一层 branch output。合并时先对齐共同 maximum，再分别重标定 numerator 与 denominator。
 
 [Sources]
 - https://arxiv.org/abs/2603.15031v1
@@ -588,26 +611,24 @@ source stack 为 $[J,B,T,d]$，logits / weights 为 $[J,B,T]$，softmax 沿 $J$�
 ---
 
 <!-- layout: figure -->
-<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | SCALING EVIDENCE · 6/6 || 21 / 29 -->
+<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | PIPELINE CACHE · 6/7 || 21 / 31 -->
 
-## Block 版本保留了大部分 scaling 收益
+## 同一 virtual stage 仍会跨 rank
 
-![Baseline、Full 与 Block AttnRes 的五点 scaling-law fit](./assets/attnres-fig4-scaling.png)
+![Block AttnRes 在四个 physical ranks、两个 virtual-stage chunks 之间传递并缓存 block history](./assets/attnres-fig3-pp-cache.png)
 
 <div class="slide-cards slide-cards--3">
-  <div class="slide-card slide-card--neutral"><strong>Baseline</strong><code>1.719</code></div>
-  <div class="slide-card slide-card--transport"><strong>Block</strong><code>1.693</code></div>
-  <div class="slide-card slide-card--read"><strong>Full</strong><code>1.692</code></div>
+  <div class="slide-card slide-card--transport"><strong>二维坐标</strong>固定 VS 后仍是 <code>R0→R1→R2→R3</code>；每个 physical rank 各有 VS0 / VS1 chunks</div>
+  <div class="slide-card slide-card--state"><strong>[复原读法]</strong>左括号 = 本 rank 收到/补齐的 history；右括号 = 本 chunk 新完成的 block；<code>[ ]</code> = 没有 boundary</div>
+  <div class="slide-card slide-card--read"><strong>receiver-relative increment</strong><code>+[b₁,b₂]</code> 只发送该接收方尚未缓存的 completed blocks</div>
 </div>
 
-`1.25× = 五点拟合的 compute-equivalence estimate`，不是 measured wall-clock speedup。
+`VS0/R0: [b₀]+[ ] → R1` · `VS0/R1: [b₀]+[b₁] → R2` · `VS0/R3 → VS1/R0`
 
-<div class="slide-boundary">single run · no fit uncertainty · data / validation protocol not public</div>
-
-> **Reported** · Attention Residuals, arXiv:2603.15031v1, Fig. 4, PDF p.9
+<div class="slide-boundary">Rank 通常对应一台 GPU 上的逻辑进程，但本质是 physical PP rank；PP cache ≠ token-attention KV cache。<strong>Reported + Derived</strong> · Attention Residuals, Fig. 3, PDF p.6</div>
 
 <!-- notes:
-2 分钟。先读同一规模的 validation loss，再解释 fitted compute-equivalence 的边界。
+2 分钟。virtual stage 是每个 rank 所持 model chunk 的编号轴，不是一台设备。Rank3/VS0 完成后回绕 Rank0/VS1；加号是相对 receiver cache 的增量。方括号语义依据 caption、block boundary 与 transition 数据流复原。
 
 [Sources]
 - https://arxiv.org/abs/2603.15031v1
@@ -616,7 +637,37 @@ source stack 为 $[J,B,T,d]$，logits / weights 为 $[J,B,T]$，softmax 沿 $J$�
 ---
 
 <!-- layout: figure -->
-<!-- section-header: xhc || 05 · xHC / LARGE-N | TWO BOTTLENECKS · 1/5 || 22 / 29 -->
+<!-- section-header: attnres || 04 · ATTNRES / DEPTH RETRIEVAL | SCALING EVIDENCE · 7/7 || 22 / 31 -->
+
+## Block 版本保留了大部分 scaling 收益
+
+![Baseline、Full 与 Block AttnRes 的五点 scaling-law fit](./assets/attnres-fig4-scaling.png)
+
+<div class="slide-card slide-card--neutral"><strong>matched baseline</strong>Kimi Linear-style MoE · standard PreNorm residual · KDA:MLA = 3:1 · 同规模内 depth / width / routing / MLP 与 baseline-selected hyperparameters 保持一致</div>
+
+<div class="slide-cards slide-cards--3">
+  <div class="slide-card slide-card--neutral"><strong>528M activated</strong><code>119B tokens<br>34 sublayers · H=17</code></div>
+  <div class="slide-card slide-card--transport"><strong>Baseline / Block</strong><code>1.719 / 1.693</code></div>
+  <div class="slide-card slide-card--read"><strong>Full</strong><code>1.692</code> · 与 Block 只差 <code>0.001</code></div>
+</div>
+
+`1.25× = 五点拟合的 compute-equivalence estimate`，不是 measured wall-clock speedup。
+
+<div class="slide-boundary">activated params 排除 embedding · single run · no fit uncertainty · data / validation protocol not public</div>
+
+> **Reported** · Attention Residuals, arXiv:2603.15031v1, Fig. 4 & Table 2, PDF p.9
+
+<!-- notes:
+2.5 分钟。baseline 是五个规模各自对应的 standard PreNorm run，不是一个固定尺寸模型。先读同规模 loss，再解释 activated params 与 fitted compute-equivalence 的边界。
+
+[Sources]
+- https://arxiv.org/abs/2603.15031v1
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: xhc || 05 · xHC / LARGE-N | TWO BOTTLENECKS · 1/6 || 23 / 31 -->
 
 ## xHC 从大 N 的两个瓶颈出发
 
@@ -641,7 +692,7 @@ source stack 为 $[J,B,T,d]$，logits / weights 为 $[J,B,T]$，softmax 沿 $J$�
 ---
 
 <!-- layout: figure -->
-<!-- section-header: xhc || 05 · xHC / LARGE-N | RICHER WRITE · 2/5 || 23 / 29 -->
+<!-- section-header: xhc || 05 · xHC / LARGE-N | RICHER WRITE · 2/6 || 24 / 31 -->
 
 ## Temporal augmentation 扩展写回
 
@@ -671,7 +722,7 @@ source stack 为 $[J,B,T,d]$，logits / weights 为 $[J,B,T]$，softmax 沿 $J$�
 ---
 
 <!-- layout: figure -->
-<!-- section-header: xhc || 05 · xHC / LARGE-N | DENSE READ · SPARSE UPDATE · 3/5 || 24 / 29 -->
+<!-- section-header: xhc || 05 · xHC / LARGE-N | DENSE READ · SPARSE UPDATE · 3/6 || 25 / 31 -->
 
 ## Dense read 解耦 $N$ 与 $k$
 
@@ -696,7 +747,7 @@ source stack 为 $[J,B,T,d]$，logits / weights 为 $[J,B,T]$，softmax 沿 $J$�
 ---
 
 <!-- layout: figure -->
-<!-- section-header: xhc || 05 · xHC / LARGE-N | ABLATION · 4/5 || 25 / 29 -->
+<!-- section-header: xhc || 05 · xHC / LARGE-N | ABLATION · 4/6 || 26 / 31 -->
 
 ## ablation 分开了质量与成本角色
 
@@ -724,25 +775,39 @@ source stack 为 $[J,B,T,d]$，logits / weights 为 $[J,B,T]$，softmax 沿 $J$�
 ---
 
 <!-- layout: figure -->
-<!-- section-header: xhc || 05 · xHC / LARGE-N | FLASH BOUNDARY · 5/5 || 26 / 29 -->
+<!-- section-header: xhc || 05 · xHC / LARGE-N | I/O ACCOUNTING · 5/6 || 27 / 31 -->
 
-## xHC-Flash 局部精确，整体是近似架构
+## Table 4：从 3C 算到 73.5C
+
+![xHC Table 4：mHC、full xHC 与 xHC-Flash 的逐操作 read/write accounting](./assets/xhc-table4-io.png)
+
+<!-- notes:
+2.5 分钟。从 vanilla merge 的 2C reads + C write 开始，再读 Table 4 的 mHC 与 xHC total 行。73.5C 是论文 counting boundary 下的 leading C accounting，不能解释成 wall-clock 或实际 cache-line traffic。
+
+[Sources]
+- https://arxiv.org/abs/2607.14530v1
+-->
+
+---
+
+<!-- layout: figure -->
+<!-- section-header: xhc || 05 · xHC / LARGE-N | FLASH AMORTIZATION · 6/6 || 28 / 31 -->
+
+## xHC-Flash 用跨 sublayer 分摊降低 I/O
 
 ![xHC、xHC-Flash 与 Flash-4sub 的 validation loss 和静态 residual-side I/O](./assets/xhc-table5-flash.png)
 
-`window = 一组复用同一 routing / pre-mapping 的 sublayers`
+`Table 4 中带 * 的 full-state work → once per 2-sublayer block / once per 4-sublayer window`
 
 <div class="slide-cards slide-cards--2">
-  <div class="slide-card slide-card--read"><strong>window 内</strong>给定 routing 后，dense-read correction 与逐步更新代数等价</div>
-  <div class="slide-card slide-card--caveat"><strong>与 full xHC 比</strong>routing 刷新频率、依赖状态和 mixing 位置改变，因此整体架构近似</div>
+  <div class="slide-card slide-card--read"><strong>Flash · 2 sublayers</strong><code>36C R + 15C W = 51C</code><br>共享 routing / joint pre-read；Attention 不做 <code>H_res</code>，用 exact input correction</div>
+  <div class="slide-card slide-card--transport"><strong>Flash-4sub · 4 sublayers</strong><code>26.5C R + 13.5C W = 40C</code><br>四层共享；residual mixing / scatter 推迟到最后 MLP</div>
 </div>
 
-<div class="slide-boundary">静态 accounting 从 full xHC <code>73.5C</code> 降到 Flash-4sub <code>40C</code>；不是实际 HBM bytes 或 wall-clock speedup。</div>
-
-> **Reported + Derived** · xHC, arXiv:2607.14530v1, Table 5, PDF p.14；§4
+<div class="slide-boundary">correction 在固定 window contract 内精确；相对每个 sublayer 重新 routing 的 full xHC，routing / pre-mapping / mixing schedule 已改变，因此整体仍是架构近似。<strong>Reported + Derived</strong> · xHC Table 5, PDF p.14</div>
 
 <!-- notes:
-1.5 分钟。exact correction 与 architectural approximation 的比较对象不同；不要混成一个“完全等价”结论。
+1.5 分钟。带星号的 full-state work 在 window 内共享，但 active mapping、write-back、merge/correction 并未全部消失，所以 73.5C 不能机械除以 2 或 4。Table 5 同一 10B setup 下 full/Flash/4sub loss 为 1.983/1.983/1.984。
 
 [Sources]
 - https://arxiv.org/abs/2607.14530v1
@@ -751,7 +816,7 @@ source stack 为 $[J,B,T,d]$，logits / weights 为 $[J,B,T]$，softmax 沿 $J$�
 ---
 
 <!-- layout: comparison -->
-<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION | METHOD CHOICE · 1/3 || 27 / 29 -->
+<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION | METHOD CHOICE · 1/3 || 29 / 31 -->
 
 ## 没有一种方法统治所有设计轴
 
@@ -780,7 +845,7 @@ source stack 为 $[J,B,T,d]$，logits / weights 为 $[J,B,T]$，softmax 沿 $J$�
 ---
 
 <!-- layout: comparison -->
-<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION | TEST AGENDA · 2/3 || 28 / 29 -->
+<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION | TEST AGENDA · 2/3 || 30 / 31 -->
 
 ## 开放问题应该被写成测试
 
@@ -795,7 +860,7 @@ source stack 为 $[J,B,T,d]$，logits / weights 为 $[J,B,T]$，softmax 沿 $J$�
 先固定 correctness contract，再进入 GPU scaling。
 
 <!-- notes:
-2 分钟。逐行回指 S11、S18、S20/S26 的未闭合边界，把研究问题改写成可证伪测试。
+1.5 分钟。逐行回指 S11、S18、S20–S21、S27–S28 的未闭合边界，把研究问题改写成可证伪测试。
 
 [Sources]
 - https://github.com/J-shang/residual
@@ -804,7 +869,7 @@ source stack 为 $[J,B,T,d]$，logits / weights 为 $[J,B,T]$，softmax 沿 $J$�
 ---
 
 <!-- layout: statement -->
-<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION | TAKEAWAY · 3/3 || 29 / 29 -->
+<!-- section-header: synthesis || 06 · 综合 / DESIGN & VALIDATION | TAKEAWAY · 3/3 || 31 / 31 -->
 
 ## Residual path 是 depth memory
 
@@ -827,7 +892,7 @@ $$
 
 连接方法的核心不是多加一个算子，而是重新定义信息沿 depth 的**保存、访问、变换与消亡方式**。
 
-`Q&A · 10 MIN`
+`Q&A · 5 MIN`
 
 <!-- notes:
 1.5 分钟。按公式五个字段回收全场，不再引入新术语。结束句：连接方法的核心不是多加一个算子，而是重新定义 depth 上的信息生命史。
