@@ -15,7 +15,7 @@ source:
   url: "https://github.com/J-shang/J-shang.github.io/blob/main/src/data/slides/residual/residual-topology-four-papers/index.md"
   revision: "main"
   syncedAt: "2026-07-26"
-  contentHash: "sha256:7695155f11c713e1c416352145adfe8351d90b0a16f2adf884bf5d54183f2317"
+  contentHash: "sha256:7297807e23734a6f6a530e10aa7c94749cd693a53afa222f2d687060432bfecb"
   manifest: "local-residual-slides"
   dirty: false
   managed: false
@@ -113,7 +113,7 @@ direct path 帮助信息与梯度跨层传播；同一个固定权重也限制�
 
 ## 四篇论文回应四类设计压力
 
-![四篇论文沿 state capacity、product stability、source retrieval 与 large-N cost 四类设计压力展开](./assets/residual-design-pressure-map.svg)
+![四篇论文沿 state capacity、product stability、source retrieval 与 large-N cost 四类设计压力展开](./assets/residual-design-pressure-map-fit.svg)
 
 > **Derived** · HC Fig. 2 · mHC Fig. 1 · Attention Residuals Fig. 1 · xHC Fig. 3
 
