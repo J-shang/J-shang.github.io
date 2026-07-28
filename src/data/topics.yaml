@@ -151,15 +151,7 @@
     - muddformer
   repository: https://github.com/J-shang/residual
   sections:
-    - id: foundations
-      title: 残差与深度记忆
-      description: 从标准 PreNorm residual 建立统一的 state/read/write/transport 视角。
-      order: 1
     - id: methods
       title: 可学习连接与论文精读
       description: 对齐 DenseFormer、DCA、MUDDFormer、LAuReL、HC、mHC、AttnRes 与 xHC 的机制、证据和边界。
-      order: 2
-    - id: systems
-      title: 正确性与系统合同
-      description: 固定 shape、数值、深层组合、缓存、通信和成本口径。
-      order: 3
+      order: 1

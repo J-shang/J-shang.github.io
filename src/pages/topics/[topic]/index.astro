@@ -77,7 +77,7 @@ const fmt = (value: Date) => new Intl.DateTimeFormat('zh-CN').format(value);
 
   {topicNotes.length > 0 && (
     <section class="reading-path shell">
-      <div class="section-heading"><h2>推荐阅读路径</h2><span>{groups.length} LAYERS / {topicNotes.length - (guide ? 1 : 0)} NOTES</span></div>
+      <div class="section-heading"><h2>推荐阅读路径</h2><span>{groups.length} {groups.length === 1 ? 'LAYER' : 'LAYERS'} / {topicNotes.length - (guide ? 1 : 0)} NOTES</span></div>
       <div class="path-list">
         {groups.map((group, groupIndex) => (
           <section class="path-group">
