@@ -134,7 +134,7 @@
   heroTitle: Residual
   heroAccent: Path
   symbol: ↯
-  description: 把 residual connection 视为沿网络深度运行的 memory policy，比较 HC、mHC、AttnRes 与 xHC 的状态、读取、传输、写回和系统成本。
+  description: 把 residual connection 视为沿网络深度运行的 memory policy，比较多流 residual state 与跨深度聚合方法的读取、传输、写回、稳定性和系统成本。
   kicker: Depth memory systems
   scope:
     - 状态
@@ -144,7 +144,11 @@
   order: 3
   featured: false
   status: published
-  cutoff: 2026-07-25
+  cutoff: 2026-07-27
+  featuredNotes:
+    - hyper-connections
+    - attention-residuals
+    - muddformer
   repository: https://github.com/J-shang/residual
   sections:
     - id: foundations
@@ -152,8 +156,8 @@
       description: 从标准 PreNorm residual 建立统一的 state/read/write/transport 视角。
       order: 1
     - id: methods
-      title: 可学习连接方法
-      description: 对齐 HC、mHC、AttnRes 与 xHC 的机制、证据和边界。
+      title: 可学习连接与论文精读
+      description: 对齐 DenseFormer、DCA、MUDDFormer、LAuReL、HC、mHC、AttnRes 与 xHC 的机制、证据和边界。
       order: 2
     - id: systems
       title: 正确性与系统合同

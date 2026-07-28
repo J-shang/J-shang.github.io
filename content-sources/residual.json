@@ -1,0 +1,103 @@
+{
+  "topic": "residual",
+  "repository": "J-shang/residual",
+  "repositoryUrl": "https://github.com/J-shang/residual",
+  "output": "src/data/notes/residual",
+  "linkRoutes": {
+    "README.md": "/topics/residual/"
+  },
+  "discoveryRoots": ["papers"],
+  "documents": [
+    {
+      "source": "papers/01-hyper-connections.md",
+      "slug": "hyper-connections",
+      "title": "Hyper-Connections：把固定 residual path 扩展为可学习的多流状态系统",
+      "description": "从 read、mix、write 三条路径复原 HC 的多流 residual state，核查初始化、深层组合、实验收益与资源成本。",
+      "section": "methods",
+      "order": 10,
+      "readtime": 34,
+      "date": "2026-07-27",
+      "cutoff": "2026-07-23",
+      "featured": true
+    },
+    {
+      "source": "papers/02-mhc.md",
+      "slug": "mhc",
+      "title": "mHC：用双随机约束把可学习 residual topology 拉回稳定区",
+      "description": "解释 mHC 如何用 Sinkhorn 投影约束 residual mixing，并区分结构保证、训练稳定性证据与系统实现成本。",
+      "section": "methods",
+      "order": 11,
+      "readtime": 37,
+      "date": "2026-07-27",
+      "cutoff": "2026-07-23",
+      "featured": true
+    },
+    {
+      "source": "papers/03-attention-residuals.md",
+      "slug": "attention-residuals",
+      "title": "Attention Residuals：把 residual stream 从固定累加改成沿深度检索",
+      "description": "复原 Full 与 Block AttnRes 的 depth-wise routing，追踪候选状态、softmax 权重、训练证据和 pipeline cache 代价。",
+      "section": "methods",
+      "order": 12,
+      "readtime": 46,
+      "date": "2026-07-27",
+      "cutoff": "2026-07-23",
+      "featured": true
+    },
+    {
+      "source": "papers/04-xhc-expanded-hyper-connections.md",
+      "slug": "xhc-expanded-hyper-connections",
+      "title": "xHC：让 Hyper-Connections 的 residual streams 从 4 条扩到 16 条",
+      "description": "拆解 xHC 的 dense read、active-stream mixing 与 sparse write，核对扩展率、I/O、Flash kernel 报告和证据边界。",
+      "section": "methods",
+      "order": 13,
+      "readtime": 49,
+      "date": "2026-07-27",
+      "cutoff": "2026-07-24"
+    },
+    {
+      "source": "papers/05-denseformer.md",
+      "slug": "denseformer",
+      "title": "DenseFormer：用静态 Depth-Weighted Average 重写跨层信息流",
+      "description": "从标准 residual sum 出发理解静态 Depth-Weighted Average，并核查 dilation、period、参数成本与中等规模语言模型证据。",
+      "section": "methods",
+      "order": 14,
+      "readtime": 16,
+      "date": "2026-07-27",
+      "cutoff": "2026-07-27"
+    },
+    {
+      "source": "papers/06-deepcrossattention.md",
+      "slug": "deepcrossattention",
+      "title": "DeepCrossAttention：让 Q、K、V 分别动态选择历史深度",
+      "description": "解释 GRN 与 DCA 如何为 Q、K、V 建立 feature-aware depth aggregation，并审计理论保证、参数效率和评测边界。",
+      "section": "methods",
+      "order": 15,
+      "readtime": 16,
+      "date": "2026-07-27",
+      "cutoff": "2026-07-27"
+    },
+    {
+      "source": "papers/07-muddformer.md",
+      "slug": "muddformer",
+      "title": "MUDDFormer：为 Q、K、V、Residual 建立四路动态 dense connections",
+      "description": "追踪 MUDDFormer 的四路 token-wise depth mixing，结合 2.8B、300B-token 实验检查质量、吞吐、显存与 artifact 完整度。",
+      "section": "methods",
+      "order": 16,
+      "readtime": 17,
+      "date": "2026-07-27",
+      "cutoff": "2026-07-27"
+    },
+    {
+      "source": "papers/08-laurel.md",
+      "slug": "laurel",
+      "title": "LAuReL：用 scalar gate、低秩映射和短历史增强 residual path",
+      "description": "统一 LAuReL-RW、LR 与 PA 三种轻量残差增强，核查参数预算、1B/4B 实验、效率收益和可复现性缺口。",
+      "section": "methods",
+      "order": 17,
+      "readtime": 15,
+      "date": "2026-07-27",
+      "cutoff": "2026-07-27"
+    }
+  ]
+}
