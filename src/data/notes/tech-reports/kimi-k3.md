@@ -19,6 +19,7 @@ readtime: 40
 > 本次分析版本锚点：用户提供的 `k3_tech_report.pdf`，SHA-256 `38621eb5be601a5dcd5c795fc10b692d124430014ff9eb035b0ce38c72ec2eaf`<br>
 > 一手来源：[官方 PDF](https://github.com/MoonshotAI/Kimi-K3/blob/main/k3_tech_report.pdf) · [官方模型仓库](https://huggingface.co/moonshotai/Kimi-K3) · [官方配置](https://huggingface.co/moonshotai/Kimi-K3/blob/main/config.json)<br>
 > 阅读范围：完整 47 页，包括 Figure 1–16、Table 1–5、方法、系统、评测、case studies 与 Appendix B–F；未做模型权重下载、代码执行或 benchmark 复现<br>
+> 视觉证据：选择性嵌入 Figure 2、3、5、7、8、12、13；均从上述版本 PDF 以 240 DPI 裁剪，保留原始图例、坐标和 caption，生成记录见 [Kimi K3 visual evidence assets](/assets/tech-reports/kimi-k3-2026/README.txt)<br>
 > 外部信息核验截止：2026-07-28<br>
 > 阅读状态：`complete`
 
@@ -148,6 +149,12 @@ K3 展示了一条把超稀疏 MoE、hybrid linear attention 和长时程 agent
 
 ## Architecture：三条信息流如何拼在一起
 
+[![Kimi K3 整体架构：token、depth、width 三条信息流与原生视觉入口](/assets/tech-reports/kimi-k3-2026/figure-02-k3-architecture.png)](/assets/tech-reports/kimi-k3-2026/figure-02-k3-architecture.png)
+
+> **原图定位：** Kimi K3 Technical Report，Figure 2，p. 3；由官方 PDF 原图裁剪。
+>
+> **看图重点：** 右侧是重复 block 与 AttnRes 的 depth mixing；左下是 KDA 的 token mixing；左上是 Stable LatentMoE 的 width mixing；右下是 MoonViT-V2 视觉入口。整篇 architecture 可以先按这四块阅读。
+
 ### 模型形状
 
 | Field | Kimi K3 | 来源 |
@@ -234,6 +241,12 @@ g_{\min}=-5.
 $$
 
 $A_h$ 是 trainable per-head scalar，$z_t^h$ 是输入相关的 decay logit。于是每步 $\alpha_t^h>e^{-5}\approx6.7\times10^{-3}$；16-token tile 的累计 log-decay 大于 $-80$。（Eq. 5、Figure 3，p. 5）
+
+[![Kimi K3 的 lower-bounded log-decay 及其对 KDA diagonal-tile 计算路径的影响](/assets/tech-reports/kimi-k3-2026/figure-03-bounded-kda-decay.png)](/assets/tech-reports/kimi-k3-2026/figure-03-bounded-kda-decay.png)
+
+> **原图定位：** Kimi K3 Technical Report，Figure 3，p. 5；由官方 PDF 原图裁剪。
+>
+> **看图重点：** 左图把无下界的 negative-Softplus 改为下界为 $g_{\min}=-5$ 的 scaled sigmoid；右图给出实现后果——原本需要 position-pair 特殊处理的 diagonal tiles 可以改走 dense Tensor Core 路径。
 
 **[复原推导] 数值边界。** $e^{80}\approx5.54\times10^{34}$，仍低于 BF16 最大有限值约 $3.39\times10^{38}$。因此 diagonal tile 不再需要逐 position-pair 的特殊路径，可以与 off-diagonal tile 一样交给 dense Tensor Core matmul。这个改动首先是数值范围与 kernel regularity 的共同设计，不应只理解成一种新的忘记门。
 
@@ -416,6 +429,12 @@ $$
 
 Figure 5 的最小例子是 $m=8,n=4,k=1$，所以每 expert 目标 load 为 2。原 Top-$k$ load 是 $(4,3,1,0)$，quantile threshold 调整后变为 $(2,2,2,2)$。
 
+[![Quantile Balancing 把 8 个 token 从不均衡路由调整为每个 expert 负载为 2](/assets/tech-reports/kimi-k3-2026/figure-05-quantile-balancing.png)](/assets/tech-reports/kimi-k3-2026/figure-05-quantile-balancing.png)
+
+> **原图定位：** Kimi K3 Technical Report，Figure 5，p. 8；由官方 PDF 原图裁剪。
+>
+> **看图重点：** 左侧先显示 $(4,3,1,0)$ 的过热与 dying experts；中间对每列设置 quantile threshold；右侧只有红边对应的 token–expert assignment 发生改变，最终得到 $(2,2,2,2)$。图中的星号是更新 bias 后的 Top-$k$ 选择。
+
 Appendix C 更进一步说明：QB 是 maximum-score balanced bipartite assignment 的 LP dual 上 alternating coordinate minimization；固定步长 sign update 只是同一 objective 的 SignSGD 近似，而 QB 直接跳到 coordinate minimizer。（Eq. 20–27、Algorithm 1，pp. 43–44）
 
 实际训练不收集 $O(mn)$ raw margins，而是每 expert 维护 1000-bin histogram，跨 rank 对 bin counts 做一次 integer all-reduce。论文给出的估计误差上界是一个 bin width，实际为几 $10^{-3}$；通信量低于每 micro-batch 交换 raw margins 方案的 1%。（Appendix D，pp. 44–45）
@@ -455,6 +474,12 @@ MoonViT-V2 有约 401M parameters、27 层，图像和视频共享参数；spati
 ### Scaling-law claim
 
 论文对 K2 与 K3 model family 分别重新搜索 batch、learning rate、tokens-per-parameter 和 model shape，在 held-out OOD validation loss 上拟合曲线；Figure 7 声称 K3 获得约 2.5× overall scaling efficiency。（§3.2、Figure 7，pp. 10–11）
+
+[![Kimi K2 与 Kimi K3 的 fitted scaling-law curves](/assets/tech-reports/kimi-k3-2026/figure-07-scaling-efficiency.png)](/assets/tech-reports/kimi-k3-2026/figure-07-scaling-efficiency.png)
+
+> **原图定位：** Kimi K3 Technical Report，Figure 7，p. 11；由官方 PDF 原图裁剪。
+>
+> **看图重点：** `2.5×` 标在相同 validation loss 下两条拟合曲线的水平 FLOPs 距离上；纵轴刻度、拟合参数和置信区间没有公开，因此这张图支持相对 compute-efficiency claim，不支持恢复绝对 loss 或统计不确定性。
 
 **[复原推导] 正确读法**是：在某个共同 target validation loss $L^{\ast}$ 上，图示的水平距离近似表示
 
@@ -527,6 +552,12 @@ agentic task: T(y) = reasoning traces + tool-call arguments 的累计 output tok
 先训练较大 $\tau$ 的 max expert，再逐步降低 $\tau$ 得到 high/low。$\tau$ 的具体数值与各 domain 配置未披露。
 
 Figure 8 显示 RL FLOPs 增长时多个 internal/public task score 与平均 assistant steps 大体上升。由于图轴没有绝对 FLOPs、score、样本数或误差条，这只能支持定性趋势，不能形成可复用的 RL scaling law。
+
+[![RL FLOPs 增长时八类任务的 score 与平均 assistant steps 变化](/assets/tech-reports/kimi-k3-2026/figure-08-rl-scaling.png)](/assets/tech-reports/kimi-k3-2026/figure-08-rl-scaling.png)
+
+> **原图定位：** Kimi K3 Technical Report，Figure 8，p. 13；由官方 PDF 原图裁剪。
+>
+> **看图重点：** 蓝线是 score、红色虚线是平均 assistant steps。多数面板随 RL FLOPs 上升而共同增加，但 Coding Experience、Web Development、Professional Workflows 等存在明显非单调区间；这也是不能把它概括成严格 scaling law 的原因。
 
 ### Multi-Teacher On-Policy Distillation
 
@@ -673,6 +704,12 @@ K3 把两者放进统一 byte-size page pool，但把 storage 与 hash granulari
 
 Figure 12 的例子中，physical block 是 6144 tokens；请求前 2800 tokens 匹配，最长可恢复边界是 $2560=5\times512$，于是无需重算 $[0,2560)$。（pp. 23–24）
 
+[![KDA-aware prefix cache 在 6144-token physical block 内恢复 2560-token prefix](/assets/tech-reports/kimi-k3-2026/figure-12-prefix-cache.png)](/assets/tech-reports/kimi-k3-2026/figure-12-prefix-cache.png)
+
+> **原图定位：** Kimi K3 Technical Report，Figure 12，p. 23；由官方 PDF 原图裁剪。
+>
+> **看图重点：** MLA KV 可以按 512-token hash blocks 命中，但只有同时保存 KDA checkpoint 的边界才能恢复 recurrent state。橙点 $B=2560$ 是两种 cache 都满足的最长共同边界；恢复后对 partial MLA block 做 copy-on-write。
+
 这解决的是“固定大状态不能每 token snapshot”与“MLA 想细粒度复用”的冲突。report 详细解释了一致性 failure modes，但没有 cache hit-rate 或 TTFT speedup benchmark。
 
 ## 实验到底证明了什么
@@ -729,6 +766,12 @@ Table 3–4 显示 K3 在 Swarm Bench 76.3、Deep Research Bench 90.0、Kimi Web
 Table 5 汇总的是截至 2026-07-23 的 third-party snapshot，例如 Artificial Analysis Intelligence Index 57.1（#4/580）、Vals Index 74.7（#2/39）、WebDev Arena 1678 Elo（#1/99）。Elo 会随 match 漂移，不能当成 2026-07-28 的固定现状。（p. 32）
 
 Figure 13 报告 BrowseComp 上 K3 为 91.2、USD 2.03/task；相对 GPT-5.6 Sol 成本约一半，相对 Claude max effort 低一个数量级。这里的 cost 来源混合了 K3 自有 run、其他厂商 published chart 与 third-party pay-per-token pricing；Kimi Code Bench 又使用不同 harness。因此它支持“在这些计价和 workload 假设下处于 cost frontier”，不支持统一 serving TCO。
+
+[![Kimi K3 在四项 agent benchmark 上的 score 或 Elo 与每任务推理成本](/assets/tech-reports/kimi-k3-2026/figure-13-score-cost.png)](/assets/tech-reports/kimi-k3-2026/figure-13-score-cost.png)
+
+> **原图定位：** Kimi K3 Technical Report，Figure 13，p. 32；由官方 PDF 原图裁剪。
+>
+> **看图重点：** 每个 panel 的纵轴和 harness 都不同，只能在单个 panel 内看 score–cost trade-off。K3 用红色星号表示；图中的美元成本是特定 workload 与计价假设下的 per-task cost，不是统一硬件上的 serving TCO。
 
 ## Claim–evidence map
 
