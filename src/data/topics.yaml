@@ -155,3 +155,28 @@
       title: 可学习连接与论文精读
       description: 对齐 DenseFormer、DCA、MUDDFormer、LAuReL、HC、mHC、AttnRes 与 xHC 的机制、证据和边界。
       order: 1
+
+- id: tech-reports
+  title: 模型 Tech Reports
+  shortTitle: Tech Reports
+  heroTitle: Tech
+  heroAccent: Reports
+  symbol: TR
+  description: 逐篇还原模型厂商 technical report 的问题、架构、训练、系统与评测证据，明确可验证结论、比较条件和披露缺口。
+  kicker: Model systems evidence
+  scope:
+    - 架构
+    - 训练
+    - 系统
+    - 评测
+  order: 4
+  featured: false
+  status: published
+  cutoff: 2026-07-28
+  featuredNotes:
+    - kimi-k3
+  sections:
+    - id: report-readings
+      title: 单篇报告精读
+      description: 先恢复模型身份、方法、证据与边界，再进入跨报告比较。
+      order: 1
