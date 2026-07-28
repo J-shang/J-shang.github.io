@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 520" role="img" aria-labelledby="title desc">
+  <title id="title">Gram–Schmidt projection geometry</title>
+  <desc id="desc">向量 g2 被分解为沿 v1 的投影与垂直于 v1 的残差 v2，所有标签位于箭头端点附近且互不重叠。</desc>
+  <defs>
+    <marker id="blue-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#1258ff"/>
+    </marker>
+    <marker id="gray-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#6d746d"/>
+    </marker>
+    <style>
+      .t{font-family:Inter,"PingFang SC",sans-serif;fill:#171816}
+      .m{font-family:"SFMono-Regular",Consolas,monospace;fill:#565a55}
+      .axis{stroke:#c7c8c2;stroke-width:2}
+      .base{stroke:#1258ff;stroke-width:5;fill:none;marker-end:url(#blue-arrow)}
+      .raw{stroke:#6d746d;stroke-width:4;fill:none;marker-end:url(#gray-arrow)}
+      .res{stroke:#ef6c36;stroke-width:5;fill:none;marker-end:url(#gray-arrow)}
+      .proj{stroke:#1258ff;stroke-width:3;stroke-dasharray:9 7;fill:none}
+    </style>
+  </defs>
+  <rect width="760" height="520" fill="#fffdf8"/>
+  <line x1="85" y1="435" x2="690" y2="435" class="axis"/>
+  <line x1="85" y1="435" x2="85" y2="55" class="axis"/>
+  <text x="695" y="462" class="m" font-size="18">feature axis 1</text>
+  <text x="43" y="68" class="m" font-size="18" transform="rotate(-90 43 68)">feature axis 2</text>
+
+  <path d="M100 420L620 345" class="base"/>
+  <text x="637" y="342" class="t" font-size="28" font-weight="700">v₁</text>
+
+  <path d="M100 420L475 95" class="raw"/>
+  <text x="490" y="94" class="t" font-size="28" font-weight="700">g₂</text>
+
+  <path d="M100 420L420 374" class="proj"/>
+  <circle cx="420" cy="374" r="7" fill="#1258ff"/>
+  <text x="225" y="414" class="m" font-size="19">projᵥ₁(g₂)</text>
+
+  <path d="M420 374L475 95" class="res"/>
+  <text x="500" y="230" class="t" font-size="26" font-weight="700">v₂</text>
+  <text x="500" y="260" class="m" font-size="18">g₂ − projᵥ₁(g₂)</text>
+
+  <path d="M413 352L435 356L439 378" fill="none" stroke="#ef6c36" stroke-width="3"/>
+  <rect x="480" y="392" width="220" height="70" fill="#fff3cf" stroke="#9a7611" stroke-width="2"/>
+  <text x="590" y="421" class="t" font-size="20" font-weight="700" text-anchor="middle">local de-correlation</text>
+  <text x="590" y="448" class="m" font-size="17" text-anchor="middle">⟨v₁,v₂⟩ = 0</text>
+</svg>

@@ -5,7 +5,7 @@ description: "从一次 PreNorm residual add 出发，用统一二维例子推�
 topic: "residual"
 status: "published"
 date: "2026-07-25"
-updated: "2026-07-27"
+updated: "2026-07-28"
 cutoff: "2026-07-27"
 audience: "熟悉 Transformer、PreNorm、Attention/MLP block 与基本线性代数的研究和工程同学"
 duration: 130
@@ -15,8 +15,8 @@ source:
   path: "src/data/slides/residual/residual-topology-four-papers/index.md"
   url: "https://github.com/J-shang/J-shang.github.io/blob/main/src/data/slides/residual/residual-topology-four-papers/index.md"
   revision: "main"
-  syncedAt: "2026-07-27"
-  contentHash: "sha256:dc0b1c2618923569aae331e9e62b49502a7f0bb04f2924ce5536e4e3f33b153e"
+  syncedAt: "2026-07-28"
+  contentHash: "sha256:42dcec36dca790f38d750b33b1f59a446e13255a0b102ec10f07c909d334da6e"
   manifest: "local-residual-slides-v2"
   dirty: false
   managed: false
@@ -93,7 +93,12 @@ PreNorm 同时规定了：当前层读什么、branch 产生什么增量、下�
   <code>x₁ = v₀ + v₁</code>
   <code>x₂ = v₀ + v₁ + v₂</code>
   <code>x₃ = v₀ + v₁ + v₂ + v₃</code>
-  <strong>一般地：$x_l=\sum_{i=0}^{l-1}v_i$</strong>
+  <strong>一般地：</strong>
+
+$$
+x_l=\sum_{i=0}^{l-1}v_i
+$$
+
 </div>
 
 <div class="slide-matrix-panel">
@@ -236,7 +241,11 @@ HC、mHC、xHC 从 capacity/topology 压力出发，内部形成连续设计链�
 
 HC 把一条 residual path 扩成多条 persistent streams，并把 **read、旧 state transport、branch write** 都变成可学习连接。
 
-<div class="slide-boundary">主 Attention / MLP 仍然只处理一次 $d\!\to\!d$；增加的是跨层 state 容器与围绕 branch 的 topology。</div>
+<div class="slide-boundary">
+
+主 Attention / MLP 仍然只处理一次 $d\!\to\!d$；增加的是跨层 state 容器与围绕 branch 的 topology。
+
+</div>
 
 > **论文报告** · Hyper-Connections, Fig. 2, PDF p.2
 
@@ -293,7 +302,11 @@ $$
 
 `n = stream axis`　·　`d = hidden width`
 
-<div class="slide-boundary">多流增加 persistent activation 与 mapping；主干算子仍处理一条 $d$ 维表示。</div>
+<div class="slide-boundary">
+
+多流增加 persistent activation 与 mapping；主干算子仍处理一条 $d$ 维表示。
+
+</div>
 
 <!-- notes:
 纠正常见误解：扩的是跨深度持久 state，不是 FFN hidden size。后面所有 mapping 都只围绕 n 轴工作。
@@ -452,15 +465,15 @@ $$
 </div>
 
 <div class="slide-worked-result">
-  <span><strong>target 1</strong><code>old h₁ + y = [4,1]</code></span>
-  <span><strong>target 2</strong><code>0.5 old h₁ + h₂ = [1,3]</code></span>
+  <span><strong>next-layer stream 1 · h₁′</strong><small>target slot 1</small><code>old h₁ + y = [4,1]</code></span>
+  <span><strong>next-layer stream 2 · h₂′</strong><small>target slot 2</small><code>0.5 old h₁ + h₂ = [1,3]</code></span>
   <b>H′ = [[4,1], [1,3]]</b>
 </div>
 
-> **复原推导** · target-by-target calculation
+> **复原推导** · next-layer stream-by-stream calculation
 
 <!-- notes:
-按 target 一行一行读，不要求听众心算矩阵乘法。第二条接收 0.5 h1 和 h2，但不接收 branch write。
+按下一层 output stream 一行一行读，不要求听众心算矩阵乘法。h1' 得到 [2,0]+[2,1]=[4,1]；h2' 得到 0.5[2,0]+[0,3]=[1,3]，但不接收 branch write。这里的 next-layer stream 就是 S12 的 target slot，不是额外生成的第三类对象。
 
 [Sources]
 - https://github.com/J-shang/residual
@@ -498,31 +511,33 @@ $$
 
 ## DHC 为每个 token 生成 runtime routing
 
-<div class="slide-flow slide-flow--timing">
-  <span class="slide-flow__step"><strong>current H[b,t]</strong><small>runtime state</small></span>
-  <span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step"><strong>route norm</strong></span>
-  <span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step"><strong>projection + tanh</strong></span>
-  <span class="slide-flow__arrow">→</span>
-  <span class="slide-flow__step"><strong>ΔA(H)</strong></span>
+<div class="slide-dhc-generator">
+  <span><strong>current H[b,t]</strong><small>[n,d] runtime state</small></span>
+  <i>↓ route norm</i>
+  <span><strong>shared projections</strong><small>Wₘ [d,1] · Wᵣ [d,n] · Wᵦ [d,1]</small></span>
+  <i>↓ tanh × scalar scale</i>
+  <span><strong>base + per-token Δ</strong><small>runtime mapping</small></span>
+  <code>Aᵣ(H) = Aᵣᵇᵃˢᵉ + sα tanh(H̄Wᵣ)</code>
 </div>
 
-<div>
-
-$$
-A_r(H)=A_r^{\mathrm{base}}+s_\alpha\tanh(\operatorname{Norm}_{route}(H)W_r)
-$$
-
-<div class="slide-lanes">
-  <div><strong>optimizer-owned</strong><span>base · projection · scale</span></div>
-  <div><strong>runtime tensors</strong><span>Aₘ(H) · Aᵣ(H) · B(H)</span></div>
-</div>
-
+<div class="slide-dhc-shapes" role="table" aria-label="DHC parameter 与 runtime mapping shapes">
+  <div class="slide-dhc-shapes__head" role="row">
+    <strong>role</strong><strong>base</strong><strong>projection</strong><strong>scale</strong><strong>per-token runtime</strong>
+  </div>
+  <div role="row">
+    <strong>read</strong><code>Aₘ [n,1]</code><code>Wₘ [d,1]</code><span>sα scalar</span><code>Aₘ(H) [n,1]</code>
+  </div>
+  <div role="row">
+    <strong>transport</strong><code>Aᵣ [n,n]</code><code>Wᵣ [d,n]</code><span>sα scalar</span><code>Aᵣ(H) [n,n]</code>
+  </div>
+  <div role="row">
+    <strong>write</strong><code>B [1,n]</code><code>Wᵦ [d,1]</code><span>sβ scalar</span><code>B(H) [1,n]</code>
+  </div>
+  <small>恢复 batch / token 维： [B,T,n,1] · [B,T,n,n] · [B,T,1,n]</small>
 </div>
 
 <!-- notes:
-运行时 mapping 不是 optimizer 直接维护的 parameter，而是当前 token forward 生成的 activation；完整 state update 仍沿用 S14。
+先区分 optimizer-owned parameters 与 runtime activations。三组 base 分别是 A_m^base:[n,1]、A_r^base:[n,n]、B^base:[1,n]；projection 的输入宽度都是 d，输出分别是 1、n、1。s_alpha 被 read 与 transport 共用，s_beta 控制 write；它们都是 scalar，不是矩阵。以 transport 为例，[n,d]@[d,n] 生成 [n,n] delta，再与 base 相加。恢复 batch / sequence 维后，runtime tensors 分别为 [B,T,n,1]、[B,T,n,n]、[B,T,1,n]。论文 Appendix J 也会把 read 与 transport 打包成 static_alpha:[n,n+1] 和 dynamic_alpha_fn:[d,n+1]；这与本页拆开的 shapes 等价。完整 state update 仍沿用 S14。
 
 [Sources]
 - https://arxiv.org/abs/2409.19606v3
@@ -545,7 +560,11 @@ $$
   <span><strong>B = 1</strong><small>全流 write</small></span>
 </div>
 
-<div class="slide-boundary">PreNorm compatibility 依赖完整的 read / write / final collapse contract，不是只看 $A_r=I$。</div>
+<div class="slide-boundary">
+
+PreNorm compatibility 依赖完整的 read / write / final collapse contract，不是只看 $A_r=I$。
+
+</div>
 
 <!-- notes:
 避免说每个中间 state 都等于 standard PreNorm。兼容性来自轮换读取、全流写入、branch scale 与最终 collapse 的组合。
@@ -568,7 +587,9 @@ $$
   </div>
   <div>
     <strong>persistent state</strong>
-    <span>$d\to nd$；论文报告训练显存增加约 9.7%–28.3%</span>
+
+$d\to nd$；论文报告训练显存增加约 9.7%–28.3%。
+
   </div>
 </div>
 
@@ -627,7 +648,7 @@ Forward 经过 $P$；backward 经过 $P^\top$，共享同一组 singular values�
 > **论文报告** · mHC, Fig. 2–3
 
 <!-- notes:
-先读训练症状，再与上一页的 transport product 机制连接。相关性支持设计方向，但不把曲线本身讲成因果证明。
+先读训练症状，再与上一页的 transport product 机制连接。相关性支持设计方向，但不把曲线本身讲成因果证明。下一问不只是谁约束 transport，而是 mHC 是否仍沿用 DHC 的 mapping generator：它只是加 Sinkhorn，还是连 logits 的生成方式也改了？
 
 [Sources]
 - https://arxiv.org/abs/2512.24880v2
@@ -635,37 +656,47 @@ Forward 经过 $P$；backward 经过 $P^\top$，共享同一组 singular values�
 
 ---
 
-<!-- layout: split -->
+<!-- layout: comparison -->
 <!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT · 3/11 || 22 / 64 -->
 
-## mHC 限制 transport，不禁止交换
+## mHC 不只是给 HC 加一个 Sinkhorn
 
-<div class="slide-set-map">
-  <span>all real matrices</span>
-  <div>
-    <strong>doubly stochastic</strong>
-    <small>identity · permutation · convex mixing</small>
-  </div>
+$$
+H^{\mathrm{pre}}\equiv A_m^\top,\qquad
+H^{\mathrm{res}}\equiv A_r^\top,\qquad
+H^{\mathrm{post}}\equiv B
+$$
+
+<div class="slide-generator-comparison" aria-label="DHC 与 mHC mapping generator 对照">
+  <section>
+    <small>DHC · row-wise generator</small>
+    <strong>保持 X̄ [n,C] 的 stream 轴</strong>
+    <code>Wₘ [C,1] · Wᵣ [C,n] · Wᵦ [C,1]</code>
+    <code>ΔAᵣ[i,j] = sα tanh(x̄ᵢᵀwᵣ⁽ʲ⁾)</code>
+    <b>row i sees xᵢ</b>
+    <span>同一 projection 逐 stream 复用，生成 local routing deltas。</span>
+  </section>
+  <section>
+    <small>mHC · full-state joint generator</small>
+    <strong>vec(X) → RMSNorm → x̂ [1,nC]</strong>
+    <code>φpre/post [nC,n] · φres [nC,n²]</code>
+    <code>σ(pre) · Sinkhorn(res) · 2σ(post)</code>
+    <b>every logit can see vec(X)</b>
+    <span>联合生成 global logits，再按 role 施加不同 reparameterization。</span>
+  </section>
 </div>
 
-<div>
-
-$$
-H\mathbf1=\mathbf1,\qquad
-\mathbf1^\top H=\mathbf1^\top,\qquad
-H\ge0
-$$
-
-mHC 缩小可选 transport 的集合，同时保留非平凡 stream exchange。
-
-<div class="slide-boundary">$H=I$ 很稳定，却会取消 HC 最重要的 cross-stream mixing。</div>
-
+<div class="slide-generator-consequence">
+  <strong>generator 变了</strong><span>dependency · projection shape · nonlinearity · bias / scale</span>
+  <strong>feasible set 也变了</strong><span>residual transport 进入 doubly stochastic subset</span>
+  <strong>新成本</strong><span>φres:[nC,n²] → O(n³C) generation</span>
 </div>
 
 <!-- notes:
-设计目标是 stability 与 plasticity 的折中。双随机集合不是 identity 的同义词，而是一组对深层复合友好的 mixing matrices。
+先用 H^pre=A_m^T、H^res=A_r^T、H^post=B 对齐两篇论文的 operational roles；转置只来自本 deck 的 row-stream convention。DHC 没有 flatten stream 轴：Delta A_r[i,j] 由第 i 条 source stream 的表示 x_i 生成，不同 rows 共享 W_r。mHC 则把 [n,C] 展平为 [nC]，每个 read、transport、write logit 都可以依赖全部 streams；随后分别使用 Sigmoid、Sinkhorn 与 2×Sigmoid。它同时改变 dependency、projection shape、nonlinearity、static bias 与 scale gates，不是简单的 DHC + Sinkhorn。论文没有逐项消融，因此质量收益不能唯一归因于 full-state generator 或双随机约束。
 
 [Sources]
+- https://arxiv.org/abs/2409.19606v3
 - https://arxiv.org/abs/2512.24880v2
 -->
 
@@ -675,6 +706,12 @@ mHC 缩小可选 transport 的集合，同时保留非平凡 stream exchange。
 <!-- section-header: mhc || 03 · mHC / STABLE TRANSPORT · 4/11 || 23 / 64 -->
 
 ## Identity、swap 与 average 都属于稳定候选
+
+<div class="slide-set-definition">
+  <span>all real matrices</span><b>→</b>
+  <strong>doubly stochastic subset</strong>
+  <code>H1=1 · 1ᵀH=1ᵀ · H≥0</code>
+</div>
 
 <div class="slide-matrix-examples">
   <div><strong>identity</strong><code>[[1,0],[0,1]]</code><small>[2,0] · [0,3]</small></div>
@@ -687,7 +724,7 @@ mHC 缩小可选 transport 的集合，同时保留非平凡 stream exchange。
 <div class="slide-boundary">Uniform average 消除了 difference mode：双随机不保证 stream diversity。</div>
 
 <!-- notes:
-identity 不交换，swap 完全交换，average 做凸混合。稳定候选仍有丰富结构，不等于每层只能 identity carry。
+上一页的 full-state generator 产生自由 logits，稳定性来自只把 residual transport 映射到双随机集合。identity 不交换，swap 完全交换，average 做凸混合；若直接固定 H=I，虽然稳定，却会取消 cross-stream exchange。三者同时说明双随机不等于接近 identity，也不保证 stream diversity。
 
 [Sources]
 - https://arxiv.org/abs/2512.24880v2
@@ -715,7 +752,7 @@ identity 不交换，swap 完全交换，average 做凸混合。稳定候选仍�
 > **论文报告** · mHC, Eq. 6–9
 
 <!-- notes:
-Backward 穿过 exp 与 normalization 计算图，optimizer 更新 generator；下一次 forward 再生成 mapping。最终 row/column error 应单独验证。
+上一页得到的是任意 residual logits；本页只解释它们怎样在同一次 forward 中经过 exp 与交替归一化得到受约束 mapping。Backward 穿过 exp 与 normalization 计算图，optimizer 更新 generator；下一次 forward 再生成 mapping。最终 row/column error 应单独验证。
 
 [Sources]
 - https://arxiv.org/abs/2512.24880v2
@@ -887,7 +924,11 @@ Uniform average 是最短反例：它双随机，却把两条 stream 的 differe
 
 ![mHC Figure 4：在 DualPipe 时间线上 overlap mapping、主干计算与通信](./assets/mhc-fig4-system-overlap.png)
 
-<div class="slide-boundary">新增 state 与运算没有消失；当 $N$ 继续增大，generator 与 state traffic 仍快速增长。</div>
+<div class="slide-boundary">
+
+新增 state 与运算没有消失；当 $N$ 继续增大，generator 与 state traffic 仍快速增长。
+
+</div>
 
 > **论文报告** · mHC, Fig. 4
 
@@ -909,7 +950,12 @@ Uniform average 是最短反例：它双随机，却把两条 stream 的 differe
 
 <div class="slide-evidence-pair">
   <div><strong>information supply</strong><span>每层究竟提供了几个新方向？</span></div>
-  <div><strong>mapping generator</strong><span>谁在从 $NC$ state 生成 $N^2$ coefficients？</span></div>
+  <div>
+    <strong>mapping generator</strong>
+
+谁在从 $NC$ state 生成 $N^2$ coefficients？
+
+  </div>
 </div>
 
 <div class="slide-boundary">收益饱和是动机；两个 bottleneck 是论文支持的 mechanism hypotheses，不是已证明定理。</div>
@@ -1161,12 +1207,7 @@ Temporal augmentation 默认放在 MLP side，因为 MLP 本身逐 token。四�
 
 ## Gram–Schmidt 去除局部共线，但不创造语义独立
 
-<div class="slide-projection">
-  <span class="slide-projection__base">v₁</span>
-  <span class="slide-projection__raw">g₂</span>
-  <i>remove projection</i>
-  <strong>v₂</strong>
-</div>
+![Gram–Schmidt 将 g₂ 分解为沿 v₁ 的投影与正交残差 v₂](./assets/xhc-gram-schmidt-projection.svg)
 
 <div>
 
@@ -1182,7 +1223,7 @@ $$
 
 </div>
 
-<div class="slide-operation-strip" aria-label="xHC 操作进度">
+<div class="slide-operation-strip slide-operation-strip--wrap" aria-label="xHC 操作进度">
   <span class="is-done">capacity N</span><i>→</i><span class="is-done">dense read</span><i>→</i><span class="is-done">active selection</span><i>→</i><span class="is-done">active update</span><i>→</i><span class="is-done">write candidates</span><i>→</i><span class="is-current">de-correlation</span><i>→</i><span>full next state</span>
 </div>
 
@@ -1470,7 +1511,11 @@ s_{jbt}=w_l^\top\operatorname{RMSNorm}(v_{jbt}),\qquad
 h_{lbt}=\sum_j\operatorname{softmax}_J(s)_{jbt}v_{jbt}
 $$
 
-<div class="slide-boundary">Depth/source routing，不是 $T\times T$ token attention，也不是 MoE expert gating。</div>
+<div class="slide-boundary">
+
+Depth/source routing，不是 $T\times T$ token attention，也不是 MoE expert gating。
+
+</div>
 
 <!-- notes:
 Query w_l 是 layer parameter；key/value 由输入产生，所以 logits 仍 input-dependent。默认同一 token 的 channels 共享 source weight。
@@ -1633,7 +1678,11 @@ h=\frac{N_{\mathrm{hist}}+N_{\mathrm{part}}}
 {D_{\mathrm{hist}}+D_{\mathrm{part}}}
 $$
 
-<div class="slide-boundary">不是两个训练阶段，也不是两个 outputs 再平均；$m/\ell/o$ 只是 max-shift 的数值稳定实现。</div>
+<div class="slide-boundary">
+
+不是两个训练阶段，也不是两个 outputs 再平均；$m/\ell/o$ 只是 max-shift 的数值稳定实现。
+
+</div>
 
 <!-- notes:
 先写 one-shot numerator/denominator，再按 source set 拆成 history 与 partial。History 固定可对多个 layer queries 批量计算，partial 必须等待前一层 branch output。
