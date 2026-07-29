@@ -1,0 +1,185 @@
+{
+  "topic": "looped-transformer",
+  "repository": "local/looped-transformer",
+  "output": "src/data/notes/looped-transformer",
+  "assets": {
+    "source": "papers/assets",
+    "output": "public/assets/looped-transformer",
+    "publicBase": "/assets/looped-transformer"
+  },
+  "linkRoutes": {
+    "README.md": "/topics/looped-transformer/",
+    "notes/papers-overview.md": "/topics/looped-transformer/"
+  },
+  "discoveryRoots": [
+    "papers",
+    "notes/paper-importance-analysis.md"
+  ],
+  "documents": [
+    {
+      "source": "papers/README.md",
+      "slug": "paper-reading-guide",
+      "title": "Looped Transformer 论文解析索引",
+      "description": "按基础、核心、泛化、动力系统与系统扩展组织 13 篇论文，并给出多条可核查的阅读路线。",
+      "section": "guide",
+      "order": 0,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-29",
+      "featured": true
+    },
+    {
+      "source": "papers/01-attention-is-all-you-need.md",
+      "slug": "attention-is-all-you-need",
+      "title": "Attention Is All You Need：逐篇解析",
+      "description": "从 self-attention、multi-head、mask 与位置编码建立标准 Transformer 基线，明确它与 depth recurrence 的边界。",
+      "section": "foundations",
+      "order": 10,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-24"
+    },
+    {
+      "source": "papers/02-universal-transformers.md",
+      "slug": "universal-transformers",
+      "title": "Universal Transformers：逐篇解析",
+      "description": "复原共享 transition、depth recurrence 与 per-position ACT，理解 Looped Transformer 的直接架构前身。",
+      "section": "foundations",
+      "order": 11,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-24",
+      "featured": true
+    },
+    {
+      "source": "papers/03-albert.md",
+      "slug": "albert",
+      "title": "ALBERT：逐篇解析",
+      "description": "拆解 factorized embedding、跨层参数共享与训练配方，分清参数效率、执行深度和实际计算成本。",
+      "section": "foundations",
+      "order": 12,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-24"
+    },
+    {
+      "source": "papers/04-looped-transformers-as-programmable-computers.md",
+      "slug": "looped-transformers-as-programmable-computers",
+      "title": "Looped Transformers as Programmable Computers：逐篇解析",
+      "description": "还原 Looped Transformer 执行可编程计算的构造，区分表达能力、可训练性与真实语言任务能力。",
+      "section": "core",
+      "order": 20,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-24"
+    },
+    {
+      "source": "papers/05-looped-transformers-learning-algorithms.md",
+      "slug": "looped-transformers-learning-algorithms",
+      "title": "Looped Transformers are Better at Learning Learning Algorithms：逐篇解析",
+      "description": "分析 input injection、truncated loss 与 loop schedule 如何诱导逐步更新，并核查训练范围外的稳定性。",
+      "section": "core",
+      "order": 21,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-24",
+      "featured": true
+    },
+    {
+      "source": "papers/06-looped-transformers-multistep-gradient-descent.md",
+      "slug": "looped-transformers-multistep-gradient-descent",
+      "title": "Can Looped Transformers Learn to Implement Multi-step Gradient Descent?：逐篇解析",
+      "description": "沿 expressivity、全局最优与 gradient-flow 收敛复原多步 preconditioned GD 结论，并标出简化假设。",
+      "section": "core",
+      "order": 22,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-24"
+    },
+    {
+      "source": "papers/07-looped-transformers-length-generalization.md",
+      "slug": "looped-transformers-length-generalization",
+      "title": "Looped Transformers for Length Generalization：逐篇解析",
+      "description": "解释 loop 数如何随任务长度增长，审视 step supervision、length extrapolation 与 stopping criterion 的证据边界。",
+      "section": "core",
+      "order": 23,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-24"
+    },
+    {
+      "source": "papers/08-reasoning-with-latent-thoughts.md",
+      "slug": "reasoning-with-latent-thoughts",
+      "title": "Reasoning with Latent Thoughts：逐篇解析",
+      "description": "对齐 iso-parameter、iso-FLOP 与 middle-looping 比较，判断 effective depth、reasoning 与 latent thoughts 的真实证据。",
+      "section": "core",
+      "order": 24,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-24",
+      "featured": true
+    },
+    {
+      "source": "papers/09-deep-equilibrium-models.md",
+      "slug": "deep-equilibrium-models",
+      "title": "Deep Equilibrium Models：逐篇解析",
+      "description": "从显式 weight tying 走向 fixed point、Broyden 求根与隐式微分，并区分终态与有限循环轨迹。",
+      "section": "adjacent",
+      "order": 30,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-24"
+    },
+    {
+      "source": "papers/10-block-recurrent-transformers.md",
+      "slug": "block-recurrent-transformers",
+      "title": "Block-Recurrent Transformers：逐篇解析",
+      "description": "复原 token-block recurrence、recurrent state 与 gating，厘清 sequence recurrence 和 depth recurrence 的不同循环轴。",
+      "section": "adjacent",
+      "order": 31,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-24"
+    },
+    {
+      "source": "papers/11-layernorm-power-method.md",
+      "slug": "layernorm-power-method",
+      "title": "Looped Transformers with Layer Normalization Provably Learn the Power Method：逐篇解析",
+      "description": "分析受控线性模型中 normalization 如何选择 power method，并区分定理、有限样本实验与完整 LLM 外推。",
+      "section": "frontiers",
+      "order": 40,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-24"
+    },
+    {
+      "source": "papers/12-deeploop-depth-scaling.md",
+      "slug": "deeploop-depth-scaling",
+      "title": "DeepLoop: Depth Scaling for Looped Transformers：逐篇解析",
+      "description": "追踪共享参数重复访问带来的 residual scaling 问题，复原 visit alignment、DeepLoop 配方与单种子证据。",
+      "section": "frontiers",
+      "order": 41,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-24"
+    },
+    {
+      "source": "papers/13-loop-the-loopies.md",
+      "slug": "loop-the-loopies",
+      "title": "Loop the Loopies!：逐篇解析",
+      "description": "比较 layer-loop 与 model-loop，核查大规模 MoE、activation checkpointing、吞吐和 wall-clock matching 的系统证据。",
+      "section": "frontiers",
+      "order": 42,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-24",
+      "featured": true
+    },
+    {
+      "source": "notes/paper-importance-analysis.md",
+      "slug": "paper-importance-analysis",
+      "title": "Looped Transformer 论文重要性评估",
+      "description": "从历史影响、研究主线位置、作者机构网络与证据成熟度比较 13 篇论文，而不是机械按引用量排序。",
+      "section": "supplements",
+      "order": 50,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-28"
+    },
+    {
+      "source": "papers/assets/README.md",
+      "slug": "visual-evidence-sources",
+      "title": "Looped Transformer 论文视觉证据来源",
+      "description": "记录 28 张论文原图裁切对应的正式 PDF、版本、页码与处理边界，便于回查图像证据。",
+      "section": "supplements",
+      "order": 51,
+      "date": "2026-07-29",
+      "cutoff": "2026-07-29"
+    }
+  ]
+}

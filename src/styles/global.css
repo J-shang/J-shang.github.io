@@ -215,7 +215,10 @@ img, svg { display: block; max-width: 100%; }
 .article-content :not(pre) > code { padding: .15em .35em; overflow-wrap: anywhere; border: 1px solid var(--line); background: color-mix(in srgb, var(--line) 30%, transparent); font-family: var(--mono); font-size: .82em; }
 .article-content .katex-display { margin: 2rem 0; padding: .5rem 0; overflow-x: auto; overflow-y: hidden; }
 .article-content hr { margin: 3rem 0; border: 0; border-top: 1px solid var(--line); }
-.article-content img { margin: 2rem auto; }
+.article-content p:has(> img:only-child) { margin: 2rem 0 .8rem; }
+.article-content p > img:only-child { display: block; width: auto; max-width: 100%; height: auto; margin: 0 auto; border: 1px solid var(--line); background: #fff; }
+.article-content p:has(> img:only-child) + p:has(> em:only-child) { margin: 0 0 2rem; }
+.article-content p:has(> img:only-child) + p > em:only-child { display: block; color: var(--ink-soft); font-family: var(--sans); font-size: .78rem; line-height: 1.65; }
 
 .toc { position: sticky; top: 6rem; padding-left: 1.2rem; border-left: 1px solid var(--line); }
 .toc__title { margin: 0 0 1rem; color: var(--ink-soft); font-family: var(--mono); font-size: .67rem; letter-spacing: .1em; text-transform: uppercase; }

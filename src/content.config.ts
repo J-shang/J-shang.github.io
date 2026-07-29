@@ -47,11 +47,12 @@ const notes = defineCollection({
     source: z.object({
       repository: z.string(),
       path: z.string(),
-      url: z.url(),
+      url: z.url().optional(),
       revision: z.string().optional(),
       syncedAt: z.coerce.date().optional(),
       contentHash: z.string().optional(),
       manifest: z.string().optional(),
+      dirty: z.boolean().default(false),
       managed: z.boolean().default(false),
     }).optional(),
   }),

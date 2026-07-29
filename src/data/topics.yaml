@@ -180,3 +180,51 @@
       title: 单篇报告精读
       description: 先恢复模型身份、方法、证据与边界，再进入跨报告比较。
       order: 1
+
+- id: looped-transformer
+  title: Looped Transformer
+  shortTitle: Looped Transformer
+  heroTitle: Looped
+  heroAccent: Transformer
+  symbol: ↻
+  description: 从 depth recurrence、参数共享与算法学习，到 length generalization、fixed point、稳定性和大模型系统实现，建立可验证的 Looped Transformer 研究地图。
+  kicker: Recurrent depth systems
+  scope:
+    - 架构
+    - 算法
+    - 泛化
+    - 系统
+  order: 5
+  featured: false
+  status: published
+  cutoff: 2026-07-29
+  guide: paper-reading-guide
+  featuredNotes:
+    - looped-transformers-learning-algorithms
+    - reasoning-with-latent-thoughts
+    - loop-the-loopies
+  sections:
+    - id: guide
+      title: 论文路线
+      description: 先建立 13 篇论文的角色、证据边界与推荐阅读顺序。
+      order: 0
+    - id: foundations
+      title: 架构基础与参数共享
+      description: 从标准 Transformer、Universal Transformer 与 ALBERT 分清 depth recurrence 和 cross-layer sharing。
+      order: 1
+    - id: core
+      title: Looped Transformer 核心主线
+      description: 依次回答可表达、可学习、多步优化、长度泛化与 latent reasoning。
+      order: 2
+    - id: adjacent
+      title: 固定点与相邻循环轴
+      description: 用 DEQ 和 Block-Recurrent Transformer 校准 equilibrium 与 sequence recurrence 的边界。
+      order: 3
+    - id: frontiers
+      title: 稳定性、深度扩展与系统前沿
+      description: 追踪 normalization、residual scaling、layer-loop MoE 和 wall-clock 证据。
+      order: 4
+    - id: supplements
+      title: 跨论文评估与视觉来源
+      description: 汇总重要性判断、引用快照和所有原图裁切的正式来源。
+      order: 5
