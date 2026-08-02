@@ -5,19 +5,22 @@ topic: "looped-transformer"
 section: "supplements"
 slug: "paper-importance-analysis"
 date: 2026-07-29
-updated: 2026-07-28
+updated: 2026-08-02
 cutoff: 2026-07-28
-order: 50
+order: 80
 source:
-  repository: "local/looped-transformer"
+  repository: "J-shang/looped-transformer"
   path: "notes/paper-importance-analysis.md"
-  revision: "94d51c542124e3a9dce8037df64b67ada1627c2b"
-  syncedAt: "2026-07-29"
-  contentHash: "sha256:41f7100504db117c927d19b1347213600dc01d1bcb50839f0b88830d6dc30a80"
+  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
+  syncedAt: "2026-08-02"
+  contentHash: "sha256:f95828daadd4fad5505aad8b729432e587ba951d0632c95c7432bd87f19a8ef8"
   manifest: "looped-transformer"
+  dirty: true
   managed: true
 ---
-> 评估对象：本项目当前收录的 13 篇论文。<br>
+> **适用范围提醒（2026-08-02）：** 本文只比较旧资料库的 13 篇机制/历史论文，不能用作通用 LLM pretraining/post-training 的当前优先级。当前学习优先级见[系统学习课程](/topics/looped-transformer/)，一手资料集见[资料地图](/topics/looped-transformer/)；后续重要性评估应以 source bundle、训练阶段、开放度和可复现性重新计算。
+>
+> 评估对象：旧机制背景库收录的 13 篇论文。
 > 信息与引用数据截止：2026-07-28（Asia/Shanghai）。<br>
 > 引用口径：Semantic Scholar Academic Graph API 的 `citationCount` 与 `influentialCitationCount`；论文身份按 arXiv ID 交叉核对。引用数会持续变化，不同数据库也会给出不同结果。<br>
 > 这里的“机构”指论文署名时的机构，而不是作者今天的任职单位。

@@ -174,7 +174,7 @@ function rewriteLinks(body, currentSource) {
     const publicPath = relativeAsset.split('/').map(encodeURIComponent).join('/');
     return `![${alt}](${assetPublicBase}/${publicPath}${suffix})`;
   });
-  return output.replace(/ {2}\r?\n/g, '<br>\n').trimStart();
+  return `${output.replace(/ {2}\r?\n/g, '<br>\n').trim()}\n`;
 }
 
 function renderDocument(document, body, git, syncedAt) {

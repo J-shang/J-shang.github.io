@@ -10,10 +10,11 @@ cutoff: 2026-07-24
 featured: true
 order: 42
 source:
-  repository: "local/looped-transformer"
+  repository: "J-shang/looped-transformer"
   path: "papers/13-loop-the-loopies.md"
+  url: "https://github.com/J-shang/looped-transformer/blob/9ab82eeb3178ddd627b592ac2cba22de91e7be66/papers/13-loop-the-loopies.md"
   revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66"
-  syncedAt: "2026-07-29"
+  syncedAt: "2026-08-02"
   contentHash: "sha256:9dcc6d15ae07e2cb49af4e832d0ceb5166c15fc68c3a689dcc4acded517cd885"
   manifest: "looped-transformer"
   managed: true

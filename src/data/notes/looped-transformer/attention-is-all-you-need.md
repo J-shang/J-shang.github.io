@@ -9,10 +9,11 @@ updated: 2026-07-29
 cutoff: 2026-07-24
 order: 10
 source:
-  repository: "local/looped-transformer"
+  repository: "J-shang/looped-transformer"
   path: "papers/01-attention-is-all-you-need.md"
+  url: "https://github.com/J-shang/looped-transformer/blob/9ab82eeb3178ddd627b592ac2cba22de91e7be66/papers/01-attention-is-all-you-need.md"
   revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66"
-  syncedAt: "2026-07-29"
+  syncedAt: "2026-08-02"
   contentHash: "sha256:ab87ab0dd6615a687ed0a1ede60f9dd1f2f74916e0f0eb6c3edd64ff6177356c"
   manifest: "looped-transformer"
   managed: true

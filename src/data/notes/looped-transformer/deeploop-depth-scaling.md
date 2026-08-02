@@ -9,10 +9,11 @@ updated: 2026-07-29
 cutoff: 2026-07-24
 order: 41
 source:
-  repository: "local/looped-transformer"
+  repository: "J-shang/looped-transformer"
   path: "papers/12-deeploop-depth-scaling.md"
+  url: "https://github.com/J-shang/looped-transformer/blob/9ab82eeb3178ddd627b592ac2cba22de91e7be66/papers/12-deeploop-depth-scaling.md"
   revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66"
-  syncedAt: "2026-07-29"
+  syncedAt: "2026-08-02"
   contentHash: "sha256:5730fe7cf4e1c7da8d8bd8cc10722bcf3f6886032343136463381610a32a922f"
   manifest: "looped-transformer"
   managed: true

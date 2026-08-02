@@ -10,10 +10,11 @@ cutoff: 2026-07-24
 featured: true
 order: 21
 source:
-  repository: "local/looped-transformer"
+  repository: "J-shang/looped-transformer"
   path: "papers/05-looped-transformers-learning-algorithms.md"
+  url: "https://github.com/J-shang/looped-transformer/blob/9ab82eeb3178ddd627b592ac2cba22de91e7be66/papers/05-looped-transformers-learning-algorithms.md"
   revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66"
-  syncedAt: "2026-07-29"
+  syncedAt: "2026-08-02"
   contentHash: "sha256:f6725dc501db8da243b75307f8df2a78aba943b533a933fdee929bbf69906fc8"
   manifest: "looped-transformer"
   managed: true

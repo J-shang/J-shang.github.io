@@ -1,6 +1,7 @@
 {
   "topic": "looped-transformer",
-  "repository": "local/looped-transformer",
+  "repository": "J-shang/looped-transformer",
+  "repositoryUrl": "https://github.com/J-shang/looped-transformer",
   "output": "src/data/notes/looped-transformer",
   "assets": {
     "source": "papers/assets",
@@ -9,8 +10,18 @@
   },
   "linkRoutes": {
     "README.md": "/topics/looped-transformer/",
-    "notes/papers-overview.md": "/topics/looped-transformer/"
+    "notes/papers-overview.md": "/topics/looped-transformer/",
+    "learning/README.md": "/topics/looped-transformer/",
+    "learning/04-looped-llm-research-playbook.md": "/topics/looped-transformer/",
+    "sources/README.md": "/topics/looped-transformer/"
   },
+  "externalLinks": [
+    {
+      "sourceIncludes": "papers/assets/README.md",
+      "prefix": "../../scripts/extract_new_paper_figures.py",
+      "baseUrl": "https://github.com/J-shang/looped-transformer/blob/main/scripts/extract_new_paper_figures.py"
+    }
+  ],
   "discoveryRoots": [
     "papers",
     "notes/paper-importance-analysis.md"
@@ -20,11 +31,11 @@
       "source": "papers/README.md",
       "slug": "paper-reading-guide",
       "title": "Looped Transformer 论文解析索引",
-      "description": "按基础、核心、泛化、动力系统与系统扩展组织 13 篇论文，并给出多条可核查的阅读路线。",
+      "description": "组织 21 篇 Looped Transformer 论文，从机制背景推进到通用 LLM 预训练、checkpoint 改造与 latent 后训练。",
       "section": "guide",
       "order": 0,
       "date": "2026-07-29",
-      "cutoff": "2026-07-29",
+      "cutoff": "2026-08-02",
       "featured": true
     },
     {
@@ -162,12 +173,95 @@
       "featured": true
     },
     {
+      "source": "papers/14-huginn-recurrent-depth.md",
+      "slug": "huginn-recurrent-depth",
+      "title": "Huginn：Recurrent Depth 与 Latent Test-Time Compute",
+      "description": "复原 3.5B/800B-token recurrent pretraining 配方，核查随机深度、input injection、truncated BPTT 与测试时深度扩展。",
+      "section": "llm-pretraining",
+      "order": 50,
+      "date": "2026-08-02",
+      "cutoff": "2026-08-02",
+      "featured": true
+    },
+    {
+      "source": "papers/15-ouro-looped-language-models.md",
+      "slug": "ouro-looped-language-models",
+      "title": "Ouro：7.7T-token Looped LM 与 Adaptive Latent Reasoning",
+      "description": "分析完整 model-loop、7.7T-token staged training 与 adaptive exit，并审视训练深度之外的性能退化。",
+      "section": "llm-pretraining",
+      "order": 51,
+      "date": "2026-08-02",
+      "cutoff": "2026-08-02"
+    },
+    {
+      "source": "papers/16-mixture-of-recursions.md",
+      "slug": "mixture-of-recursions",
+      "title": "Mixture-of-Recursions：Token-Level Dynamic Recurrent Depth",
+      "description": "拆解 token-wise routing、共享 recursion block 与 selective KV cache，并区分 isoFLOP、吞吐和 token budget 口径。",
+      "section": "llm-pretraining",
+      "order": 52,
+      "date": "2026-08-02",
+      "cutoff": "2026-08-02"
+    },
+    {
+      "source": "papers/17-retrofitted-recurrence.md",
+      "slug": "retrofitted-recurrence",
+      "title": "Retrofitted Recurrence：把 Pretrained LLM 改造成 Recurrent-Depth Model",
+      "description": "复原 pretrained-model surgery、recurrence curriculum 与两阶段 healing，评估约 50B continued-training tokens 的收益和边界。",
+      "section": "llm-retrofit",
+      "order": 60,
+      "date": "2026-08-02",
+      "cutoff": "2026-08-02",
+      "featured": true
+    },
+    {
+      "source": "papers/18-loopus.md",
+      "slug": "loopus",
+      "title": "LoopUS：把标准 Pretrained LLM 重组为 Latent Refinement Model",
+      "description": "研究 encoder–loop–decoder 重组、selective gate、随机深度监督与 confidence exit，同时保留能力退化的负面证据。",
+      "section": "llm-retrofit",
+      "order": 61,
+      "date": "2026-08-02",
+      "cutoff": "2026-08-02"
+    },
+    {
+      "source": "papers/19-lotus.md",
+      "slug": "lotus",
+      "title": "LOTUS：用 Gold-CoT Supervision 对齐 Looped Latent States",
+      "description": "分析并行 latent workspace、post-loop token supervision 与 answer loss，校准 3B 数学任务上的质量和延迟结论。",
+      "section": "llm-posttraining",
+      "order": 70,
+      "date": "2026-08-02",
+      "cutoff": "2026-08-02"
+    },
+    {
+      "source": "papers/20-looprpt.md",
+      "slug": "looprpt",
+      "title": "LoopRPT：把 Reinforcement Signal 放进 Latent Recurrent Steps",
+      "description": "复原 hard-token selection、EMA teacher、step reward 与 exit policy，明确小规模数学 continued training 的证据边界。",
+      "section": "llm-posttraining",
+      "order": 71,
+      "date": "2026-08-02",
+      "cutoff": "2026-08-02"
+    },
+    {
+      "source": "papers/21-loopformer.md",
+      "slug": "loopformer",
+      "title": "LoopFormer：用 Shortcut Consistency 训练 Elastic-Depth Trajectories",
+      "description": "还原 time/step-size conditioning 与 shortcut consistency，核查多预算推理的平滑性及额外训练计算成本。",
+      "section": "llm-posttraining",
+      "order": 72,
+      "date": "2026-08-02",
+      "cutoff": "2026-08-02",
+      "featured": true
+    },
+    {
       "source": "notes/paper-importance-analysis.md",
       "slug": "paper-importance-analysis",
       "title": "Looped Transformer 论文重要性评估",
       "description": "从历史影响、研究主线位置、作者机构网络与证据成熟度比较 13 篇论文，而不是机械按引用量排序。",
       "section": "supplements",
-      "order": 50,
+      "order": 80,
       "date": "2026-07-29",
       "cutoff": "2026-07-28"
     },
@@ -175,11 +269,11 @@
       "source": "papers/assets/README.md",
       "slug": "visual-evidence-sources",
       "title": "Looped Transformer 论文视觉证据来源",
-      "description": "记录 28 张论文原图裁切对应的正式 PDF、版本、页码与处理边界，便于回查图像证据。",
+      "description": "记录 45 张论文原图裁切对应的正式 PDF、版本、页码与处理边界，便于回查图像证据。",
       "section": "supplements",
-      "order": 51,
+      "order": 81,
       "date": "2026-07-29",
-      "cutoff": "2026-07-29"
+      "cutoff": "2026-08-02"
     }
   ]
 }

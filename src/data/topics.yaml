@@ -187,26 +187,27 @@
   heroTitle: Looped
   heroAccent: Transformer
   symbol: ↻
-  description: 从 depth recurrence、参数共享与算法学习，到 length generalization、fixed point、稳定性和大模型系统实现，建立可验证的 Looped Transformer 研究地图。
+  description: 从 depth recurrence 与参数共享出发，推进到通用 LLM 预训练、checkpoint 改造、latent 后训练与自适应计算，建立可验证的 Looped Transformer 研究地图。
   kicker: Recurrent depth systems
   scope:
     - 架构
-    - 算法
-    - 泛化
+    - 预训练
+    - 结构改造
+    - 后训练
     - 系统
   order: 5
   featured: false
   status: published
-  cutoff: 2026-07-29
+  cutoff: 2026-08-02
   guide: paper-reading-guide
   featuredNotes:
-    - looped-transformers-learning-algorithms
-    - reasoning-with-latent-thoughts
-    - loop-the-loopies
+    - huginn-recurrent-depth
+    - retrofitted-recurrence
+    - loopformer
   sections:
     - id: guide
       title: 论文路线
-      description: 先建立 13 篇论文的角色、证据边界与推荐阅读顺序。
+      description: 先建立 21 篇论文的角色、证据边界与推荐阅读顺序。
       order: 0
     - id: foundations
       title: 架构基础与参数共享
@@ -224,7 +225,19 @@
       title: 稳定性、深度扩展与系统前沿
       description: 追踪 normalization、residual scaling、layer-loop MoE 和 wall-clock 证据。
       order: 4
+    - id: llm-pretraining
+      title: 通用 LLM Recurrent Pretraining
+      description: 从 Huginn、Ouro 到 Mixture-of-Recursions，审视 recurrent depth 如何进入大规模预训练与动态计算。
+      order: 5
+    - id: llm-retrofit
+      title: Pretrained Checkpoint 结构改造
+      description: 比较 Retrofitted Recurrence 与 LoopUS 如何复用已有 base model，并核查 continued-training 成本与能力保留。
+      order: 6
+    - id: llm-posttraining
+      title: Latent Supervision 与 Compute Control
+      description: 追踪 LOTUS、LoopRPT 与 LoopFormer 如何监督中间状态、退出策略和弹性深度轨迹。
+      order: 7
     - id: supplements
       title: 跨论文评估与视觉来源
       description: 汇总重要性判断、引用快照和所有原图裁切的正式来源。
-      order: 5
+      order: 8

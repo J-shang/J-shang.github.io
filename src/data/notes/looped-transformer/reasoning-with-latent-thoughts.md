@@ -10,10 +10,11 @@ cutoff: 2026-07-24
 featured: true
 order: 24
 source:
-  repository: "local/looped-transformer"
+  repository: "J-shang/looped-transformer"
   path: "papers/08-reasoning-with-latent-thoughts.md"
+  url: "https://github.com/J-shang/looped-transformer/blob/9ab82eeb3178ddd627b592ac2cba22de91e7be66/papers/08-reasoning-with-latent-thoughts.md"
   revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66"
-  syncedAt: "2026-07-29"
+  syncedAt: "2026-08-02"
   contentHash: "sha256:c9c6667ba14e25276be2093d10b3a3380187a9eea53ebea8f33e291ffdf0f038"
   manifest: "looped-transformer"
   managed: true

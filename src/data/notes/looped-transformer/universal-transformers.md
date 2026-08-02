@@ -10,10 +10,11 @@ cutoff: 2026-07-24
 featured: true
 order: 11
 source:
-  repository: "local/looped-transformer"
+  repository: "J-shang/looped-transformer"
   path: "papers/02-universal-transformers.md"
+  url: "https://github.com/J-shang/looped-transformer/blob/9ab82eeb3178ddd627b592ac2cba22de91e7be66/papers/02-universal-transformers.md"
   revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66"
-  syncedAt: "2026-07-29"
+  syncedAt: "2026-08-02"
   contentHash: "sha256:4e73b252633ab11d51fc60dfdeb864857e44fb6c6d960b69f664b299312e2a05"
   manifest: "looped-transformer"
   managed: true

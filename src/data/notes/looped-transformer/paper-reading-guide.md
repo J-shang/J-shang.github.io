@@ -1,26 +1,29 @@
 ---
 title: "Looped Transformer 论文解析索引"
-description: "按基础、核心、泛化、动力系统与系统扩展组织 13 篇论文，并给出多条可核查的阅读路线。"
+description: "组织 21 篇 Looped Transformer 论文，从机制背景推进到通用 LLM 预训练、checkpoint 改造与 latent 后训练。"
 topic: "looped-transformer"
 section: "guide"
 slug: "paper-reading-guide"
 date: 2026-07-29
-updated: 2026-07-29
-cutoff: 2026-07-29
+updated: 2026-08-02
+cutoff: 2026-08-02
 featured: true
 order: 0
 source:
-  repository: "local/looped-transformer"
+  repository: "J-shang/looped-transformer"
   path: "papers/README.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66"
-  syncedAt: "2026-07-29"
-  contentHash: "sha256:2265017e4ac02dc34baa66ced49e43256474851e4ae19f2006eab891f5f348bd"
+  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
+  syncedAt: "2026-08-02"
+  contentHash: "sha256:51824a3ead44af175cd779ddff1595d1748f29a2744bd3318154472533c35f65"
   manifest: "looped-transformer"
+  dirty: true
   managed: true
 ---
-> 共 13 篇，全部按 `analyze-research-paper` 最新规范重审：明确版本与证据范围，提供早期符号表、贡献账本、方法复原、最小算例、实验问题—证据链、claim–evidence map、局限和可证伪扩展。每篇另选 2–3 张真正承担解释作用的论文原图，共 28 张；图片下方均标注图号、PDF 页码、精确来源、看图重点与证据边界。
+> **定位更新（2026-08-02）：** 01–13 保留为机制与历史背景，14–21 是面向通用 LLM pretraining、retrofit、latent supervision 与 adaptive compute 的新主线。先读[系统学习课程](/topics/looped-transformer/)，查一手来源时使用[通用 LLM 资料地图](/topics/looped-transformer/)。
 >
-> 解析信息截止：2026-07-24；视觉证据复核：2026-07-29。图源与裁切说明见[视觉证据资产清单](/topics/looped-transformer/visual-evidence-sources/)。
+> 共 21 篇，全部按 `analyze-research-paper` 最新规范处理：明确版本与证据范围，提供早期符号表、贡献账本、方法复原、最小算例、实验问题—证据链、claim–evidence map、局限和可证伪扩展。共选 45 张真正承担解释作用的论文原图；图片下方均标注图号、PDF 页码、精确来源、看图重点与证据边界。
+>
+> 01–13 信息截止 2026-07-24，视觉复核 2026-07-29；14–21 信息与视觉复核截止 2026-08-02。图源与裁切说明见[视觉证据资产清单](/topics/looped-transformer/visual-evidence-sources/)。
 
 跨论文的作者、机构、引用量与重要性比较见：[论文重要性评估](/topics/looped-transformer/paper-importance-analysis/)（引用快照：2026-07-28）。
 
@@ -41,10 +44,26 @@ source:
 | 11 | [LayerNorm Provably Learns the Power Method](/topics/looped-transformer/layernorm-power-method/) | normalization 与算法偏置 | 受控设定中训练选出 power method | 实际是 RMSNorm-like linear model |
 | 12 | [DeepLoop](/topics/looped-transformer/deeploop-depth-scaling/) | residual scaling | aligned tied visits 的保守 exponent 为 $1/2$ | 一阶充分界、核心 alignment 未直接测 |
 | 13 | [Loop the Loopies!](/topics/looped-transformer/loop-the-loopies/) | 大规模 MoE 与系统共设计 | layer-loop + measured wall-clock recipe 胜过 matched vanilla | 非 analytical-FLOP matched，v2 极新 |
+| 14 | [Huginn / Recurrent Depth](/topics/looped-transformer/huginn-recurrent-depth/) | 从头 recurrent pretraining | 3.5B/800B 上建立 task-dependent latent depth scaling | proof of concept；无完整 post-training |
+| 15 | [Ouro / Looped Language Models](/topics/looped-transformer/ouro-looped-language-models/) | multi-trillion-token model-loop | 7.7T staged training + adaptive gate 得到强 1.4B/2.6B base/Thinking | 超过 train depth 常退化；code/data 未完全开放 |
+| 16 | [Mixture-of-Recursions](/topics/looped-transformer/mixture-of-recursions/) | token-level dynamic compute | parameter sharing、routing 与 selective KV cache 可联合设计 | 1.7B 强配置并非稳定胜 vanilla；吞吐口径有限 |
+| 17 | [Retrofitted Recurrence](/topics/looped-transformer/retrofitted-recurrence/) | pretrained-model surgery | pretrained init + curriculum/healing 可把 vanilla base 改成 recurrent | 约 1B、~50B tokens、math-heavy |
+| 18 | [LoopUS](/topics/looped-transformer/loopus/) | 轻量 pretrained LLM adaptation | selective gate + random deep supervision 跨 Qwen/Phi 有效 | 部分 retained benchmarks 下滑；context 1K |
+| 19 | [LOTUS](/topics/looped-transformer/lotus/) | latent CoT supervision | parallel latent blocks 在 3B math 上接近 explicit CoT 并降 thought latency | gold-CoT、固定 workspace、math domain |
+| 20 | [LoopRPT](/topics/looped-transformer/looprpt/) | latent-step reinforcement | hard-token quality 提升且平均 exit steps 下降 | 仅 4,428 条 OMNI-MATH；不是 broad pretraining |
+| 21 | [LoopFormer](/topics/looped-transformer/loopformer/) | elastic-depth trajectory | shortcut consistency 让单 checkpoint 支持多个 user budgets | 训练约 1.5× FLOPs，仍略逊 non-looped base |
 
-## 四条阅读路线
+## 通用 LLM 主线
 
-### 最短主线
+1. 从头训练：[Huginn](/topics/looped-transformer/huginn-recurrent-depth/) → [Ouro](/topics/looped-transformer/ouro-looped-language-models/) → [Mixture-of-Recursions](/topics/looped-transformer/mixture-of-recursions/) → [Loop the Loopies!](/topics/looped-transformer/loop-the-loopies/)。
+2. 复用 checkpoint：[Retrofitted Recurrence](/topics/looped-transformer/retrofitted-recurrence/) → [LoopUS](/topics/looped-transformer/loopus/)。
+3. Post-training 与 compute control：[LOTUS](/topics/looped-transformer/lotus/) → [LoopRPT](/topics/looped-transformer/looprpt/) → [LoopFormer](/topics/looped-transformer/loopformer/)。
+
+跨论文统一比较、实验模板与自测见[Looped LLM 研究手册](/topics/looped-transformer/)。
+
+## 四条机制背景阅读路线
+
+### 最短机制路线
 
 1. [Universal Transformers](/topics/looped-transformer/universal-transformers/)
 2. [Learning Learning Algorithms](/topics/looped-transformer/looped-transformers-learning-algorithms/)
@@ -52,7 +71,7 @@ source:
 4. [Reasoning with Latent Thoughts](/topics/looped-transformer/reasoning-with-latent-thoughts/)
 5. [Loop the Loopies!](/topics/looped-transformer/loop-the-loopies/)
 
-这条路线从架构原型走到 toy algorithms、泛化、language reasoning，再到大规模 MoE。
+这条路线从架构原型走到 toy algorithms、泛化、language reasoning，再到大规模 MoE。若目标是研究通用 LLM 的完整训练流程，应先走[新资料地图的阅读路线](/topics/looped-transformer/#6-建议的阅读顺序)，再按问题回到这里补机制。
 
 ### 理论主线
 

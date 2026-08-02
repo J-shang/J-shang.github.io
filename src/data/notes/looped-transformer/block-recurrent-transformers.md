@@ -9,10 +9,11 @@ updated: 2026-07-29
 cutoff: 2026-07-24
 order: 31
 source:
-  repository: "local/looped-transformer"
+  repository: "J-shang/looped-transformer"
   path: "papers/10-block-recurrent-transformers.md"
+  url: "https://github.com/J-shang/looped-transformer/blob/9ab82eeb3178ddd627b592ac2cba22de91e7be66/papers/10-block-recurrent-transformers.md"
   revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66"
-  syncedAt: "2026-07-29"
+  syncedAt: "2026-08-02"
   contentHash: "sha256:16f829422cd85ef6fe8d65fa57f8a3261ee4e28b54f1d3c96a8e1f0d8480d341"
   manifest: "looped-transformer"
   managed: true

@@ -9,10 +9,11 @@ updated: 2026-07-29
 cutoff: 2026-07-24
 order: 23
 source:
-  repository: "local/looped-transformer"
+  repository: "J-shang/looped-transformer"
   path: "papers/07-looped-transformers-length-generalization.md"
+  url: "https://github.com/J-shang/looped-transformer/blob/9ab82eeb3178ddd627b592ac2cba22de91e7be66/papers/07-looped-transformers-length-generalization.md"
   revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66"
-  syncedAt: "2026-07-29"
+  syncedAt: "2026-08-02"
   contentHash: "sha256:0bca45c8d3d5f508ed4b7374307fb2eedf28360538618c82c00b5ae4871bf08a"
   manifest: "looped-transformer"
   managed: true

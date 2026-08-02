@@ -9,10 +9,11 @@ updated: 2026-07-29
 cutoff: 2026-07-24
 order: 30
 source:
-  repository: "local/looped-transformer"
+  repository: "J-shang/looped-transformer"
   path: "papers/09-deep-equilibrium-models.md"
+  url: "https://github.com/J-shang/looped-transformer/blob/9ab82eeb3178ddd627b592ac2cba22de91e7be66/papers/09-deep-equilibrium-models.md"
   revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66"
-  syncedAt: "2026-07-29"
+  syncedAt: "2026-08-02"
   contentHash: "sha256:76eb41b4aaedfaec5ba8a1ebbfc3d01260cfcbd8f77e6086b0a3d95fefbe0748"
   manifest: "looped-transformer"
   managed: true
