@@ -13,12 +13,12 @@ source:
   path: "papers/assets/README.md"
   revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
   syncedAt: "2026-08-02"
-  contentHash: "sha256:7b26eaf4b332188466bfec328b6621ff34489165bebebf230d428cd752953f6b"
+  contentHash: "sha256:3ee98433d7d16a437173c51033780a394a7a26b32b2580edf39fd2e4a90a412e"
   manifest: "looped-transformer"
   dirty: true
   managed: true
 ---
-本目录只保存论文原图的忠实裁切，用于相邻 Markdown 解析的自包含阅读。01–13 于 2026-07-29 以 240 DPI 处理，14–21 于 2026-08-02 以 216 DPI 处理；未重绘、未生成式补全，也未改变图中的数据、坐标轴、图例或 caption。原始 PDF 仅用于本地处理，不纳入仓库。14–21 的重复提取入口是 [`scripts/extract_new_paper_figures.py`](https://github.com/J-shang/looped-transformer/blob/main/scripts/extract_new_paper_figures.py)。
+本目录只保存论文原图的忠实裁切，用于相邻 Markdown 解析的自包含阅读。01–13 于 2026-07-29 以 240 DPI 处理，14–21 于 2026-08-02 以 216 DPI 处理；未重绘、未生成式补全，也未改变图中的数据、坐标轴、图例或 caption。原始 PDF 仅用于本地处理，不纳入仓库。14–21 的重复提取入口是 `scripts/extract_new_paper_figures.py`。
 
 | 解析 | PDF 版本与来源 | 收录图（PDF 页码） |
 |---|---|---|

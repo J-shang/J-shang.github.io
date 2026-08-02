@@ -15,11 +15,11 @@
     "learning/04-looped-llm-research-playbook.md": "/topics/looped-transformer/",
     "sources/README.md": "/topics/looped-transformer/"
   },
-  "externalLinks": [
+  "contentReplacements": [
     {
       "sourceIncludes": "papers/assets/README.md",
-      "prefix": "../../scripts/extract_new_paper_figures.py",
-      "baseUrl": "https://github.com/J-shang/looped-transformer/blob/main/scripts/extract_new_paper_figures.py"
+      "from": "[`scripts/extract_new_paper_figures.py`](../../scripts/extract_new_paper_figures.py)",
+      "to": "`scripts/extract_new_paper_figures.py`"
     }
   ],
   "discoveryRoots": [

@@ -149,6 +149,10 @@ function sourceUrl(sourcePath, git) {
 
 function rewriteLinks(body, currentSource) {
   let output = body;
+  for (const rule of manifest.contentReplacements ?? []) {
+    if (!currentSource.includes(rule.sourceIncludes)) continue;
+    output = output.replaceAll(rule.from, rule.to);
+  }
   for (const rule of manifest.externalLinks ?? []) {
     if (!currentSource.includes(rule.sourceIncludes)) continue;
     output = output.replaceAll(`](${rule.prefix}`, `](${rule.baseUrl}`);
