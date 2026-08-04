@@ -5,18 +5,18 @@ topic: "looped-transformer"
 section: "llm-retrofit"
 slug: "retrofitted-recurrence"
 date: 2026-08-02
-updated: 2026-08-02
+updated: 2026-08-04
 cutoff: 2026-08-02
 featured: true
 order: 60
 source:
   repository: "J-shang/looped-transformer"
   path: "papers/17-retrofitted-recurrence.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
-  syncedAt: "2026-08-02"
+  url: "https://github.com/J-shang/looped-transformer/blob/eb43191df7da7f8d1b936fa6485ea21f7c8f430a/papers/17-retrofitted-recurrence.md"
+  revision: "eb43191df7da7f8d1b936fa6485ea21f7c8f430a"
+  syncedAt: "2026-08-04"
   contentHash: "sha256:930be3bde5ca042353e317452a22a2675e9c8538f3dfecbe9aefcc3fe40359dd"
   manifest: "looped-transformer"
-  dirty: true
   managed: true
 ---
 > 论文：*Teaching Pretrained Language Models to Think Deeper with Retrofitted Recurrence*<br>

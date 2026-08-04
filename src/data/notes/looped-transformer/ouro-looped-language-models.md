@@ -11,11 +11,11 @@ order: 51
 source:
   repository: "J-shang/looped-transformer"
   path: "papers/15-ouro-looped-language-models.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
+  url: "https://github.com/J-shang/looped-transformer/blob/eb43191df7da7f8d1b936fa6485ea21f7c8f430a/papers/15-ouro-looped-language-models.md"
+  revision: "eb43191df7da7f8d1b936fa6485ea21f7c8f430a"
   syncedAt: "2026-08-04"
   contentHash: "sha256:06fe708150d7cc32dbe47a73b610354b7e9b1b0baa8e00d90a57c644e0e36624"
   manifest: "looped-transformer"
-  dirty: true
   managed: true
 ---
 > 论文：*Scaling Latent Reasoning via Looped Language Models*<br>

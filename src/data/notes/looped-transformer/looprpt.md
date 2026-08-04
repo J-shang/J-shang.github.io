@@ -5,17 +5,17 @@ topic: "looped-transformer"
 section: "llm-posttraining"
 slug: "looprpt"
 date: 2026-08-02
-updated: 2026-08-02
+updated: 2026-08-04
 cutoff: 2026-08-02
 order: 71
 source:
   repository: "J-shang/looped-transformer"
   path: "papers/20-looprpt.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
-  syncedAt: "2026-08-02"
+  url: "https://github.com/J-shang/looped-transformer/blob/eb43191df7da7f8d1b936fa6485ea21f7c8f430a/papers/20-looprpt.md"
+  revision: "eb43191df7da7f8d1b936fa6485ea21f7c8f430a"
+  syncedAt: "2026-08-04"
   contentHash: "sha256:9543b7770189361d71fea9717537b9a6b15f0379b7769e79c15fc1f8471eeeda"
   manifest: "looped-transformer"
-  dirty: true
   managed: true
 ---
 > 论文：*LoopRPT: Reinforcement Pre-Training for Looped Language Models*<br>

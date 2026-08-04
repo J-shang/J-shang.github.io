@@ -212,6 +212,15 @@ img, svg { display: block; max-width: 100%; }
 .article-content th { background: color-mix(in srgb, var(--line) 35%, transparent); }
 .article-content pre { margin: 2rem 0; padding: 1.2rem; overflow-x: auto; border: 1px solid #2a313c; border-radius: 2px; background: var(--code) !important; box-shadow: 0 14px 40px rgba(0,0,0,.12); }
 .article-content pre code { font-family: var(--mono); font-size: .78rem; line-height: 1.7; }
+.mermaid-diagram { margin: 2rem 0; padding: 1rem; overflow: hidden; border: 1px solid var(--line); background: color-mix(in srgb, var(--paper-raised) 94%, transparent); box-shadow: var(--shadow); }
+.mermaid-diagram__canvas { width: 100%; overflow-x: auto; color: var(--ink); }
+.mermaid-diagram__canvas > svg { width: 100%; min-width: 100%; height: auto; margin-inline: auto; }
+.mermaid-diagram__status { margin: 0; color: var(--ink-soft); font-family: var(--mono); font-size: .72rem; }
+.mermaid-diagram__status[hidden] { display: none; }
+.mermaid-diagram__source { margin-top: .75rem; border-top: 1px solid var(--line); color: var(--ink-soft); font-family: var(--sans); font-size: .75rem; }
+.mermaid-diagram__source summary { padding-top: .75rem; cursor: pointer; }
+.mermaid-diagram__source pre { margin: .75rem 0 0; }
+.mermaid-diagram.is-error { border-color: var(--warm); }
 .article-content :not(pre) > code { padding: .15em .35em; overflow-wrap: anywhere; border: 1px solid var(--line); background: color-mix(in srgb, var(--line) 30%, transparent); font-family: var(--mono); font-size: .82em; }
 .article-content .katex-display { margin: 2rem 0; padding: .5rem 0; overflow-x: auto; overflow-y: hidden; }
 .article-content hr { margin: 3rem 0; border: 0; border-top: 1px solid var(--line); }

@@ -11,11 +11,11 @@ order: 41
 source:
   repository: "J-shang/looped-transformer"
   path: "papers/12-deeploop-depth-scaling.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
+  url: "https://github.com/J-shang/looped-transformer/blob/eb43191df7da7f8d1b936fa6485ea21f7c8f430a/papers/12-deeploop-depth-scaling.md"
+  revision: "eb43191df7da7f8d1b936fa6485ea21f7c8f430a"
   syncedAt: "2026-08-04"
   contentHash: "sha256:9f62fd04381c1f8d7d324e08281aabae738fb83ad5dd33ded716ba9be14f4b4b"
   manifest: "looped-transformer"
-  dirty: true
   managed: true
 ---
 ## 论文身份与证据范围

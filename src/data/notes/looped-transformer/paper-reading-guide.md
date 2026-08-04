@@ -12,11 +12,11 @@ order: 0
 source:
   repository: "J-shang/looped-transformer"
   path: "papers/README.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
+  url: "https://github.com/J-shang/looped-transformer/blob/eb43191df7da7f8d1b936fa6485ea21f7c8f430a/papers/README.md"
+  revision: "eb43191df7da7f8d1b936fa6485ea21f7c8f430a"
   syncedAt: "2026-08-04"
   contentHash: "sha256:d5e3b9168850c0a8f45cf4d094c4547c82ba515f8d7432e9401d2255081fa8f4"
   manifest: "looped-transformer"
-  dirty: true
   managed: true
 ---
 > **定位更新（2026-08-02）：** 01–13 保留为机制与历史背景，14–21 是面向通用 LLM pretraining、retrofit、latent supervision 与 adaptive compute 的新主线。先读[系统学习课程](/topics/looped-transformer/)，查一手来源时使用[通用 LLM 资料地图](/topics/looped-transformer/)。

@@ -5,17 +5,17 @@ topic: "looped-transformer"
 section: "llm-posttraining"
 slug: "lotus"
 date: 2026-08-02
-updated: 2026-08-02
+updated: 2026-08-04
 cutoff: 2026-08-02
 order: 70
 source:
   repository: "J-shang/looped-transformer"
   path: "papers/19-lotus.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
-  syncedAt: "2026-08-02"
+  url: "https://github.com/J-shang/looped-transformer/blob/eb43191df7da7f8d1b936fa6485ea21f7c8f430a/papers/19-lotus.md"
+  revision: "eb43191df7da7f8d1b936fa6485ea21f7c8f430a"
+  syncedAt: "2026-08-04"
   contentHash: "sha256:6f45af514437341edbf9043825048f248a9d21d4155e25116eb3187d92e11a42"
   manifest: "looped-transformer"
-  dirty: true
   managed: true
 ---
 > 论文：*Bridging the Gap Between Latent and Explicit Reasoning with Looped Transformers*<br>

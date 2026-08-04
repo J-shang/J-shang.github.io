@@ -5,18 +5,18 @@ topic: "looped-transformer"
 section: "llm-posttraining"
 slug: "loopformer"
 date: 2026-08-02
-updated: 2026-08-02
+updated: 2026-08-04
 cutoff: 2026-08-02
 featured: true
 order: 72
 source:
   repository: "J-shang/looped-transformer"
   path: "papers/21-loopformer.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
-  syncedAt: "2026-08-02"
+  url: "https://github.com/J-shang/looped-transformer/blob/eb43191df7da7f8d1b936fa6485ea21f7c8f430a/papers/21-loopformer.md"
+  revision: "eb43191df7da7f8d1b936fa6485ea21f7c8f430a"
+  syncedAt: "2026-08-04"
   contentHash: "sha256:0dcd421ccfd498f578166c1b41a70a08b0b21123cbed36414f737d5d9e443e36"
   manifest: "looped-transformer"
-  dirty: true
   managed: true
 ---
 > 论文：*LoopFormer: Elastic-Depth Looped Transformers for Latent Reasoning via Shortcut Modulation*<br>

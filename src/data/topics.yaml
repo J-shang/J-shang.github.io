@@ -198,7 +198,7 @@
   order: 5
   featured: false
   status: published
-  cutoff: 2026-08-03
+  cutoff: 2026-08-04
   guide: paper-reading-guide
   featuredNotes:
     - looped-transformer-eight-paper-survey

@@ -11,11 +11,11 @@ order: 61
 source:
   repository: "J-shang/looped-transformer"
   path: "papers/18-loopus.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
+  url: "https://github.com/J-shang/looped-transformer/blob/eb43191df7da7f8d1b936fa6485ea21f7c8f430a/papers/18-loopus.md"
+  revision: "eb43191df7da7f8d1b936fa6485ea21f7c8f430a"
   syncedAt: "2026-08-04"
   contentHash: "sha256:9ac28d2ec9cca3a5c73cb99b3d7fddee2d5c6c736d0e334d5ff0807b48ae2bba"
   manifest: "looped-transformer"
-  dirty: true
   managed: true
 ---
 > 论文：*LoopUS: Recasting Pretrained LLMs into Looped Latent Refinement Models*<br>

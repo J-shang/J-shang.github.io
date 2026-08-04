@@ -81,6 +81,8 @@ const fmt = (value: Date) => new Intl.DateTimeFormat('zh-CN', { year: 'numeric',
     </div>
   </article>
   <script>
+    import { renderMermaidDiagrams } from '../scripts/render-mermaid';
+
     const progress = document.querySelector('.reading-progress');
     const updateProgress = () => {
       const max = document.documentElement.scrollHeight - innerHeight;
@@ -89,5 +91,6 @@ const fmt = (value: Date) => new Intl.DateTimeFormat('zh-CN', { year: 'numeric',
     };
     addEventListener('scroll', updateProgress, { passive: true });
     updateProgress();
+    void renderMermaidDiagrams();
   </script>
 </BaseLayout>

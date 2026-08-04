@@ -6,21 +6,21 @@ section: "supplements"
 slug: "looped-transformer-eight-paper-survey"
 date: 2026-08-04
 updated: 2026-08-04
-cutoff: 2026-08-03
+cutoff: 2026-08-04
 featured: true
 order: 79
 source:
   repository: "J-shang/looped-transformer"
   path: "notes/looped-transformer-eight-paper-survey.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
+  url: "https://github.com/J-shang/looped-transformer/blob/e717ccebf25b40f8e1652f9c3ee0f16d6fe9415a/notes/looped-transformer-eight-paper-survey.md"
+  revision: "e717ccebf25b40f8e1652f9c3ee0f16d6fe9415a"
   syncedAt: "2026-08-04"
-  contentHash: "sha256:d289ddc60e8ff4743152e407794a8cc0fe2160d6a96edf3d5e77cc80fdb479e1"
+  contentHash: "sha256:ec605fed190d1e33adf91af1cf5d7043f46436d2a86c6628dd46cc084245f14d"
   manifest: "looped-transformer"
-  dirty: true
   managed: true
 ---
 > 覆盖：Huginn、Ouro、Mixture-of-Recursions、LoopUS、LOTUS、LoopRPT、LoopFormer、Loop the Loopies!
-> 版本核对日期：2026-08-03（Asia/Shanghai）
+> 版本核对日期：2026-08-04（Asia/Shanghai）
 > 阅读原则：数值优先取论文表格；architecture、data recipe、post-training 与 compute budget 分开归因；单篇完整公式、图表、claim–evidence map 与复现建议见各自链接。
 
 ## 0. 一份真正有用的 Looped Transformer 汇总应回答什么
@@ -44,9 +44,9 @@ source:
 
 ### 1.1 Paper 时间表
 
-“首次公开”用于看研究时间线；“分析版本日期”用于复核本文引用的公式和数字。两者都不同于项目页或模型 checkpoint 的发布时间。
+“arXiv v1”是 arXiv 首次提交日期；“分析版本日期”用于复核本文引用的公式和数字。它们都不同于项目页或模型 checkpoint 的发布时间，也不保证是所有渠道中的最早公开时间。例如 MoR 的 [workshop OpenReview](https://openreview.net/forum?id=YtQtGsNr64) 和 LoopFormer 的 [ICLR OpenReview](https://openreview.net/forum?id=RzYXb5YWBs) 都早于各自的 arXiv v1。
 
-| 工作 | 论文与分析版本 | 首次公开 | 分析版本日期 | 状态 | 在综述中的角色 |
+| 工作 | 论文与分析版本 | arXiv v1 | 分析版本日期 | 状态 | 在综述中的角色 |
 |---|---|---:|---:|---|---|
 | Huginn | *Scaling up Test-Time Compute with Latent Reasoning*, v2 | 2025-02-07 | 2025-02-17 | arXiv preprint | recurrent-core pretraining |
 | Mixture-of-Recursions | *Learning Dynamic Recursive Depths for Adaptive Token-Level Computation*, v3 | 2025-07-14 | 2025-10-25 | NeurIPS 2025 | token-level dynamic depth |
@@ -125,7 +125,7 @@ $$
 
 ### 2.1 结构和 runtime 语义总表
 
-| 工作 | 首次公开 | loop 单元 | loop 粒度 | 原输入/时间信号 | 读出与停止 | KV/runtime 关键点 |
+| 工作 | arXiv v1 | loop 单元 | loop 粒度 | 原输入/时间信号 | 读出与停止 | KV/runtime 关键点 |
 |---|---:|---|---|---|---|---|
 | Huginn | 2025-02-07 | 4-layer recurrent core | sequence 的完整 hidden state | 每轮 input injection；随机初始 state | coda 最终读出；论文另测 zero-shot exit | 每个 recurrence 有完整 causal attention；深度增加仍串行 |
 | MoR | 2025-07-14 | 共享 recursion block | token-wise | router score | expert-choice 或 token-choice routing | recursion-wise selective cache 或 first-recursion KV sharing |
@@ -144,7 +144,7 @@ $$
 |---|---|---|---|---|---|---|
 | Huginn | 3.5B，从头训练 | broad public mixture；约 800B，实际 run 约 795B | 4096；平均 recurrence 32，训练时随机采样 | next-token loss；只对最后 8 个 recurrent steps 反传 | Adam variant，warmup 4096 steps 后 constant LR；512 Frontier nodes/4096 MI250X logical GPUs | 无完整常规 SFT/DPO/RLVR |
 | Ouro | 1.4B/2.6B，从头；2.6B 在 24→48 层 duplication 后继续训练 | 累计 7.7T，多阶段 broad、CT annealing、LongCT、mid-training | 4K→16K→64K→32K；Stage 1a 8 loops，后降为 4 | 每步 LM + entropy/KL depth objective；另训练 exit gate | AdamW，$\beta=(0.9,0.95)$、wd 0.1、clip 1；各阶段降低 LR | 8.3M-example SFT，2 epochs；有 Ouro-Thinking |
-| MoR | 135M–1.7B，从头 | FineWeb-Edu/SmolLM slices；主规模实验预算不同，最高约 220B | context 2K；$N_r=2$–$4$ | LM loss + router/load-balancing 相关目标 | H100/A100；isoFLOP 与 throughput study | 无现代 SFT/DPO/RLVR |
+| MoR | 135M–1.7B，从头 | FineWeb-Edu corpus 共约 220B；各 run 实际约 0.5–76.2B，1.7B Table 7 为 18–30B（headline expert-MoR 为 26–27B） | context 2K；$N_r=2$–$4$ | LM loss + router/load-balancing 相关目标 | H100/A100；isoFLOP 与 throughput study | 无现代 SFT/DPO/RLVR |
 | Loopie | 6B-A0.6B、20B-A2B MoE，从头 | 文中给 3T+1.26T，但细项又给 2.28T+1.263T≈3.54T，存在内部 token accounting 矛盾 | seqlen 8192；每层固定 loop 2 次 | standard causal LM + MoE auxiliary loss | AdamW，warmup-stable-only；以 Megatron optimizer-step wall-clock选架构 | 约 2T target-only SPT，随后 math/code RL |
 
 这里最值得比较的是四种稳定策略：
@@ -160,7 +160,7 @@ $$
 |---|---|---|---|---|---|
 | LoopUS | Qwen3 1.7B/4B/8B、Phi-4 14B、TinyLlama 等 | FineWeb-Edu 3B tokens，seqlen 1024 | sampled-depth next-token loss + monotonicity regularizer + confidence loss | 最大 20 loops，每 batch只监督 5 个；其余 no-grad/detach | 用较小 continued-LM budget形成可 early-exit latent refinement |
 | LOTUS | Llama-3.2-3B-Instruct 等 explicit-CoT checkpoint | GSM8K-Aug 约 385K，30 epochs | post-loop latent positions 直接预测 gold CoT tokens + answer loss | $K=6,c=25,R=6$；从 explicit CoT逐步替换为 latent blocks | 把 sequential visible CoT 压进并行 latent workspace |
-| LoopRPT | Ouro-1.4B/2.6B | OMNI-MATH 4,428，3 epochs，8×A100，约 2–4 小时 | latent-step reward、policy gradient、representation loss、entropy/KL | EMA teacher + hard-token selection + 8 noisy rollouts | 改善早期 latent state并学更早退出 |
+| LoopRPT | Ouro-1.4B/2.6B | OMNI-MATH 共 4,428：4,228 train / 200 validation；3 epochs，8×A100，约 2–4 小时 | latent-step reward、policy gradient、representation loss、entropy/KL | EMA teacher + hard-token selection + 8 noisy rollouts | 改善早期 latent state并学更早退出 |
 | LoopFormer | 约 1B NanoGPT-style，从头训练 | 25B-token dedup Pile，seqlen 1024 | full-route CE + shortcut CE + endpoint consistency | 同 batch跑 full 和 random-shortcut trajectory，teacher route stop-gradient | 单 checkpoint 支持多个用户指定 global budgets |
 
 这四项形成一个清楚的 supervision spectrum：
@@ -180,12 +180,12 @@ final-token LM
 | 工作 | 最能代表论文的结果 | 该结果真正支持什么 | 最重要的 confound / negative evidence |
 |---|---|---|---|
 | Huginn | $r=32$：ARC-C 38.23、HellaSwag 65.21、MMLU 31.38、GSM8K CoT strict/flexible 34.80/42.08；HumanEval 23.17 | 同一 recurrent checkpoint 的任务性能可随 latent depth 增长 | 3.5B/800B 仍弱于训练更充分的现代 LLM；任务会饱和；训练与推理 FLOPs很高 |
-| Ouro | 1.4B $T=4$：MMLU 67.35、BBH 71.02、GSM8K 78.92、MATH-500 82.40；2.6B：MMLU 74.60、BBH 80.46、MATH-500 90.85 | multi-trillion-token full-stack loop可得到强 stored-parameter efficiency | 外部模型 data/tokens 不同；1.4B MMLU 从 $T=4$ 67.45 降到 $T=8$ 64.49；2.6B Thinking 的更深 extrapolation 可大幅退化 |
+| Ouro | 1.4B $T=4$：MMLU 67.35、BBH 71.02、GSM8K 78.92、MATH-500 82.40；2.6B：MMLU 74.60、BBH 80.46、MATH-500 90.85 | multi-trillion-token full-stack loop可得到强 stored-parameter efficiency | 外部模型 data/tokens 不同；论文 Table 7/10 的 1.4B、$T=4$ MMLU 分别为 67.35/67.45，Table 10 depth sweep 到 $T=8$ 降为 64.49；2.6B Thinking 的更深 extrapolation 可大幅退化 |
 | MoR | 68.5e18 FLOPs、1.7B配置：vanilla Avg 48.9，MoR $R=2$ 48.4，$R=3$ 46.7；另一低预算表 40.54 vs 40.97 | dynamic token depth在部分 budget allocation 上形成 Pareto点 | 强规模配置并未稳定胜 vanilla；较优低预算点多看约 35% tokens；throughput 假设不等于端到端 serving |
-| Loopie | 20B-A2B 在相同测量栈/近似 step time、800B-token head-to-head 中约 600B 后超过 30B-A3B；四档 scaling ladder均领先 | layer-loop + memory/microbatch co-design 可改善 realized training budget利用 | 不是 analytical-FLOP matched；single run；最终 Thinking 分数混入 3.5T pretraining、2T SPT、RL 与 decoding |
+| Loopie | 20B-A2B 在相同测量栈/近似 step time、800B-token head-to-head 中约 600B 后超过 30B-A3B；四档 scaling ladder均领先 | layer-loop + memory/microbatch co-design 可改善 realized training budget利用 | 不是 analytical-FLOP matched；论文未报告多 seed、方差或误差条；最终 Thinking 分数混入 3.5T pretraining、2T SPT、RL 与 decoding |
 | LoopUS | 七项平均：Qwen3 1.7B +1.6、4B +1.8、8B +2.2、Phi-4 14B +1.7；adaptive 平均 3.39/8 loops | 3B-token adaptation可让多类 pretrained backbone形成可用 loops | Qwen3-8B MMLU 72.8→71.5、HellaSwag 57.2→56.0；真实 batched latency未充分建立 |
 | LOTUS | Llama-3.2-3B：GSM8K $70.0\pm0.9$ vs explicit CoT 71.5；OOD math 63.9 vs 62.1；thought latency 133.0 vs 338.8 ms | gold-CoT direct supervision可让并行 latent workspace接近 explicit CoT，并减少逐 token thought latency | math domain、gold trace、fixed workspace；$R=7$ 从 $R=6$ 的 70.0 降到 69.3；readout不等于 faithful CoT |
-| LoopRPT | Ouro-2.6B hard tokens：peak 34.52→38.10，adaptive 34.35→37.24，avg step 3.51→2.28；GSM8K 81.76→85.36 | reward placement可同时改善早期 state质量与退出效率 | 只有 4,428 条数学数据；next-token reward不等于最终 proof正确；无官方 code/model |
+| LoopRPT | Ouro-2.6B hard tokens：peak 34.52→38.10，adaptive 34.35→37.24，avg step 3.51→2.28；GSM8K 81.76→85.36 | reward placement可同时改善早期 state质量与退出效率 | 总数据只有 4,428 条（实际训练 4,228）；next-token reward不等于最终 proof正确；无官方 code/model |
 | LoopFormer | $(3\otimes8)$：Pile PPL 10.28、Avg 44.81，优于其他 looped baseline但弱于 non-loop 9.49/45.27；FLOP-matched 时 Avg 44.21 | shortcut consistency让不同 budgets下的 trajectory更稳 | 训练约 1.5× FLOPs、1.3× wall-clock；global budget不是 learned adaptive exit |
 
 ### 4.2 不应直接放在同一 leaderboard 的结果
@@ -358,7 +358,7 @@ gate 再用 binary cross-entropy 拟合“继续计算”的 soft target \(w_i^{
 - **结构细节：** 1.4B/2.6B hidden size 都是 2048，分别有 24/48 个 stored layers；每个 loop 后接同一 LM head 和 $2048\to1$ gate。2.6B 的 upcycling 是把部分 recurrent execution depth 展开成独立层，不是 MoE upcycling。
 - **训练目标：** 每步都有 next-token loss；exit probabilities 把各步 loss 组合为期望目标，并用 entropy 避免 gate 立即塌缩。随后冻结语言模型，用相邻 step 的 detached loss improvement 构造“继续/退出”target，专门校准 gate。
 - **cache 与部署：** 默认精确语义为每个 `loop × physical layer` 一套 KV。论文的 decode-only last-step reuse 可把 cache 近似降到 $1/4$，但 prefill 强行共享会显著掉分；公开 reference path 也没有完成真正的 token compaction。
-- **性能与负面证据：** 1.4B 在 $T=4$ 的 MMLU/BBH/GSM8K/MATH-500 为 67.35/71.02/78.92/82.40；但 MMLU 到 $T=8$ 降至约 64.49，2.6B-Thinking 的 AIME 2024 甚至从最佳区间约 70.33 降到 39.00。
+- **性能与负面证据：** 论文 Table 7 给出 1.4B、$T=4$ 的 MMLU/BBH/GSM8K/MATH-500 为 67.35/71.02/78.92/82.40；Table 10 的独立 depth sweep 则给出 $T=4$ MMLU 67.45、$T=8$ 64.49。两个表的同配置数字有 0.10 point 差异，不能静默拼成同一行实验。2.6B-Thinking 的 AIME 2024 甚至从最佳区间约 70.33 降到 39.00。
 - **最可靠结论：** 它证明 full-stack recurrence 能承受 multi-trillion-token staged training，并在训练覆盖的深度区间提供可分配 compute；它没有证明超过训练深度后仍可无限 scaling。
 - **复现重点：** 应固定 $T=4$ 先复现 checkpoint，再分别扫 fixed $T$、Q-exit threshold、full-cache/last-step-cache，并把“选早期 logits”与“真实少算”作为两个实验。
 
@@ -377,9 +377,10 @@ flowchart TD
     Router -->|"active tokens"| Pack["gather / compact"]
     Pack --> B
     Router -->|"exited tokens"| Hold["保留当前 state"]
-    H --> KV["recursion-wise KV<br/>或 first-recursion KV sharing"]
+    H --> KV["写入或复用 KV<br/>recursion-wise / first-recursion sharing"]
+    KV -->|"供下一 recursion 的 attention 使用"| B
     Hold --> Merge["合并不同深度的 token states"]
-    KV --> Merge
+    H -->|"到达指定或最大深度"| Merge
     Merge --> Post["可选独立 suffix layers + LM head"]
 ```
 
@@ -583,7 +584,7 @@ flowchart TD
     Data --> Sample["每个 batch 在最大 20 loops 中<br/>随机抽 5 个 supervised steps"]
     Sample --> Roll["其余 steps no-grad 滚动 state<br/>抽中 step 从 detached state 建局部 graph"]
     Roll --> LM["当前 step next-token loss"]
-    Roll --> Mono["SiLU(CE_after - stopgrad(CE_before))"]
+    Roll --> Mono["论文：SiLU(CE_after − CE_before)<br/>代码：CE_before 在 no_grad 中计算"]
     Roll --> Conf["confidence BCE<br/>target = teacher-forced token accuracy"]
     LM --> Update["局部 backward；再次 detach"]
     Mono --> Update
@@ -601,16 +602,16 @@ E_x(h)=\operatorname{CE}\!\left(\mathcal D(h),x_{2:T}\right),
 \mathcal L_{\mathrm{LM}}^{(b)}=E_x(h^{(b)}).
 $$
 
-它再比较同一次更新前后的 CE，并用 signed SiLU regularizer 鼓励“不变差”：
+它再比较同一次更新前后的 CE，并用 signed SiLU regularizer 鼓励“不变差”。论文 Eq. (12) 写成：
 
 $$
 \mathcal L_{\mathrm{mono}}^{(b)}
 =\operatorname{SiLU}\!\left(
-E_x(h^{(b)})-\operatorname{stopgrad}(E_x(h^{(b-1)}))
+E_x(h^{(b)})-E_x(h^{(b-1)})
 \right).
 $$
 
-这项不一定非负：小幅改善时它给有限的负奖励，退步时为正惩罚；所以“monotonicity”是 soft preference，不是逐 token、逐步都单调下降的保证。
+这项不一定非负：小幅改善时它给有限的负奖励，退步时为正惩罚；所以“monotonicity”是 soft preference，不是逐 token、逐步都单调下降的保证。需要把论文公式和代码行为分开：截至 2026-08-04 的官方 [`training_runtime.py`](https://github.com/Thrillcrazyer/LoopUS/blob/main/training_runtime.py) 在 `torch.no_grad()` 中计算前一步 CE，因此实现中的梯度等价于对 $E_x(h^{(b-1)})$ 使用 `stopgrad`，但这个 stop-gradient 没有写进论文 Eq. (12) 或伪代码。
 
 confidence head 输出 \(q_n^{(b)}=\sigma(\tilde q_n^{(b)})\)。监督 target 不是答案正确与否，而是该 sample 在当前深度的 teacher-forced token argmax accuracy：
 
@@ -635,12 +636,12 @@ $$
 =\frac1K\sum_{b\in\mathcal S}
 \left[
 E_x(h^{(b)})
-+\beta\,\mathcal L_{\mathrm{mono}}^{(b)}
++\mathcal L_{\mathrm{mono}}^{(b)}
 +\mathcal L_Q^{(b)}
 \right],
 $$
 
-当前官方实现默认 \(\beta=1\)。关键是梯度局部化：前一步 CE、confidence 的 argmax target 以及传入当前监督步的旧 state 都 detach；梯度只穿过当前这次 \(M\)、selective gate、decoder/head 和 confidence head，不穿过此前的 1 到 \(b-1\) 条 trajectory。它因此节省 backward graph，但没有完整 20-step BPTT 的长程 credit。
+论文总式没有为 monotonicity 项单列系数；若把代码里的权重显式记作 \(\beta\)，当前默认值是 \(\beta=1\)。关键是梯度局部化：前一步 CE、confidence 的 argmax target 以及传入当前监督步的旧 state 都 detach；梯度只穿过当前这次 \(M\)、selective gate、decoder/head 和 confidence head，不穿过此前的 1 到 \(b-1\) 条 trajectory。它因此节省 backward graph，但没有完整 20-step BPTT 的长程 credit。
 
 - **具体结构：** 根据层间表示变化把 pretrained backbone分为 encoder $E$、middle reasoning block $M$、decoder $D$。
 - **怎样 loop：** $M$ 提出 $\tilde h=M(h)$，selective gate按 token×channel阻尼更新：$h^+=h+\alpha\odot(\tilde h-h)$；confidence head决定是否继续。
@@ -653,10 +654,10 @@ LoopUS 的细节价值在于，它把“已有 checkpoint 怎样变成 recurrent
 
 - **结构选择：** 作者用相邻层 representation change 找出中间相对平缓的区域作为 $M$，首尾保留为 $E/D$。这是经验性的 layer-role hypothesis，不证明任意 pretrained middle block天然是 fixed-point operator。
 - **gate 机制：** $M$ 先给出 proposed update $\delta_b=M(h_b)-h_b$；低秩投影产生正值 $\Delta_b$，再由负 channel decay $A$ 得到 $0<\alpha_b=\exp(\Delta_b\odot A)<1$。这保证插值但不保证整个 Jacobian 是 contraction。
-- **三类 supervision：** LM loss 让抽中深度可读出；monotonicity regularizer 用 detached 前一步 CE 惩罚局部退步；confidence BCE 学习 teacher-forced token accuracy proxy。三者分别对应“能预测”“别变差”“是否可停”。
+- **三类 supervision：** LM loss 让抽中深度可读出；论文中的 monotonicity regularizer 比较相邻 CE，当前代码再用 no-grad 前一步 CE 把它实现成局部退步惩罚；confidence BCE 学习 teacher-forced token accuracy proxy。三者分别对应“能预测”“别变差”“是否可停”。
 - **训练成本：** 20 个 middle-block forwards仍全部执行，只有 5 个 steps 保留 backward graph。粗略成本是 $20C_F+5C_B$ 加多个 decoder/head，而不是 full BPTT 的 $20C_F+20C_B$；换来的代价是 step 20 的 loss不能跨 detach训练 step 1。
 - **性能边界：** 七项平均分跨多个 backbone 提升约 1.6–2.2 points，但 Qwen3-8B 的 MMLU/HellaSwag 从 72.8/57.2 降到 71.5/56.0，Phi-4-14B HellaSwag 也从 63.1 降到 60.5。
-- **实现审计：** 当前公开代码训练 confidence head 时读取 proposed-update delta，threshold inference 却读取 post-gate hidden state，存在 train–inference input mismatch；复现时应把它作为显式 ablation，而不是默认为论文公式的等价实现。
+- **实现审计：** 截至 2026-08-04 的官方 main，训练和 threshold inference 都通过共享的 [`ReasoningBlock`](https://github.com/Thrillcrazyer/LoopUS/blob/main/models/modeling_lds.py) 路径，让 confidence head 读取 selective gate 之前的 proposed-update delta；因此当前版本不存在旧实现所担心的 confidence-input train–inference mismatch。复现仍应固定 commit，因为这类代码语义比论文伪代码更具体。
 
 ### 5.6 LOTUS：把 gold CoT 并行压入 latent workspace
 
@@ -666,17 +667,24 @@ LoopUS 的细节价值在于，它把“已有 checkpoint 怎样变成 recurrent
 
 ```mermaid
 flowchart TD
-    Q["question tokens Q"] --> Prefix["Q + BoT + K×c latent slots + EoT"]
-    Slots["K=6 blocks；c=25<br/>共 150 个并行 positions"] --> Prefix
-    Prefix --> Loop["looped backbone<br/>整段 prefix 并行更新一次"]
-    Loop --> H["latent workspace h⁽ʳ⁾"]
-    H -->|"r < R=6：共享 backbone"| Loop
-    H -->|"r = R"| Freeze["固定最终 latent prefix"]
-    Freeze --> Ans["额外 final forward<br/>autoregressive answer decode"]
-    Ans --> Y["answer tokens"]
+    Q["question tokens Q"] --> Prefix["单次 prefix forward<br/>Q + BoT"]
+    Prefix --> Cache["固定 prefix KV cache C_pre"]
+    Slots["K=6、c=25 的 learnable latent embeddings E<br/>共 150 个并行 positions"] --> Init["初始化 latent region<br/>h⁽⁰⁾ = fθ(E | C_pre)"]
+    Cache --> Init
+    Init --> Refine["共享 backbone refinement<br/>h⁽ʳ⁾ = fθ(E + h⁽ʳ⁻¹⁾ | C_pre)"]
+    Cache --> Refine
+    Refine --> H["更新后的 latent workspace h⁽ʳ⁾"]
+    H -->|"r < R=6"| Refine
+    H -->|"r = R"| Freeze["固定 post-loop latent h⁽ᴿ⁾"]
+    Freeze --> Final["final forward：EoT + answer<br/>条件为 C_pre 与 h⁽ᴿ⁾"]
+    Final --> Y["autoregressive answer tokens"]
 ```
 
-150 个 latent positions 在一次 Transformer pass 中并行更新，和生成 150 个不可见 autoregressive tokens不是同一种成本。循环阶段不反复生成答案；答案只在最终 latent prefix 上按普通自回归方式解码。
+问题 $Q+\mathrm{BoT}$ 只计算一次并形成固定的 $C_{\mathrm{pre}}$，不是每轮把 question 和 latent slots 一起重跑。随后 150 个 latent positions 在每次 backbone pass 内并行更新，和生成 150 个不可见 autoregressive tokens不是同一种成本。按论文 Eq. (2) 与官方实现的记数，先有一次初始化 $h^{(0)}=f_\theta(E\mid C_{\mathrm{pre}})$，再做 $R=6$ 次 refinement；作者在正文和图中把后者称为 “$R$ loops”，因此 literal latent-region backbone calls 是 $R+1=7$。循环阶段不生成答案；答案只在最终 latent workspace 后按普通自回归方式解码。
+
+**实现补充：** 上一段先按论文公式复原。当前官方 [`scripts/lotus.py`](https://github.com/yingfan-bot/lotus/blob/main/scripts/lotus.py) 为了让 loop-region logits 对齐第一个 latent target，把 `loop_start` 设为首个 latent position前一位；因此代码实际把 $\mathrm{BoT}$ 放进 loop region、只缓存 $Q$，与论文把 $[Q,\mathrm{BoT}]$ 都写进 $C_{\mathrm{pre}}$ 略有差异。它不改变 $K/c$ 的含义，但会影响逐 token cache 与精确 forward accounting，复现应固定 commit 并明确采用哪一种语义。
+
+$K$ 和 $c$ 是两个不同的容量轴：$K=6$ 是可并行承载的 reasoning-step block 数，$c=25$ 是每个 step block 的 token 槽位数。训练 trace 先按 reasoning step 切分，每个 step 再独立 tokenize，并 pad/truncate 到 $c$ 个位置；因此有效的每个 $(i,j)$ latent position确实对应一个 gold CoT token，而不是整个 block只对应一个 token。padding 位置不计 loss。
 
 **训练 recipe 示意图（分析者复原）**
 
@@ -684,10 +692,10 @@ flowchart TD
 flowchart TD
     Trace["explicit-CoT checkpoint<br/>+ gold reasoning traces"] --> Data["GSM8K-Aug 约 385k examples<br/>30 epochs"]
     Data --> Curr["curriculum：逐步用 latent blocks<br/>替换可见 CoT 片段"]
-    Curr --> Work["构造 K=6、c=25 workspace<br/>运行 R=6 loops"]
+    Curr --> Work["构造 K=6、c=25 workspace<br/>1 次初始化 + R=6 次 refinement"]
     Work --> Step["post-loop step loss<br/>每个 latent slot 用原 LM head预测对应 gold CoT token"]
     Work --> Ans["answer loss<br/>在最终 latent prefix 上生成答案"]
-    Step --> Total["L = L_answer + λL_step"]
+    Step --> Total["L = L_answer + λ_step L_step<br/>主实验 λ_step=0.05"]
     Ans --> Total
     Total --> Deploy["推理：不输出训练期 gold CoT<br/>先并行 latent refinement，再生成 answer"]
 ```
@@ -704,7 +712,7 @@ f_{\mathrm{head}}(h_{ij}^{(R)}),T_{ij}
 \right),
 $$
 
-其中 \(N\) 是未被 padding/截断 mask 掉的 latent target 数。前 \(1,\ldots,R-1\) 轮没有各自的 token label；它们只通过最终 latent states 收到端到端梯度。这一点正是“post-loop supervision”，不同于强迫第 \(r\) 轮复现 CoT 的第 \(r\) 步。
+其中 $T_{ij}$ 是第 $i$ 个 reasoning step 经 tokenizer 后的第 $j$ 个 gold token，$N$ 是未被 padding mask 掉的有效 latent target 数；超过每步 $c$ 容量的部分按数据构造规则截断。也就是说，每个有效 latent position有一个对应的 gold token label。前 $1,\ldots,R-1$ 轮没有各自的 token label；它们只通过最终 latent states 收到端到端梯度。这一点正是“post-loop supervision”，不同于强迫第 $r$ 轮复现 CoT 的第 $r$ 步。
 
 第二项在 question 和最终 latent prefix 条件下，自回归生成最终答案：
 
@@ -719,26 +727,26 @@ $$
 $$
 \mathcal L
 =\mathcal L_{\mathrm{ans}}
-+\lambda\,\mathcal L_{\mathrm{step}}.
++\lambda_{\mathrm{step}}\,\mathcal L_{\mathrm{step}}.
 $$
 
-所以 \(\mathcal L_{\mathrm{step}}\) 解决 latent workspace 缺少局部可读监督的问题，\(\mathcal L_{\mathrm{ans}}\) 保证被压缩的 workspace 对最终回答有用。curriculum 逐步把可见 CoT 换成 latent slots，但不改变这两个 loss 的代数形式。两项都能经最终 workspace 回传到全部 \(R=6\) 次共享 backbone 调用；与 LoopUS 不同，论文的方法定义没有在相邻 loops 之间做 stop-gradient。
+主实验使用 \(\lambda_{\mathrm{step}}=0.05\)；论文的 natural-language stress-test recipe 使用 0.033。所以 \(\mathcal L_{\mathrm{step}}\) 解决 latent workspace 缺少局部可读监督的问题，\(\mathcal L_{\mathrm{ans}}\) 保证被压缩的 workspace 对最终回答有用。curriculum 逐步把可见 CoT 换成 latent slots，但不改变这两个 loss 的代数形式。两项都能经最终 workspace 回传到 $h^{(0)}$ 的初始化 forward 与后续 $R=6$ 次共享-backbone refinement；与 LoopUS 不同，论文的方法定义没有在相邻 loops 之间做 stop-gradient。
 
-- **具体结构：** question后插入 $K=6$ 个 latent blocks，每个 $c=25$ positions，共 150 个并行 latent positions；整体做 $R=6$ loops。
-- **怎样 loop：** 先只更新 question+latent prefix，最终 latent state作为 prefix，再单独 autoregressive生成答案。
-- **training recipe：** 从 explicit-CoT checkpoint和 curriculum起步；在最终 loop后让每个 latent position经原 LM head预测对应 gold CoT token，并加 answer loss。
+- **具体结构：** question后的 $\mathrm{BoT}$ 建立固定 prefix cache；随后放入 $K=6$ 个 latent blocks，每个 $c=25$ positions，共 150 个并行 latent positions；最后再接 $\mathrm{EoT}$ 和 answer。
+- **怎样 loop：** question+$\mathrm{BoT}$ 只计算一次；先从 learnable $E$ 得到 $h^{(0)}$，再以 $E+h^{(r-1)}$ 为输入做 $R=6$ 次共享-backbone refinement。最终 latent state固定后，才单独 autoregressive生成答案。
+- **training recipe：** 从 explicit-CoT checkpoint和 curriculum起步；在最终 loop后让每个有效 latent position经原 LM head预测对应 gold CoT token，并加 answer loss；主实验 $\lambda_{\mathrm{step}}=0.05$。
 - **性能含义：** 3B math setup接近 explicit CoT且显著减少 thought latency；优势会随显式 CoT变长而增大。
 - **核心 insight：** 给最终并行 workspace直接 step supervision，比 only-answer或把每个 loop强制对齐某一推理步更容易优化。
 - **主要边界：** 它没有摆脱显式 reasoning data，而是把训练期 gold traces压缩到 inference latent space；LM-head可读性是被直接监督出来的，不证明 causal faithfulness。
 
 LOTUS 应理解为 reasoning-trace compression，而不是“无监督地涌现出隐藏 CoT”：
 
-- **两个正交轴：** $Kc$ 决定并行 workspace 容量，$R$ 决定同一 workspace被共同更新多少轮。增大前者主要增加 attention sequence length，增大后者主要增加串行 full-forward 次数，两者不能都简称“更多 latent tokens”。
+- **两个正交轴：** $Kc$ 决定并行 workspace 容量，其中 $K$ 是 reasoning-step blocks、$c$ 是每步 token slots；$R$ 决定同一 workspace被 refinement多少轮。增大前者主要增加 attention sequence length，增大后者主要增加串行 full-forward 次数。按公式/代码 convention，latent region还有一次 $h^{(0)}$ 初始化，所以总调用数是 $R+1$，不能把两条轴都简称“更多 latent tokens”。
 - **为什么 post-loop supervision 有效：** only-answer supervision 的 credit assignment太弱；per-iteration supervision又强迫第 $r$ 轮对应某个固定 reasoning step。post-loop objective只要求 6 轮共同形成一个可读 workspace，给内部 trajectory 留出自由度。
 - **最关键消融：** only-answer、CODI-style、direct per-iteration、direct post-loop 的 GSM8K 分别为 63.3、64.4、68.2、70.0；train-$R=2$ 只有 14.6，而 train-$R=6$ 达 70.0。
 - **性能与成本：** Llama-3.2-3B 上 GSM8K 为 $70.0\pm0.9$，接近 explicit CoT 的 71.5；H100、batch 1 下 thought latency 133.0 ms vs 338.8 ms，总 latency 181.2 ms vs 384.2 ms。该优势会随显式 trace变长而扩大，也会在 workspace不足需要 fallback 时缩小。
 - **可解释性边界：** gold-token retrieval top-1/top-5 为 70.9%/85.8%，但 state从训练开始就被 LM head直接监督成可读；这支持 representational alignment，不支持“这些 token就是对 final answer有因果作用的真实思维”。
-- **复现重点：** 除 $K,c,R$ 外，还要固定 trace tokenizer长度、超过 150 positions 的截断/fallback规则、curriculum替换速度及 answer decoding budget，否则 latency与 accuracy都不可比。
+- **复现重点：** 除 $K,c,R$ 外，还要分别固定“单个 reasoning step 超过 $c$ tokens”的截断规则，以及“trace 超过 $K$ steps”时保留为 visible/autoregressive tail 的规则；再固定 tokenizer、curriculum替换速度及 answer decoding budget，否则 latency与 accuracy都不可比。
 
 ### 5.7 LoopRPT：把 reinforcement signal 放到 latent steps
 
@@ -766,7 +774,7 @@ LoopRPT 不改变 Ouro 的 backbone topology；它改变的是 latent trajectory
 
 ```mermaid
 flowchart TD
-    Base["Ouro-1.4B / 2.6B checkpoint"] --> Data["OMNI-MATH 4,428<br/>3 epochs；sequence 4096"]
+    Base["Ouro-1.4B / 2.6B checkpoint"] --> Data["OMNI-MATH 共 4,428<br/>4,228 train / 200 validation<br/>3 epochs；sequence 4096"]
     Data --> Hard["EMA teacher entropy排序<br/>每个 example选 top 20% hard tokens"]
     Hard --> Ref["teacher cumulative exit CDF<br/>得到 reference step t_ref"]
     Ref --> Noise["latent state加 σ=0.1 Gaussian noise<br/>每 token做 8 rollouts"]
@@ -845,7 +853,7 @@ $$
 - **training recipe：** 每个 example选20% high-entropy hard tokens；对 latent state加 $\sigma=0.1$ Gaussian noise，每 token做 8 rollouts；policy gradient + representation + entropy + KL。
 - **性能含义：** peak accuracy和adaptive accuracy同时提高，说明不是只把 gate提前，而是早期 latent states也变好。
 - **核心 insight：** looped model的 credit assignment可以直接落在“多算一步是否值得”上，而不必只奖励最终输出 token。
-- **主要边界：** 4,428 条 OMNI-MATH、3 epochs属于小型 math reinforcement continued training；“Reinforcement Pre-Training”是方法名，不应与 foundation pretraining混为一谈。
+- **主要边界：** OMNI-MATH 共 4,428 条，其中 4,228 train、200 validation；3 epochs属于小型 math reinforcement continued training。“Reinforcement Pre-Training”是方法名，不应与 foundation pretraining混为一谈。
 
 LoopRPT 的核心贡献可以进一步拆成“选哪里训练、怎样定义动作、怎样平衡质量与时间”三步：
 
@@ -914,6 +922,8 @@ $$
 \operatorname{stopgrad}(h^{(L)})-h^{(S)}
 \right\|_2^2.
 $$
+
+这里采用论文 Eq. (7) 和 Algorithm 1 的 formal definition，即 consistency 作用在 hidden endpoint $h$ 上。§3.3 的一处 prose 把目标描述成 logits，与公式和算法不一致；复现时应按 hidden-state MSE 理解，而不要把两种说法静默混合。
 
 总目标固定为
 

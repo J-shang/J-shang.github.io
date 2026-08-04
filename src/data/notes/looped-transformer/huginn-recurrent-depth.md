@@ -12,11 +12,11 @@ order: 50
 source:
   repository: "J-shang/looped-transformer"
   path: "papers/14-huginn-recurrent-depth.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
+  url: "https://github.com/J-shang/looped-transformer/blob/eb43191df7da7f8d1b936fa6485ea21f7c8f430a/papers/14-huginn-recurrent-depth.md"
+  revision: "eb43191df7da7f8d1b936fa6485ea21f7c8f430a"
   syncedAt: "2026-08-04"
   contentHash: "sha256:2fbd57c18f19a04b4329176488fda59113955aab1a65888fccf99450bc7f280b"
   manifest: "looped-transformer"
-  dirty: true
   managed: true
 ---
 > 论文：*Scaling up Test-Time Compute with Latent Reasoning: A Recurrent Depth Approach*<br>

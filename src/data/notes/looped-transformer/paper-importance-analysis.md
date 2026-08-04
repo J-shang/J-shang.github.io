@@ -5,17 +5,17 @@ topic: "looped-transformer"
 section: "supplements"
 slug: "paper-importance-analysis"
 date: 2026-07-29
-updated: 2026-08-02
+updated: 2026-08-04
 cutoff: 2026-07-28
 order: 80
 source:
   repository: "J-shang/looped-transformer"
   path: "notes/paper-importance-analysis.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
-  syncedAt: "2026-08-02"
+  url: "https://github.com/J-shang/looped-transformer/blob/eb43191df7da7f8d1b936fa6485ea21f7c8f430a/notes/paper-importance-analysis.md"
+  revision: "eb43191df7da7f8d1b936fa6485ea21f7c8f430a"
+  syncedAt: "2026-08-04"
   contentHash: "sha256:f95828daadd4fad5505aad8b729432e587ba951d0632c95c7432bd87f19a8ef8"
   manifest: "looped-transformer"
-  dirty: true
   managed: true
 ---
 > **适用范围提醒（2026-08-02）：** 本文只比较旧资料库的 13 篇机制/历史论文，不能用作通用 LLM pretraining/post-training 的当前优先级。当前学习优先级见[系统学习课程](/topics/looped-transformer/)，一手资料集见[资料地图](/topics/looped-transformer/)；后续重要性评估应以 source bundle、训练阶段、开放度和可复现性重新计算。

@@ -5,17 +5,17 @@ topic: "looped-transformer"
 section: "supplements"
 slug: "visual-evidence-sources"
 date: 2026-07-29
-updated: 2026-08-02
+updated: 2026-08-04
 cutoff: 2026-08-02
 order: 81
 source:
   repository: "J-shang/looped-transformer"
   path: "papers/assets/README.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
-  syncedAt: "2026-08-02"
+  url: "https://github.com/J-shang/looped-transformer/blob/eb43191df7da7f8d1b936fa6485ea21f7c8f430a/papers/assets/README.md"
+  revision: "eb43191df7da7f8d1b936fa6485ea21f7c8f430a"
+  syncedAt: "2026-08-04"
   contentHash: "sha256:3ee98433d7d16a437173c51033780a394a7a26b32b2580edf39fd2e4a90a412e"
   manifest: "looped-transformer"
-  dirty: true
   managed: true
 ---
 本目录只保存论文原图的忠实裁切，用于相邻 Markdown 解析的自包含阅读。01–13 于 2026-07-29 以 240 DPI 处理，14–21 于 2026-08-02 以 216 DPI 处理；未重绘、未生成式补全，也未改变图中的数据、坐标轴、图例或 caption。原始 PDF 仅用于本地处理，不纳入仓库。14–21 的重复提取入口是 `scripts/extract_new_paper_figures.py`。
