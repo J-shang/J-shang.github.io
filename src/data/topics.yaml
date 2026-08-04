@@ -198,12 +198,12 @@
   order: 5
   featured: false
   status: published
-  cutoff: 2026-08-02
+  cutoff: 2026-08-03
   guide: paper-reading-guide
   featuredNotes:
+    - looped-transformer-eight-paper-survey
     - huginn-recurrent-depth
     - retrofitted-recurrence
-    - loopformer
   sections:
     - id: guide
       title: 论文路线
@@ -239,5 +239,5 @@
       order: 7
     - id: supplements
       title: 跨论文评估与视觉来源
-      description: 汇总重要性判断、引用快照和所有原图裁切的正式来源。
+      description: 汇总八篇通用 LLM 主线的横向综述、重要性判断、引用快照和所有原图裁切的正式来源。
       order: 8

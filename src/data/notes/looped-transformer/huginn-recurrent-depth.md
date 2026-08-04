@@ -5,7 +5,7 @@ topic: "looped-transformer"
 section: "llm-pretraining"
 slug: "huginn-recurrent-depth"
 date: 2026-08-02
-updated: 2026-08-02
+updated: 2026-08-04
 cutoff: 2026-08-02
 featured: true
 order: 50
@@ -13,8 +13,8 @@ source:
   repository: "J-shang/looped-transformer"
   path: "papers/14-huginn-recurrent-depth.md"
   revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
-  syncedAt: "2026-08-02"
-  contentHash: "sha256:f5b90d74cebcc12dbd682f6e063733e7528b031e4439631377c995fb0791c7b1"
+  syncedAt: "2026-08-04"
+  contentHash: "sha256:2fbd57c18f19a04b4329176488fda59113955aab1a65888fccf99450bc7f280b"
   manifest: "looped-transformer"
   dirty: true
   managed: true
@@ -93,6 +93,67 @@ $$
 主模型约 3.5B parameters，使用 8 个实际保存的 Transformer layers，布局为 $(2,4,2)$：2 层 prelude、4 层 recurrent core、2 层 coda。若 core 重复 32 次，effective execution depth 远大于 8，但 stored parameters 不变。
 
 参数大致分布为：prelude/coda 约 1.5B、recurrent core 约 1.5B、embedding 约 0.5B。这个比例提醒我们：parameter sharing 只作用于 core，embedding、首尾层和 LM head 仍然占显著空间。
+
+#### Huginn-0125 的逐层配置
+
+下面是主 checkpoint 的实际结构，而不只是 `prelude → core → coda` 的概念图。数值来自论文 §3.2、§4.1 与[官方 checkpoint config](https://huggingface.co/tomg-group-umd/huginn-0125/blob/main/config.json)，算子顺序与 bias/dropout 由[官方最小推理实现](https://github.com/seal-rg/recurrent-pretraining/blob/main/recpre/raven_modeling_minimal.py)核对。
+
+| 项目 | Huginn-0125 |
+|---|---|
+| 模型类型 | decoder-only autoregressive Transformer，dense model，不是 MoE |
+| stored Transformer blocks | 8：2 prelude + 4 recurrent core + 2 coda |
+| effective block depth | $2+4r+2$；默认 $r=32$ 时为 132 |
+| hidden size | $h=5280$ |
+| context / block size | 4096 tokens |
+| attention | dense causal self-attention；无 sliding window、local/sparse attention |
+| heads | 55 query heads、55 KV heads、head dim 96；因此是普通 MHA，不是 GQA/MQA |
+| position encoding | RoPE，base 50,000，施加在 Q/K 上 |
+| attention bias/dropout | 只有 Q、K 有 learned bias；V、attention output projection 无 bias；attention dropout 为 0 |
+| FFN | dense gated-SiLU / SwiGLU-style MLP，$5280\to 2\times17920\to17920\to5280$，无 bias、无 experts/router |
+| normalization | learned-scale RMSNorm，$\epsilon=10^{-6}$；每个 block 有 4 个独立 RMSNorm |
+| embeddings/head | vocabulary 65,536；input embedding 与 LM head 权重绑定；embedding 输出乘 $\sqrt{5280}\approx72.66$ |
+| input injection | 每轮把 $s_{i-1}$ 与固定的 prelude 输出 $e$ concat，经过无 bias 的 $10560\to5280$ learned linear adapter |
+| recurrent state init | 与 token 序列同 shape 的随机 state；主模型用截断正态，最终每维方差为 $2/5$ |
+
+这里的 **full attention** 需要消除一个术语歧义：如果它指“每个 token 可看见窗口内所有历史 token”，答案是 **是**；如果它指 BERT 式双向 all-to-all attention，答案是 **否**。Huginn 是自回归 LM，所以 attention mask 是下三角 causal mask。实现调用 scaled dot-product attention，prefill 路径设 `is_causal=True`、`dropout_p=0.0`；没有 attention sink、linear attention 或分层 local/global pattern。
+
+单个 `SandwichBlock` 的精确计算为：
+
+$$
+u=\operatorname{RMSNorm}_2\!\left(x+
+\operatorname{MHA}\!\left(\operatorname{RMSNorm}_1(x)\right)\right),
+$$
+
+$$
+y=\operatorname{RMSNorm}_4\!\left(u+
+\operatorname{MLP}\!\left(\operatorname{RMSNorm}_3(u)\right)\right).
+$$
+
+所以它既不是纯 pre-norm，也不是纯 post-norm，而是每个 attention/MLP 子层前后都 norm：
+
+```text
+x ─RMSNorm₁─MHA─Add(x)─RMSNorm₂─RMSNorm₃─SwiGLU-MLP─Add─RMSNorm₄ → y
+```
+
+`RMSNorm₃` 的输入已经经过 `RMSNorm₂`，论文明确说它在数学上可视为冗余，但最终 checkpoint 确实保留了它。RMSNorm 带一个可学习的逐通道 scale，均方根统计在官方实现中以 FP32 计算后再 cast 回 activation dtype；它不是 parameter-free RMSNorm，也不是 LayerNorm，因此没有减均值步骤和 beta bias。除此之外，官方实现还复用一个 `ln_f` RMSNorm：一次放在 recurrent core 结束、进入 coda 之前，一次放在两层 coda 之后、LM head 之前。
+
+整个 forward 可以写得更具体：
+
+```text
+token ids
+  → tied embedding × √5280
+  → 2 × SandwichBlock                         = e
+  → random s₀
+  → repeat r times:
+        Linear([sᵢ₋₁ ; e])                    # 10560 → 5280
+        → 4 × the same shared SandwichBlocks  = sᵢ
+  → shared final RMSNorm
+  → 2 × SandwichBlock
+  → the same final RMSNorm
+  → tied vocabulary projection → logits
+```
+
+这里共享的是 **4 个 core blocks 的整组参数**：第 1 个 core block 在所有 recurrence 中复用自己的权重，第 2–4 个同理；并不是 4 层彼此也共享成同一层。prelude、core 内四层、coda 都各有独立参数。$r=32$ 时，执行的是 2 个首层、$4\times32$ 次 core block call 和 2 个尾层。
 
 ### 5.2 随机 recurrent depth
 

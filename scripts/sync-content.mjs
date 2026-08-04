@@ -113,11 +113,13 @@ function splitMarkdown(content) {
 
 function metadataFrom(frontmatter) {
   const field = (name) => frontmatter.match(new RegExp(`^\\s*${name}:\\s*"([^"]*)"\\s*$`, 'm'))?.[1];
+  const dateField = (name) => frontmatter.match(new RegExp(`^\\s*${name}:\\s*(\\d{4}-\\d{2}-\\d{2})\\s*$`, 'm'))?.[1];
   return {
     managed: /^\s*managed:\s*true\s*$/m.test(frontmatter),
     manifest: field('manifest'),
     path: field('path'),
     revision: field('revision'),
+    updated: dateField('updated'),
     syncedAt: field('syncedAt'),
     contentHash: field('contentHash'),
   };
@@ -241,9 +243,11 @@ for (const document of manifest.documents) {
   }
 
   let previousSync;
+  let previousMetadata;
   if (existing !== undefined) {
     const parsed = splitMarkdown(existing);
     const metadata = metadataFrom(parsed.frontmatter);
+    previousMetadata = metadata;
     previousSync = metadata.syncedAt;
     if (metadata.managed) {
       if (metadata.contentHash && hashBody(parsed.body) !== metadata.contentHash) {
@@ -254,6 +258,10 @@ for (const document of manifest.documents) {
       conflicts.push(`${relative(root, targetPath)} is not managed; rerun with --adopt after reviewing it.`);
       continue;
     }
+  }
+
+  if (git.dirty && previousMetadata?.updated && previousMetadata.contentHash === hashBody(body)) {
+    git.updated = previousMetadata.updated;
   }
 
   let output = renderDocument(document, body, git, previousSync ?? today);

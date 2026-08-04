@@ -5,7 +5,7 @@ topic: "looped-transformer"
 section: "guide"
 slug: "paper-reading-guide"
 date: 2026-07-29
-updated: 2026-08-02
+updated: 2026-08-04
 cutoff: 2026-08-02
 featured: true
 order: 0
@@ -13,8 +13,8 @@ source:
   repository: "J-shang/looped-transformer"
   path: "papers/README.md"
   revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
-  syncedAt: "2026-08-02"
-  contentHash: "sha256:51824a3ead44af175cd779ddff1595d1748f29a2744bd3318154472533c35f65"
+  syncedAt: "2026-08-04"
+  contentHash: "sha256:d5e3b9168850c0a8f45cf4d094c4547c82ba515f8d7432e9401d2255081fa8f4"
   manifest: "looped-transformer"
   dirty: true
   managed: true
@@ -23,7 +23,9 @@ source:
 >
 > 共 21 篇，全部按 `analyze-research-paper` 最新规范处理：明确版本与证据范围，提供早期符号表、贡献账本、方法复原、最小算例、实验问题—证据链、claim–evidence map、局限和可证伪扩展。共选 45 张真正承担解释作用的论文原图；图片下方均标注图号、PDF 页码、精确来源、看图重点与证据边界。
 >
-> 01–13 信息截止 2026-07-24，视觉复核 2026-07-29；14–21 信息与视觉复核截止 2026-08-02。图源与裁切说明见[视觉证据资产清单](/topics/looped-transformer/visual-evidence-sources/)。
+> 01–13 信息截止 2026-07-24，视觉复核 2026-07-29；14–21 版本与数值复核截止 2026-08-03，视觉复核截止 2026-08-02。图源与裁切说明见[视觉证据资产清单](/topics/looped-transformer/visual-evidence-sources/)。
+
+八项核心工作已有一份按 Paper 时间、architecture、loop、training recipe、performance 与 insight 统一归一化的[横向综述](/topics/looped-transformer/looped-transformer-eight-paper-survey/)；需要公式、原图、表格与逐条证据时再进入下方单篇解析。DeepLoop 因模型规模较小，只保留在背景论文索引中。
 
 跨论文的作者、机构、引用量与重要性比较见：[论文重要性评估](/topics/looped-transformer/paper-importance-analysis/)（引用快照：2026-07-28）。
 

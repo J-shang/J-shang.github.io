@@ -24,7 +24,8 @@
   ],
   "discoveryRoots": [
     "papers",
-    "notes/paper-importance-analysis.md"
+    "notes/paper-importance-analysis.md",
+    "notes/looped-transformer-eight-paper-survey.md"
   ],
   "documents": [
     {
@@ -253,6 +254,17 @@
       "order": 72,
       "date": "2026-08-02",
       "cutoff": "2026-08-02",
+      "featured": true
+    },
+    {
+      "source": "notes/looped-transformer-eight-paper-survey.md",
+      "slug": "looped-transformer-eight-paper-survey",
+      "title": "Looped Transformer 八篇核心工作：结构、Loop、训练、性能与 Insight",
+      "description": "横向比较 Huginn、Ouro、MoR、LoopUS、LOTUS、LoopRPT、LoopFormer 与 Loopie 的计算图、训练配方、性能证据和复现优先级。",
+      "section": "supplements",
+      "order": 79,
+      "date": "2026-08-04",
+      "cutoff": "2026-08-03",
       "featured": true
     },
     {

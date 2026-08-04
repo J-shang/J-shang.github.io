@@ -5,17 +5,17 @@ topic: "looped-transformer"
 section: "frontiers"
 slug: "deeploop-depth-scaling"
 date: 2026-07-29
-updated: 2026-07-29
+updated: 2026-08-04
 cutoff: 2026-07-24
 order: 41
 source:
   repository: "J-shang/looped-transformer"
   path: "papers/12-deeploop-depth-scaling.md"
-  url: "https://github.com/J-shang/looped-transformer/blob/9ab82eeb3178ddd627b592ac2cba22de91e7be66/papers/12-deeploop-depth-scaling.md"
-  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66"
-  syncedAt: "2026-08-02"
-  contentHash: "sha256:5730fe7cf4e1c7da8d8bd8cc10722bcf3f6886032343136463381610a32a922f"
+  revision: "9ab82eeb3178ddd627b592ac2cba22de91e7be66+working-tree"
+  syncedAt: "2026-08-04"
+  contentHash: "sha256:9f62fd04381c1f8d7d324e08281aabae738fb83ad5dd33ded716ba9be14f4b4b"
   manifest: "looped-transformer"
+  dirty: true
   managed: true
 ---
 ## 论文身份与证据范围
@@ -192,9 +192,9 @@ for every Post-LN residual sublayer:
 
 ### 1. FineWeb-Edu validation loss
 
-相同 GPT-MHA-RoPE backbone、optimizer、data pipeline、seed；50B tokens、100K steps、context 1024、global batch 480。small 用 4×H200 141GB，medium 用 8×H200 141GB（§5.1）。Table 1 的四列依次为 $R=1,2,4,8$：
+相同 GPT-MHA-RoPE backbone、optimizer、data pipeline、seed；50B tokens、100K steps、context 1024、global batch 480。small 用 4×H200 141GB，medium 用 8×H200 141GB（§5.1）。Table 1 的四列依次为 $R=1,3,5,7$：
 
-| Backbone | 方法 | $R=1$ | $R=2$ | $R=4$ | $R=8$ |
+| Backbone | 方法 | $R=1$ | $R=3$ | $R=5$ | $R=7$ |
 |---|---|---:|---:|---:|---:|
 | GPT-2 small | baseline | 2.8627 | 2.8077 | 2.7910 | 2.7700 |
 | GPT-2 small | DeepLoop | 2.8631 | 2.7917 | 2.7679 | 2.7514 |
@@ -211,7 +211,7 @@ for every Post-LN residual sublayer:
 
 ### 2. Downstream transfer
 
-medium checkpoint 在 8-task lm-eval-harness、default `acc`、0/1-shot、bf16、context 1024 上评估（§5.2）。$R=8$：
+medium checkpoint 在 8-task lm-eval-harness、default `acc`、0/1-shot、bf16、context 1024 上评估（§5.2）。$R=7$：
 
 - 0-shot Avg：baseline 52.95，DeepLoop 53.88；
 - 1-shot Avg：baseline 54.62，DeepLoop 55.20（Table 2）。
@@ -268,7 +268,7 @@ Appendix C 在单一 GPT-2 small、固定 loop depth/短 budget 上，对 7 个 
 - Reasoning chain：理论阈值由 alignment 决定；若早层/晚层或训练早晚 alignment 不同，统一最坏值会浪费学习信号。
 - Predicted observation：高 alignment blocks 需要接近 $1/2$，低 alignment blocks 用 $1/4$–$1/2$ 间值可更快收敛。
 - Falsification condition：估计 alignment 与稳定边界/最终 loss 无预测关系。
-- Minimum experiment：GPT-2 small，$R=2,4,8$，对每 block 记录 visit gradient cosine 与低秩 sensitivity proxy；预注册 $p_b$ rule 再测 held-out seeds。
+- Minimum experiment：GPT-2 small，$R=3,5,7$，对每 block 记录 visit gradient cosine 与低秩 sensitivity proxy；预注册 $p_b$ rule 再测 held-out seeds。
 - Cost/risk：per-visit gradient 收集昂贵且改变显存；应使用随机投影 sketch，避免形成新的大开销方法。
 
 ## 复现与阅读路径
@@ -276,7 +276,7 @@ Appendix C 在单一 GPT-2 small、固定 loop depth/短 budget 上，对 7 个 
 1. Figure 1：先写出 $B,R,N,2N$。
 2. §2.3/§3.4：手推 $R=2$ 的四个 cross terms。
 3. Proposition 3.1：明确是 sufficient exponent threshold。
-4. Table 1：先复现 $R=1$ neutral check，再跑 $R>1$。
+4. Table 1：先复现 $R=1$ neutral check，再跑 $R\in\{3,5,7\}$。
 5. Appendix C：至少 5 seeds 画“失败率 + 条件于收敛的 loss”，不要只报均值。
 6. sanity checks：确认 $\beta$ 只用于初始化、$\alpha$ 用在 skip、baseline 共享拓扑完全相同。
 
